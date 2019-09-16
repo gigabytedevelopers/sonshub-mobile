@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:context=".activities.DownloadActivity">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_height="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:theme="@style/AppTheme.AppBarOverlay">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:padding="@dimen/fab_margin"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/back"
+                    app:srcCompat="@drawable/ic_back"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/nav_download"
+                    android:textSize="20sp"/>
+            </RelativeLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <include layout="@layout/content_download"/>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <include layout="@layout/ads_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
+</LinearLayout>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:descendantFocusability="blocksDescendants"
+    tools:context=".fragments.downloads.DownloadedFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical">
+        <com.ogaclejapan.smarttablayout.SmartTabLayout
+            android:id="@+id/smart_tab"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/smart_tab_height"
+            app:stl_customTabTextLayoutId="@layout/smart_tab_custom_text"
+            app:stl_customTabTextViewId="@id/smart_custom_tab_text"
+            app:stl_dividerColor="@android:color/transparent"
+            app:stl_dividerThickness="0dp"
+            app:stl_indicatorColor="@color/colorAccent"
+            app:stl_indicatorGravity="top"
+            app:stl_indicatorCornerRadius="@dimen/card_corner_radius"
+            app:stl_indicatorWidth="@dimen/smart_tabs_width"
+            app:stl_distributeEvenly="true"
+            app:stl_indicatorInterpolation="smart"
+            app:stl_underlineThickness="0dp"
+            app:stl_underlineColor="@android:color/transparent"/>
+        <com.gigabytedevelopersinc.apps.sonshub.ui.LockableViewPager
+            android:id="@+id/customViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

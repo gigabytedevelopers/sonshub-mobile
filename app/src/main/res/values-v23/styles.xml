@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ParentTheme.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+</resources>

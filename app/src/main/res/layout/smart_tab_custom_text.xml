@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--TextView is for the tabs text display-->
+<TextView
+    android:id="@+id/smart_custom_tab_text"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="?android:attr/selectableItemBackground"
+    android:paddingLeft="@dimen/padding_large"
+    android:paddingStart="@dimen/padding_large"
+    android:paddingRight="@dimen/padding_large"
+    android:paddingEnd="@dimen/padding_large"
+    android:textAllCaps="true"
+    android:textColor="@color/white"
+    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+    android:textStyle="bold"
+    android:fontFamily="@font/petitabold"
+    tools:text="MAIN"
+    xmlns:tools="http://schemas.android.com/tools"/>

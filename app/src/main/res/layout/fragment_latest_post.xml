@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.music.AfricanFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <GridView
+            android:id="@+id/latest_posts_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/padding_small"
+            android:numColumns="auto_fit"
+            android:horizontalSpacing="1dp"
+            android:verticalSpacing="1dp"
+            android:columnWidth="130dp"
+            android:minWidth="130dp"
+            android:stretchMode="columnWidth"
+            android:scrollingCache="false"
+            android:animationCache="false"
+            android:smoothScrollbar="true"
+            android:scrollbars="none"/>
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progress_bar_loading"
+            android:indeterminate="true"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            style="@style/Widget.AppCompat.ProgressBar"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_gravity="center_horizontal"/>
+
+    </RelativeLayout>
+</RelativeLayout>

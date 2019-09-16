@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     tools:context=".fragments.music.AfricanFragment">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/progressBar"
+            android:id="@+id/main_swipe">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/african_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:padding="@dimen/padding_mini"/>
+
+        </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
+
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progress_bar_loading"
+            android:indeterminate="true"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            style="@style/Widget.AppCompat.ProgressBar"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_gravity="center_horizontal"/>
+
+    </RelativeLayout>
+</RelativeLayout>

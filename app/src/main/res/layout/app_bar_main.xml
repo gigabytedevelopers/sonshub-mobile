@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:theme="@style/AppTheme.AppBarOverlay">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/colorPrimary"
+                app:title="@string/app_name"
+                app:titleTextColor="@color/white"
+                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <include layout="@layout/content_main"/>
+
+        <com.leinardi.android.speeddial.SpeedDialView
+            android:id="@+id/speedDial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
+            android:layout_gravity="bottom|end"
+            app:sdMainFabClosedSrc="@drawable/ic_feedback"
+            app:fabSize="auto"
+            app:rippleColor="@color/white"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@null"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+        android:id="@+id/stream_layout">
+
+        <ImageView
+            android:id="@+id/toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:layout_gravity="bottom"
+            android:scaleType="center"
+            android:contentDescription="@string/stream_toggle" />
+        <LinearLayout
+            android:id="@+id/toggleDivider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10.0dp"
+                android:background="@color/black"/>
+        </LinearLayout>
+
+        <com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout
+            android:id="@+id/expandable_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/black"
+            app:el_duration="1000"
+            app:el_expanded="true">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:id="@+id/image_stream_art"
+                    android:src="@drawable/placeholder"
+                    android:contentDescription="@string/stream_placeholder" />
+
+                <com.google.android.exoplayer2.ui.PlayerView
+                    android:id="@+id/audio_view"
+                    android:layout_width="match_parent"
+                    android:layout_toEndOf="@id/image_stream_art"
+                    android:layout_height="75dp"
+                    app:show_timeout="0"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/stream_title"
+                    android:layout_below="@+id/audio_view"
+                    android:padding="@dimen/padding_small"
+                    android:text="@string/sample_music_title"
+                    android:textColor="@color/white"
+                    android:layout_gravity="bottom"/>
+            </RelativeLayout>
+        </com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout>
+    </LinearLayout>
+
+    <!--<include layout="@layout/ads_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />-->
+</LinearLayout>

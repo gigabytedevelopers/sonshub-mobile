@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/gist_list_size"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:baselineAligned="false"
+    android:layout_marginBottom="@dimen/margin_small"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.2">
+        <ImageView
+            android:id="@+id/news_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/nav_gist"
+            tools:src="@drawable/placeholder"/>
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.7">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/padding_small"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/gist_title_text"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:maxLines="2"
+                android:textAlignment="textStart"
+                android:textStyle="bold"
+                android:fontFamily="@font/petitabold"
+                android:textColor="@color/white"
+                tools:text="Breaking News: The Mad enters the camps"/>
+
+            <TextView
+                android:id="@+id/gist_title_description"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.6"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:maxLines="4"
+                android:textColor="@color/white"
+                android:textAlignment="textStart"
+                android:textStyle="normal"
+                android:fontFamily="@font/petitamedium"
+                android:layout_marginTop="@dimen/margin_small"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:layout_gravity="bottom"
+                android:gravity="start"
+                android:layout_marginEnd="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_small">
+                <ImageView
+                    android:id="@+id/gist_post_time_icon"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:contentDescription="@string/more"
+                    android:tint="@color/colorAccent"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:layout_centerVertical="true"
+                    app:srcCompat="@drawable/ic_time"/>
+
+                <TextView android:id="@+id/gist_post_time"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_centerVertical="true"
+                      android:maxLength="10"
+                      android:fontFamily="@font/petitamedium"
+                      android:layout_toEndOf="@id/gist_post_time_icon"
+                      android:textColor="@color/grey"
+                      tools:text="6 hours"/>
+            </RelativeLayout>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1.0dp"
+            android:background="@color/divider_color"
+            android:layout_gravity="bottom"/>
+    </FrameLayout>
+
+</LinearLayout>

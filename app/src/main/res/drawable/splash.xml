@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/grey_900"/>
+    <item>
+        <bitmap android:src="@drawable/sonshub"
+                android:gravity="center"/>
+    </item>
+    <item android:top="300dp">
+        <layer-list>
+            <item android:id="@android:id/background">
+                <shape
+                    android:shape="ring"
+                    android:innerRadius="30dp"
+                    android:thickness="20dp"
+                    android:useLevel="false">
+                    <solid android:color="@color/colorPrimary" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!--<item>
+        <layer-list>
+            <item>
+                <shape
+android:shape="ring"
+                    android:innerRadius="30dp"
+                    android:thickness="20dp"
+                    android:useLevel="false">
+                    <solid android:color="@color/colorPrimary" />
+                </shape>
+            </item>
+            <item android:id="@android:id/progress">
+                <rotate android:toDegrees="360">
+                    <shape
+                        android:shape="ring"
+                        android:innerRadius="35dp"
+                        android:thickness="10dp"
+                        android:useLevel="false">
+                        <gradient
+                            android:type="sweep"
+                            android:startColor="#00000000"
+                            android:endColor="@color/colorAccent" />
+                    </shape>
+                </rotate>
+            </item>
+        </layer-list>
+    </item>-->
+
+</layer-list>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ExpandableLayout">
+        <attr name="el_duration" format="integer" />
+        <attr name="el_expanded" format="boolean" />
+        <attr name="el_parallax" format="float" />
+        <attr name="android:orientation"/>
+    </declare-styleable>
+
+    <declare-styleable name="DropDownView">
+        <attr name="containerBackgroundColor" format="color" />
+        <attr name="overlayColor" format="color"/>
+    </declare-styleable>
+
+    <!-- Music Player Attributes -->
+    <attr format="reference" name="progressDrawable"/>
+    <attr format="color" name="invertedColor"/>
+    <attr format="color" name="invertedColorAlpha"/>
+    <attr format="color" name="invertedColorAlpha2"/>
+    <attr format="color" name="invertedColorAlternate"/>
+    <attr format="color" name="invertedColorAlternate2"/>
+</resources>

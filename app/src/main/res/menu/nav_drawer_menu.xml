@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:showIn="navigation_view">
+
+	<group  android:checkableBehavior="single">
+
+	<item android:id="@+id/nav_home"
+		android:title="@string/nav_home"/>
+	<item android:id="@+id/nav_music"
+		android:title="@string/nav_music"/>
+
+	<item android:id="@+id/nav_video"
+		android:title="@string/nav_video"/>
+
+	<item android:id="@+id/nav_gist"
+		android:title="@string/nav_gist"/>
+
+	<item android:id="@+id/nav_word_of_faith"
+		android:title="@string/nav_word_of_faith"/>
+
+	<item android:id="@+id/nav_sonshub_tv"
+		android:title="@string/nav_sonshubTV"/>
+
+	<item android:id="@+id/nav_music_player"
+		android:title="Music Player"/>
+
+	<item android:id="@+id/nav_about"
+		android:title="@string/nav_about"/>
+	</group>
+
+</menu>

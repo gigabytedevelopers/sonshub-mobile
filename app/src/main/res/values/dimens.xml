@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="nav_height_size">160dp</dimen>
+	<dimen name="image_slider_size">160dp</dimen>
+	<dimen name="gist_list_size">156dp</dimen>
+	<dimen name="download_list_height">50dp</dimen>
+    <dimen name="card_width">140dp</dimen>
+	<dimen name="card_height">190dp</dimen>
+	<dimen name="smart_tab_height">48dp</dimen>
+	<dimen name="smart_tabs_width">20dp</dimen>
+    <dimen name="tiny_icon">15dp</dimen>
+	<dimen name="icon_size">28dp</dimen>
+	<dimen name="details_image_size">185dp</dimen>
+    <dimen name="logo_size">90dp</dimen>
+	<dimen name="music_list_size">160dp</dimen>
+	<dimen name="margin_small">5dp</dimen>
+	<dimen name="margin_normal">16dp</dimen>
+	<dimen name="margin_large">25dp</dimen>
+
+	<dimen name="padding_mini">5dp</dimen>
+	<dimen name="padding_small">10dp</dimen>
+	<dimen name="padding_normal">16dp</dimen>
+	<dimen name="padding_large">20dp</dimen>
+
+    <dimen name="card_corner_radius">6dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Music Player Dimensions -->
+	<dimen name="album_art">55dp</dimen>
+	<dimen name="album_art_large">100dp</dimen>
+	<dimen name="album_art_mega">250dp</dimen>
+
+	<dimen name="album_art_spacing">2dp</dimen>
+
+    <dimen name="corner_small">4dp</dimen>
+	<dimen name="corner_large">8dp</dimen>
+	<dimen name="corner_extra_large">10dp</dimen>
+
+	<dimen name="bottom_controls_height">65dp</dimen>
+
+	<!-- Default screen margins, per the Android Design guidelines. -->
+</resources>

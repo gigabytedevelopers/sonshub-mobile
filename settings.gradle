@@ -1,0 +1,1 @@
+include ':app', ":fetch2", ':fetch2core', ':fetch2okhttp', ":fetch2rx"

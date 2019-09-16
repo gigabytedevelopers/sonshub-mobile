@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="license_1_name">TinyDB</string>
+    <string name="license_1_type">MIT License</string>
+    <string name="license_1_owner">Markus Siemens</string>
+    <string name="license_1_url">https://github.com/msiemens/tinydb</string>
+
+    <string name="license_2_name">Compat Support Library</string>
+    <string name="license_2_type">Apache License, Version 2.0</string>
+    <string name="license_2_owner">The Android Open Source Project</string>
+    <string name="license_2_url">https://developer.android.com/reference/android/support/compat/package-summary</string>
+
+    <string name="license_3_name">Design Support Library</string>
+    <string name="license_3_type">Apache License, Version 2.0</string>
+    <string name="license_3_owner">The Android Open Source Project</string>
+    <string name="license_3_url">https://developer.android.com/reference/android/design/package-summary</string>
+
+    <string name="license_4_name">Glide</string>
+    <string name="license_4_type">BSD, part MIT and Apache License</string>
+    <string name="license_4_owner">Sam Judd</string>
+    <string name="license_4_url">https://github.com/bumptech/glide</string>
+
+    <string name="license_5_name">Gson</string>
+    <string name="license_5_type">Apache License, Version 2.0</string>
+    <string name="license_5_owner">Google Inc.</string>
+    <string name="license_5_url">https://github.com/google/gson</string>
+
+    <string name="license_6_name">Volley</string>
+    <string name="license_6_type">Apache License, Version 2.0</string>
+    <string name="license_6_owner">Google Inc.</string>
+    <string name="license_6_url">https://github.com/google/volley</string>
+
+    <string name="license_7_name">Wave Swipe Refresh Layout</string>
+    <string name="license_7_type">Apache License, Version 2.0</string>
+    <string name="license_7_owner">Recruit Lifestyle Co.LTD</string>
+    <string name="license_7_url">https://github.com/recruit-lifestyle/WaveSwipeRefreshLayout</string>
+
+    <string name="license_8_name">SmartTabLayout</string>
+    <string name="license_8_type">Apache License, Version 2.0</string>
+    <string name="license_8_owner">Ogaclejapan</string>
+    <string name="license_8_url">https://github.com/ogaclejapan/SmartTabLayout</string>
+
+    <string name="license_9_name">GlideSlider</string>
+    <string name="license_9_type">Apache License, Version 2.0</string>
+    <string name="license_9_owner">Maulana Firdaus</string>
+    <string name="license_9_url">https://github.com/firdausmaulan/GlideSlider</string>
+</resources>

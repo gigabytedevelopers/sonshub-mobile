@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+
+buildscript {
+    apply from: '../versions.gradle'
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$gradle_tools_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+android {
+    compileSdkVersion library_compile_version
+    defaultConfig {
+        minSdkVersion library_min_version
+        targetSdkVersion library_target_version
+        versionCode library_version_code
+        versionName library_version
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+    lintOptions {
+        abortOnError false
+        disable 'MissingTranslation'
+    }
+    compileOptions {
+        sourceCompatibility 1.7
+        targetCompatibility 1.7
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    api "io.reactivex.rxjava2:rxandroid:$rxAndroid2_version"
+    api "io.reactivex.rxjava2:rxjava:$rxJava2_version"
+    api project(':fetch2')
+
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test:runner:$test_runner_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+}

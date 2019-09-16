@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/download_list_height"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:baselineAligned="false"
+    android:layout_marginBottom="@dimen/margin_small"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.15">
+        <ImageView
+            android:id="@+id/news_image"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/nav_gist"
+            app:srcCompat="@drawable/placeholder"/>
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/padding_small">
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textAlignment="textStart"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/petitamedium"
+                android:textColor="@color/white"
+                tools:text="Breaking News: The Mad enters the camps"/>
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1.0dp"
+            android:background="@color/divider_color"
+            android:layout_gravity="bottom"/>
+    </FrameLayout>
+
+</LinearLayout>

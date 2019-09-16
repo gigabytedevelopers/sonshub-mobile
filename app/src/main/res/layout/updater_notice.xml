@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_small"
+        android:gravity="start">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_close"
+            android:layout_gravity="center"
+            android:tint="@color/colorAccent"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/padding_normal">
+    <!--Update Notice Title-->
+        <TextView
+            android:id="@+id/updateNoticeTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/update_notice"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:fontFamily="@font/petitabold"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+        <!--Update Notice SubTitle-->
+        <TextView
+            android:id="@+id/updateNoticeMarquee"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/update_notice_subhead"
+            android:textStyle="bold"
+            android:fontFamily="@font/petitabold"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:singleLine="true"
+            android:focusable="true"
+            android:textColor="@color/colorPrimary"
+            android:focusableInTouchMode="true"
+            android:ellipsize="marquee"
+            android:freezesText="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
+    </LinearLayout>
+
+    <!-- Update Notice Features-->
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:paddingStart="@dimen/margin_large"
+        android:paddingEnd="@dimen/margin_large">
+
+        <TextView
+            android:id="@+id/updateNoticeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/update_description"
+            android:fontFamily="@font/petitabold"
+            android:textColor="@color/colorPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
+
+    </LinearLayout>
+
+    <!--Download Button-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:gravity="center">
+        <Button
+            android:id="@+id/update_continue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/update_start_btn"
+            android:textColor="@color/grey"
+            android:fontFamily="@font/petitabold"
+            style="@style/Widget.AppCompat.Button.Borderless"/>
+    </LinearLayout>
+</LinearLayout>

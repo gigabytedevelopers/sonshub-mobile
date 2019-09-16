@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center|center_horizontal"
+        android:gravity="center|center_horizontal"
+        android:layout_marginTop="@dimen/margin_normal">
+        <!--General Notice Title-->
+        <ImageView
+            android:id="@+id/warningImg"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_marginEnd="@dimen/margin_small"
+            app:srcCompat="@drawable/ic_warning"
+            android:contentDescription="Notice Image" />
+
+        <TextView
+            android:id="@+id/warning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/petitabold"
+            android:text="@string/warning"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textSize="22sp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:paddingStart="@dimen/margin_large"
+        android:paddingEnd="@dimen/margin_large">
+
+        <TextView
+            android:id="@+id/generalNoticeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/warning_description"
+            android:fontFamily="@font/petitabold"
+            android:textColor="@color/colorPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
+
+    </LinearLayout>
+
+    <!--Notice Button-->
+    <Button
+        android:id="@+id/optionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No, Don't worry"
+        android:textColor="@color/grey"
+        android:fontFamily="@font/petitabold"
+        android:background="@color/colorAccent"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_marginStart="@dimen/margin_normal"
+        android:layout_marginEnd="@dimen/margin_normal"
+        android:visibility="gone"/>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:paddingStart="@dimen/margin_normal"
+        android:paddingEnd="@dimen/margin_normal"
+        android:paddingBottom="@dimen/margin_large">
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Don't worry"
+            android:textColor="@color/grey"
+            android:fontFamily="@font/petitabold"
+            android:background="@color/colorAccent"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:paddingStart="@dimen/margin_normal"
+            android:paddingEnd="@dimen/margin_normal"/>
+        <Button
+            android:id="@+id/continueButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yes, Continue"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/grey"
+            android:fontFamily="@font/petitabold"
+            android:background="@color/colorAccent"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:paddingStart="@dimen/margin_normal"
+            android:paddingEnd="@dimen/margin_normal"/>
+    </RelativeLayout>
+</LinearLayout>
