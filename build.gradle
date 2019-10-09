@@ -18,14 +18,14 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:3.5.1'
         if (!project.hasProperty("disable-performance-plugin")) {
             classpath('com.google.firebase:firebase-plugins:1.1.5') {
                 exclude group: 'com.google.guava', module: 'guava-jdk5'
             }
         }
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.0'
+        classpath 'com.google.gms:google-services:4.3.2'
         classpath 'io.fabric.tools:gradle:1.30.0'
 
         // NOTE: Do not place your application dependencies here; they belong

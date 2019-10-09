@@ -25,8 +25,17 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
+    signingConfigs {
+        release {
+            storeFile file('C:/Users/Gigabyte/keystore.jks')
+            storePassword 'Doc.d.doc'
+            keyAlias 'key0'
+            keyPassword 'Doc.d.doc'
+        }
+    }
     buildTypes {
         release {
+		signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -53,9 +62,9 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    api 'com.google.android.material:material:1.1.0-alpha09'
+    api 'com.google.android.material:material:1.1.0-beta01'
     implementation 'com.android.volley:volley:1.1.1'
     implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true
@@ -64,7 +73,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.2.0'
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
     implementation 'com.google.firebase:firebase-perf:19.0.0'
-    implementation 'com.google.firebase:firebase-database:19.0.0'
+    implementation 'com.google.firebase:firebase-database:19.1.0'
     implementation 'com.github.javiersantos:AppUpdater:2.7'
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'jp.wasabeef:glide-transformations:3.1.1'
@@ -101,17 +110,17 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0-M2'
 
     // AndroidX
-    implementation 'androidx.preference:preference:1.1.0-rc01'
+    implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0-beta01'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta03'
-    implementation 'androidx.core:core-ktx:1.2.0-alpha03'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta04'
+    implementation 'androidx.core:core-ktx:1.2.0-alpha04'
 
     // Arch Components
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha03'
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.2.0-alpha03'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha05'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.2.0-alpha05'
     implementation 'androidx.room:room-runtime:2.1.0'
     kapt 'androidx.room:room-compiler:2.1.0'
-    kapt 'androidx.databinding:databinding-compiler:3.5.0'
+    kapt 'androidx.databinding:databinding-compiler:3.5.1'
 
     // RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
@@ -119,16 +128,16 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
 
     // Other Google
-    implementation 'androidx.media:media:1.1.0-rc01'
-    implementation 'androidx.mediarouter:mediarouter:1.1.0-rc01'
-    implementation 'com.google.android.gms:play-services-cast-framework:17.0.0'
+    implementation 'androidx.media:media:1.1.0'
+    implementation 'androidx.mediarouter:mediarouter:1.1.0'
+    implementation 'com.google.android.gms:play-services-cast-framework:17.1.0'
 
     // Third Party
     implementation 'com.afollestad:rxkprefs:1.2.4'
     implementation 'com.afollestad.material-dialogs:core:2.0.0'
     implementation 'com.afollestad.material-dialogs:input:2.0.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'org.koin:koin-android:1.0.2'
     implementation 'org.koin:koin-androidx-scope:1.0.2'
