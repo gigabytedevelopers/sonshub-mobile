@@ -1,6 +1,7 @@
 package com.gigabytedevelopersinc.apps.sonshub.fragments.downloads;
 
 import android.content.Context;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.gigabytedevelopersinc.apps.sonshub.utils.ActionListener;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Data;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +50,7 @@ public class DownloadingFragment extends Fragment implements ActionListener {
 
     private static Context appContext = App.getContext();
     public static RecyclerView recyclerView;
-    private DownloadFileAdapter fileAdapter;
+    private static DownloadFileAdapter fileAdapter;
 
     public DownloadingFragment() {
         // Required empty public constructor
@@ -83,12 +85,20 @@ public class DownloadingFragment extends Fragment implements ActionListener {
 
     public static void enqueueDownload() {
         final List<Request> requests = Data.getFetchRequestWithGroupId(GROUP_ID);
-        fetch.enqueue(requests, updatedRequests -> {
-
-        });
+        fetch.enqueue(requests, updatedRequests -> fetch.getDownloadsInGroup(GROUP_ID, downloads -> {
+            final ArrayList<Download> list = new ArrayList<>(downloads);
+            Collections.sort(list, (first, second) -> Long.compare(first.getCreated(), second.getCreated()));
+            for (Download download : list) {
+                fileAdapter.addDownload(download);
+            }
+        }).addListener(fetchListener));
     }
 
-    private final FetchListener fetchListener = new AbstractFetchListener() {
+    private static void scanFile(Context ctxt, String x, String mimeType) {
+        MediaScannerConnection.scanFile(ctxt, new String[] {x}, new String[] {mimeType}, null);
+    }
+
+    private static final FetchListener fetchListener = new AbstractFetchListener() {
         @Override
         public void onAdded(@NotNull Download download) {
             fileAdapter.addDownload(download);
@@ -101,6 +111,12 @@ public class DownloadingFragment extends Fragment implements ActionListener {
 
         @Override
         public void onCompleted(@NotNull Download download) {
+            File file = new File(download.getFile());
+            String fileName = file.getName();
+            if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) {
+                String fileExtension = fileName.substring(fileName.lastIndexOf(".")+1);
+                scanFile(appContext, download.getFile(), fileExtension);
+            }
             fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
         }
 
@@ -166,13 +182,13 @@ public class DownloadingFragment extends Fragment implements ActionListener {
     @Override
     public void onResume() {
         super.onResume();
-        fetch.getDownloadsInGroup(GROUP_ID, downloads -> {
+        /*fetch.getDownloadsInGroup(GROUP_ID, downloads -> {
             final ArrayList<Download> list = new ArrayList<>(downloads);
             Collections.sort(list, (first, second) -> Long.compare(first.getCreated(), second.getCreated()));
             for (Download download : list) {
                 fileAdapter.addDownload(download);
             }
-        }).addListener(fetchListener);
+        }).addListener(fetchListener);*/
     }
 
     @Override

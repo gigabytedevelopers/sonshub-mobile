@@ -174,8 +174,9 @@ public class SearchFrag extends Fragment {
                 tinyDb.putString("clicked", "music");
                 tinyDb.putString("musicDetailsList", getDetails(searchList,position));
 
-                MainActivity mainActivity = new MainActivity();
-                mainActivity.fillBottomSheet(appContext,pattern,matcher,tinyDb);
+                if (!Objects.requireNonNull(getActivity()).isFinishing()) {
+                    ((MainActivity) Objects.requireNonNull(getActivity())).fillBottomSheet(getContext(),pattern,matcher,tinyDb);
+                }
             }
         });
 
