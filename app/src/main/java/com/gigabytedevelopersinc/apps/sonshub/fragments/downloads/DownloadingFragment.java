@@ -50,7 +50,7 @@ public class DownloadingFragment extends Fragment implements ActionListener {
 
     private static Context appContext = App.getContext();
     public static RecyclerView recyclerView;
-    private static DownloadFileAdapter fileAdapter;
+    private DownloadFileAdapter fileAdapter;
 
     public DownloadingFragment() {
         // Required empty public constructor
@@ -85,20 +85,16 @@ public class DownloadingFragment extends Fragment implements ActionListener {
 
     public static void enqueueDownload() {
         final List<Request> requests = Data.getFetchRequestWithGroupId(GROUP_ID);
-        fetch.enqueue(requests, updatedRequests -> fetch.getDownloadsInGroup(GROUP_ID, downloads -> {
-            final ArrayList<Download> list = new ArrayList<>(downloads);
-            Collections.sort(list, (first, second) -> Long.compare(first.getCreated(), second.getCreated()));
-            for (Download download : list) {
-                fileAdapter.addDownload(download);
-            }
-        }).addListener(fetchListener));
+        fetch.enqueue(requests, updatedRequests -> {
+
+        });
     }
 
-    private static void scanFile(Context ctxt, String x, String mimeType) {
+    public void scanFile(Context ctxt, String x, String mimeType) {
         MediaScannerConnection.scanFile(ctxt, new String[] {x}, new String[] {mimeType}, null);
     }
 
-    private static final FetchListener fetchListener = new AbstractFetchListener() {
+    private final FetchListener fetchListener = new AbstractFetchListener() {
         @Override
         public void onAdded(@NotNull Download download) {
             fileAdapter.addDownload(download);
@@ -182,13 +178,13 @@ public class DownloadingFragment extends Fragment implements ActionListener {
     @Override
     public void onResume() {
         super.onResume();
-        /*fetch.getDownloadsInGroup(GROUP_ID, downloads -> {
+        fetch.getDownloadsInGroup(GROUP_ID, downloads -> {
             final ArrayList<Download> list = new ArrayList<>(downloads);
             Collections.sort(list, (first, second) -> Long.compare(first.getCreated(), second.getCreated()));
             for (Download download : list) {
                 fileAdapter.addDownload(download);
             }
-        }).addListener(fetchListener);*/
+        }).addListener(fetchListener);
     }
 
     @Override
