@@ -18,11 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.DownloadedAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.models.DownloadedModel;
+import com.gigabytedevelopersinc.apps.sonshub.utils.DownloadUtils;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Project - SonsHub
@@ -77,53 +80,39 @@ public class AudioDownloadedFragment extends Fragment {
         return fileNames;
     }
     private void setAudioListAdapter(List<DownloadedModel> data){
-        /*try {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(uri1, DownloadUtils.getMimeType(Objects.requireNonNull(getContext()), uri1));
-                intent.setClassName(
-                        "com.gigabytedevelopersinc.apps.sonshub",
-                        "com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity"
-                );
-                startActivity(intent);
-            } catch (Exception e) {
-                Toast.makeText(getContext(), "Sorry, our Music Player cannot open this file",
-                        Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(audioUrl),"audio/mp3");
-                startActivity(Intent.createChooser(intent, "Play this song with"));
-                e.printStackTrace();
-            }*/
         DownloadedAdapter adapter = new DownloadedAdapter(getActivity(), data, (view, position, title) -> {
             File fileFolder = Environment.getExternalStorageDirectory();
             File audioUrl = new File(
                     fileFolder.getPath() + "/SonsHub/Music/" + title
             );
             Uri uri1 = Uri.fromFile(audioUrl);
-            /*try {
+            try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(uri1, DownloadUtils.getMimeType(Objects.requireNonNull(getContext()), uri1));
-                intent.setClassName(
+                /*intent.setClassName(
                         "com.gigabytedevelopersinc.apps.sonshub",
                         "com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity"
                 );
-                startActivity(intent);
+                startActivity(intent);*/
+                startActivity(Intent.createChooser(intent, "Play this song with"));
             } catch (Exception e) {
-                Toast.makeText(getContext(), "Sorry, our Music Player cannot open this file",
+                Toast.makeText(getContext(), "No application can open this file", Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(getContext(), "Sorry, our Music Player cannot open this file",
                         Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(audioUrl),"audio/mp3");
-                startActivity(Intent.createChooser(intent, "Play this song with"));
+                startActivity(Intent.createChooser(intent, "Play this song with"));*/
                 e.printStackTrace();
-            }*/
+            }
 
-            try {
+            /*try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(audioUrl), "audio/mp3");
                 startActivity(Intent.createChooser(intent, "Play this song with"));
             } catch (Exception e) {
                 Toast.makeText(getContext(), "No Application can open this file", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
-            }
+            }*/
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewAudio.setLayoutManager(linearLayoutManager);
