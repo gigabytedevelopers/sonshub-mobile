@@ -61,11 +61,9 @@ public class AudioDownloadedFragment extends Fragment {
         TextView downloadText = view.findViewById(R.id.noDownload_tv);
 
         ArrayList<File> totalAudio = getAudioListFiles();
-        if (totalAudio != null){
-            if (totalAudio.size() > 0){
-                downloadText.setVisibility(View.GONE);
-                setAudioListAdapter(parseAudioToFileName(totalAudio));
-            }
+        if (totalAudio.size() > 0) {
+            downloadText.setVisibility(View.GONE);
+            setAudioListAdapter(parseAudioToFileName(totalAudio));
         }
     }
 

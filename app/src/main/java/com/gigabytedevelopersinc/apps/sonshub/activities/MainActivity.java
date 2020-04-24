@@ -1132,14 +1132,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
 
             case R.id.nav_download:
-                showAd();
                 loadAd();
                 startActivity(new Intent(MainActivity.this, DownloadActivity.class));
                 showAd();
                 return true;
 
             case R.id.nav_music_play:
-                showAd();
                 loadAd();
                 player.setPlayWhenReady(false);
                 startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
