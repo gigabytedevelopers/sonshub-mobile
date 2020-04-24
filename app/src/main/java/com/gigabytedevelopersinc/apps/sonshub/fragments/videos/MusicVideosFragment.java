@@ -301,7 +301,7 @@ public class MusicVideosFragment extends Fragment {
 
             };
 
-            RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
+            RequestQueue requestQueue = Volley.newRequestQueue(requireActivity());
             requestQueue.add(africanRequest);
 
             africanRequest.setRetryPolicy(new RetryPolicy() {

@@ -27,9 +27,10 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.MediaModule
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.viewmodels.ViewModelsModuleKt;
 import com.gigabytedevelopersinc.apps.sonshub.services.notification.MyFirebaseMessagingService;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.AnalyticsManager;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mobfox.android.MobfoxSDK;
+
 import kotlin.collections.MapsKt;
 import kotlin.jvm.functions.Function1;
 import okhttp3.OkHttpClient;
@@ -60,14 +61,14 @@ public class App extends Application implements Application.ActivityLifecycleCal
         sInstance = this;
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         registerActivityLifecycleCallbacks(sInstance);
-        if(!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
             // Enables Crash, Error Reporting for detailed, well structured Error messages on Firebase Console
             Timber.plant(new FabricTree());
 
             // Initialize Live Banner Ads immediately SonsHub Mobile is opened
-            MobileAds.initialize(sInstance, getResources().getString(R.string.admob_app_id));
+            MobfoxSDK.init(this);
             if (Build.VERSION.SDK_INT >= 24) {
                 try {
                     Method m = StrictMode.class.getMethod(getResources().getString(R.string.runtimeStrictMode));
@@ -87,7 +88,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
             Timber.plant(new Timber.DebugTree());
 
             // Initialize Sample Banner Ads immediately SonsHub Mobile is opened
-            MobileAds.initialize(sInstance, getResources().getString(R.string.sample_admob_app_id));
+            MobfoxSDK.init(this);
         }
         SystemClock.sleep(TimeUnit.SECONDS.toMillis(1));
 

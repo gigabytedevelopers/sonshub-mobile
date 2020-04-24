@@ -1,32 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!--Privacy Policy Title-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/privacy_policy"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="bold"
-        android:fontFamily="@font/petitabold"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/margin_normal"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
-    <!--Privacy WebView-->
-    <WebView
-        android:id="@+id/privacy_policy_web"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="@dimen/margin_small"/>
-    <!--Continue Button-->
-
     <LinearLayout
+        android:id="@+id/privacy_policy_title"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/privacy_policy"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:fontFamily="@font/petitabold"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+    </LinearLayout>
+    <ScrollView
+        android:id="@+id/privacy_policy_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_below="@id/privacy_policy_title"
+        android:layout_above="@id/privacy_policy_button">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!--Privacy WebView-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <WebView
+                    android:id="@+id/privacy_policy_web"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_small"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1.0dp"
+                android:background="@color/grey"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <!--Continue Button-->
+    <LinearLayout
+        android:id="@+id/privacy_policy_button"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:gravity="end">
         <Button
             android:id="@+id/privacy_policy_continue"
@@ -37,4 +67,4 @@
             android:fontFamily="@font/petitabold"
             style="@style/Widget.AppCompat.Button.Borderless"/>
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

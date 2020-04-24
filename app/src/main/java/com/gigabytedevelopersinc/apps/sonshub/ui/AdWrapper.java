@@ -3,16 +3,20 @@ package com.gigabytedevelopersinc.apps.sonshub.ui;
 import android.content.Context;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+
 import com.crashlytics.android.Crashlytics;
 import com.gigabytedevelopersinc.apps.sonshub.BuildConfig;
 import com.gigabytedevelopersinc.apps.sonshub.R;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
+import com.mobfox.android.MobfoxSDK;
+import com.startapp.sdk.ads.banner.Banner;
+import com.startapp.sdk.adsbase.StartAppAd;
+
+import timber.log.Timber;
 
 import static com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity.isTelevision;
 
@@ -21,9 +25,7 @@ import static com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity.isT
  **/
 public class AdWrapper extends FrameLayout {
 
-    private AdView mAdView;
-    private InterstitialAd mInterstitialAd;
-    private boolean showInterstiatial = true;
+    private StartAppAd startAppAd = new StartAppAd(getContext());
 
     public AdWrapper(Context context) {
         super(context);
@@ -42,88 +44,24 @@ public class AdWrapper extends FrameLayout {
 
     private void init(Context context) {
         //Ads
-        if(!isTelevision() && !BuildConfig.DEBUG){
+        if (!isTelevision()){
             LayoutInflater.from(context).inflate(R.layout.ads_wrapper, this, true);
             initAd();
-        } else if (!isTelevision() && BuildConfig.DEBUG) {
-            LayoutInflater.from(context).inflate(R.layout.ads_wrapper_test, this, true);
-            initAd();
         } else {
-            mInterstitialAd = new InterstitialAd(context);
-            initInterstitialAd();
+            loadAd();
         }
     }
 
-    public void initInterstitialAd(){
-        if (BuildConfig.DEBUG) {
-            mInterstitialAd.setAdUnitId(getResources().getString(R.string.interstitial_test_ads));
-        } else {
-            mInterstitialAd.setAdUnitId(getResources().getString(R.string.interstitial_ads));
-        }
-        //mInterstitialAd.setAdUnitId("ca-app-pub-6559138681672642/9998639521"); Interstitial
-        requestNewInterstitial();
-    }
-
-    public void initAd(){
-        if (BuildConfig.DEBUG) {
-            // Show Test Banner Ads
-            mAdView = findViewById(R.id.adViewTest);
-            AdListener adListener = new AdListener() {
-                @Override
-                public void onAdLoaded() {
-                    super.onAdLoaded();
-                    mAdView.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAdFailedToLoad(int errorCode) {
-                    super.onAdFailedToLoad(errorCode);
-                    mAdView.setVisibility(View.GONE);
-                    mAdView.loadAd(new AdRequest.Builder().build());
-                }
-            };
-            mAdView.setAdListener(adListener);
-        } else {
-            // Show Banner Ads
-            mAdView = findViewById(R.id.adView);
-            AdListener adListener = new AdListener() {
-                @Override
-                public void onAdLoaded() {
-                    super.onAdLoaded();
-                    mAdView.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAdFailedToLoad(int errorCode) {
-                    super.onAdFailedToLoad(errorCode);
-                    mAdView.setVisibility(View.GONE);
-                    mAdView.loadAd(new AdRequest.Builder().build());
-                }
-            };
-            mAdView.setAdListener(adListener);
-        }
-    }
-
-    private void requestNewInterstitial() {
-        if (null != mInterstitialAd) {
-            mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        }
-    }
-
-    private void showInterstitial() {
-        if (showInterstiatial && null != mInterstitialAd) {
-            if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
-            } else {
-                requestNewInterstitial();
-            }
-        }
+    public void initAd() {
+        Banner mAdView = findViewById(R.id.startAppBanner);
+        mAdView.setVisibility(View.VISIBLE);
+        mAdView.loadAd();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        showInterstitial();
+        showAd();
     }
 
     @Override
@@ -134,20 +72,28 @@ public class AdWrapper extends FrameLayout {
 
     @Override
     protected Parcelable onSaveInstanceState() {
-        showInterstiatial = false;
         return super.onSaveInstanceState();
     }
 
-    private void showAd(){
-        if(isInEditMode()){
+    private void showAds(){
+
+    }
+
+    public void loadAd() {
+        startAppAd.loadAd(StartAppAd.AdMode.AUTOMATIC);
+    }
+
+    public void showAd() {
+        Banner mAdView = findViewById(R.id.startAppBanner);
+        if (isInEditMode()) {
             return;
         }
         //Fixes GPS AIOB Exception
         try {
             if (null != mAdView) {
-                mAdView.loadAd(new AdRequest.Builder().build());
+                loadAd();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
         }
     }

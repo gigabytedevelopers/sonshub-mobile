@@ -48,11 +48,11 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:singleLine="true"
-            android:focusable="true"
             android:textColor="@color/colorPrimary"
             android:focusableInTouchMode="true"
             android:ellipsize="marquee"
-            android:freezesText="true"
+            android:scrollHorizontally="true"
+            android:fadingEdge = "horizontal"
             android:marqueeRepeatLimit="marquee_forever"
             android:layout_marginTop="@dimen/margin_normal"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>

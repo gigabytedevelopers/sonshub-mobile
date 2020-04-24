@@ -303,7 +303,7 @@ public class NewsFragment extends Fragment {
 
             };
 
-            RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
+            RequestQueue requestQueue = Volley.newRequestQueue(requireActivity());
             requestQueue.add(africanRequest);
 
             africanRequest.setRetryPolicy(new com.android.volley.RetryPolicy() {

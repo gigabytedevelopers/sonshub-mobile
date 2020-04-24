@@ -76,12 +76,12 @@
                 android:layout_height="1.0dp"
                 android:background="@color/grey"/>
             <TextView
+                android:id="@+id/copyright"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:textColor="@color/grey_500"
                 android:fontFamily="@font/petitamedium"
-                android:text="@string/copyright_desc"
                 android:gravity="center"
                 android:padding="@dimen/padding_small"
                 android:layout_marginTop="@dimen/margin_small"/>

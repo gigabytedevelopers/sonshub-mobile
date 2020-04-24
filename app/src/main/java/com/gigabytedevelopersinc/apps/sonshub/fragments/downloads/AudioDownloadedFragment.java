@@ -88,27 +88,32 @@ public class AudioDownloadedFragment extends Fragment {
             Uri uri1 = Uri.fromFile(audioUrl);
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(uri1, DownloadUtils.getMimeType(Objects.requireNonNull(getContext()), uri1));
-                /*intent.setClassName(
+                intent.setDataAndType(uri1, DownloadUtils.getMimeType(requireContext(), uri1));
+                intent.setClassName(
                         "com.gigabytedevelopersinc.apps.sonshub",
                         "com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity"
                 );
-                startActivity(intent);*/
-                startActivity(Intent.createChooser(intent, "Play this song with"));
+                startActivity(intent);
+//                startActivity(Intent.createChooser(intent, "Play this song with"));
             } catch (Exception e) {
-                Toast.makeText(getContext(), "No application can open this file", Toast.LENGTH_SHORT).show();
-                /*Toast.makeText(getContext(), "Sorry, our Music Player cannot open this file",
+                Toast.makeText(getContext(), "Sorry, our Music Player cannot open this file",
                         Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(audioUrl),"audio/mp3");
-                startActivity(Intent.createChooser(intent, "Play this song with"));*/
+                startActivity(Intent.createChooser(intent, "Play this song with"));
                 e.printStackTrace();
             }
 
             /*try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(audioUrl), "audio/mp3");
-                startActivity(Intent.createChooser(intent, "Play this song with"));
+
+                Intent chooser = Intent.createChooser(intent, "Play this song with");
+                if (intent.resolveActivity(requireContext().getPackageManager()) != null) {
+                    startActivity(chooser);
+                } else {
+                    startActivity(intent);
+                }
             } catch (Exception e) {
                 Toast.makeText(getContext(), "No Application can open this file", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();

@@ -28,7 +28,7 @@
     <string name="developedBy">Developed and Maintained by</string>
     <string name="developer">Gigabyte Developers Incorporated</string>
     <string name="developer_url">https://www.gigabytedevelopersinc.com</string>
-    <string name="changelog_url">https://www.gigabytedevelopersinc.com/apps/sonshub/changelog</string>
+    <string name="changelog_url">https://www.gigabytedevelopersinc.com/apps/changelog/sonshub</string>
     <string name="version_number">App Version</string>
     <string name="youtube">Youtube</string>
     <string name="youtube_desc">Subscribe to our Channel</string>
@@ -47,8 +47,8 @@
     <string name="changeLog">Changelog</string>
     <string name="changeLog_desc">Keep track of all versions and changes</string>
     <string name="privacy_policy">Privacy Policy</string>
-    <string name="privacy_policy_desc">SonsHub Mobile Privacy Policy</string>
-    <string name="copyright_desc">Copyright © 2019 SonsHub Media</string>
+    <string name="privacy_policy_desc">SonsHub Mobile privacy policy</string>
+    <string name="copyright_desc">Copyright © %1$s - SonsHub Media</string>
     <string name="continue_on">Continue</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -57,7 +57,7 @@
 
     <string name="update_notice">Version Update</string>
     <string name="update_notice_subhead">
-        Hi dear, SonsHub Mobile has a new app Update and it seems you haven\'t downloaded it yet. Kindly download to enjoy the latest features on SonsHub Mobile.
+        Hello dear, SonsHub Mobile has a new update
     </string>
     <string name="update_start_btn">Download and Install Update</string>
     <string name="warning">Warning</string>
@@ -170,6 +170,8 @@
     <!-- Downloader Strings -->
     <string name="delete_title">Are you sure you want to delete %1$s?</string>
     <string name="cancel">Cancel</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
     <string name="wifiOnly">Download with WiFi Only</string>
     <string name="percent_progress">%1$d%%</string>
     <string name="download_eta_sec">%1$ds left</string>
@@ -184,4 +186,10 @@
     <string name="no_downloads_yet">No active downloads yet!</string>
     <string name="no_downloaded_audio">Sorry, you have not downloaded any song yet</string>
     <string name="no_downloaded_videos">Sorry, you have not downloaded any video yet</string>
+
+    <!-- App Update -->
+    <string name="message_download_failed" translatable="false">Cannot download at this time!</string>
+    <string name="message_download_canceled" translatable="false">Update download canceled!</string>
+    <string name="message_download_completed" translatable="false">Download complete!</string>
+    <string name="downloading_update_dialog" translatable="false">Downloading update!</string>
 </resources>

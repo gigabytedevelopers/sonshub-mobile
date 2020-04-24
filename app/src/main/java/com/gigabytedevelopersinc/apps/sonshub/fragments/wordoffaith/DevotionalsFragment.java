@@ -306,7 +306,7 @@ public class DevotionalsFragment extends Fragment {
                     }else {
                         System.out.println("Load More Error" + error);
                         try {
-                            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Error connecting to server", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireActivity().getApplicationContext(), "Error connecting to server", Toast.LENGTH_SHORT).show();
                             error.printStackTrace();
                         }catch (NullPointerException npe){
                             //Ignore this exception
@@ -318,7 +318,7 @@ public class DevotionalsFragment extends Fragment {
 
             };
 
-            RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
+            RequestQueue requestQueue = Volley.newRequestQueue(requireActivity());
             requestQueue.add(africanRequest);
 
             africanRequest.setRetryPolicy(new RetryPolicy() {

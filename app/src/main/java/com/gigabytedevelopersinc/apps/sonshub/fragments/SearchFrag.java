@@ -174,8 +174,8 @@ public class SearchFrag extends Fragment {
                 tinyDb.putString("clicked", "music");
                 tinyDb.putString("musicDetailsList", getDetails(searchList,position));
 
-                if (!Objects.requireNonNull(getActivity()).isFinishing()) {
-                    ((MainActivity) Objects.requireNonNull(getActivity())).fillBottomSheet(getContext(),pattern,matcher,tinyDb);
+                if (!requireActivity().isFinishing()) {
+                    ((MainActivity) requireActivity()).fillBottomSheet(getContext(),pattern,matcher,tinyDb);
                 }
             }
         });
@@ -259,7 +259,7 @@ public class SearchFrag extends Fragment {
                 }
             });
 
-            RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
+            RequestQueue requestQueue = Volley.newRequestQueue(requireActivity());
             requestQueue.add(africanRequest);
 
             africanRequest.setRetryPolicy(new RetryPolicy() {

@@ -22,6 +22,14 @@ import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.crashlytics.android.Crashlytics;
+import com.downloader.OnCancelListener;
+import com.downloader.OnDownloadListener;
+import com.downloader.OnPauseListener;
+import com.downloader.OnProgressListener;
+import com.downloader.OnStartOrResumeListener;
+import com.downloader.PRDownloader;
+import com.downloader.Progress;
+import com.downloader.Status;
 import com.gigabytedevelopersinc.apps.sonshub.App;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.DownloadFileAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.AbstractFetchListener;
@@ -36,8 +44,14 @@ import com.gigabytedevelopersinc.apps.sonshub.fragments.downloads.DownloadingFra
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.services.notification.SonsHubDownloadNotificationManager;
 import com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout;
+import com.gigabytedevelopersinc.apps.sonshub.utils.DownloadUtils;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Data;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.IndividualUser;
+import com.github.javiersantos.appupdater.AppUpdater;
+import com.github.javiersantos.appupdater.AppUpdaterUtils;
+import com.github.javiersantos.appupdater.enums.AppUpdaterError;
+import com.github.javiersantos.appupdater.enums.UpdateFrom;
+import com.github.javiersantos.appupdater.objects.Update;
 import com.google.android.exoplayer2.*;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -51,6 +65,8 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.*;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
+
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -73,18 +89,22 @@ import com.gigabytedevelopersinc.apps.sonshub.fragments.wordoffaith.WordOfFaithF
 import com.gigabytedevelopersinc.apps.sonshub.utils.NotificationUtil;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Configs;
-import com.github.javiersantos.appupdater.AppUpdater;
-import com.github.javiersantos.appupdater.AppUpdaterUtils;
-import com.github.javiersantos.appupdater.enums.AppUpdaterError;
-import com.github.javiersantos.appupdater.enums.UpdateFrom;
-import com.github.javiersantos.appupdater.objects.Update;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
+
 import com.google.firebase.database.*;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.leinardi.android.speeddial.SpeedDialView;
+import com.mobfox.android.MobfoxSDK;
+import com.mobfox.android.MobfoxSDK.MFXInterstitial;
+import com.mobfox.android.MobfoxSDK.MFXInterstitialListener;
+import com.mobfox.android.core.gdpr.GDPRParams;
+import com.startapp.consentdialog.ConsentDialogFragment;
+import com.startapp.consentdialog.ConsentDialogListener;
+import com.startapp.sdk.adsbase.Ad;
+import com.startapp.sdk.adsbase.StartAppAd;
+import com.startapp.sdk.adsbase.StartAppSDK;
+import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener;
+
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -103,7 +123,7 @@ import java.util.regex.Pattern;
 import static com.gigabytedevelopersinc.apps.sonshub.App.getContext;
 
 @SuppressLint("StaticFieldLeak")
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ConsentDialogListener {
     private static final String TAG = "SonsHub Mobile";
     private DrawerLayout drawerLayout;
     public static Toolbar toolbar;
@@ -116,8 +136,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static PlayerView playerView;
     public static SimpleExoPlayer player;
 
-    // Ads (Google)
-    public static InterstitialAd sonshubInterstitialAd;
+    // Ads (StartApp)
+    private StartAppAd startAppAd = new StartAppAd(this);
+
+    // Ads (MobFox)
+    private MFXInterstitial mMFXInterstitialAd = null;
 
     private static boolean isTelevision;
     private static MainActivity sonshubAppInstance;
@@ -125,8 +148,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private BroadcastReceiver sonshubNotificaticationBroadcastReceiver, receiver;
     private AppUpdater appUpdater;
     private AppUpdaterUtils appUpdaterUtils;
-    private long enqueue;
-    private DownloadManager dm;
     boolean isDeleted;
     private File file;
     public static int currentWindow;
@@ -150,12 +171,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final long UNKNOWN_REMAINING_TIME = -1;
     private static final long UNKNOWN_DOWNLOADED_BYTES_PER_SECOND = 0;
     private static final int GROUP_ID = "listGroup".hashCode();
+    int downloadId;
+
+    public static final String MOBFOX_HASH_INTER_HTML   = "267d72ac3f77a3f447b32cf7ebf20673";
+    public static final String MOBFOX_HASH_INTER_VIDEO  = "80187188f458cfde788d961b6882fd53";
 
     @SuppressLint({"InflateParams", "HardwareIds"})
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (ConsentDialogFragment.isUserDecisionSaved(this)) {
+            // allow return ads if we already have user decision
+            StartAppSDK.setUserConsent (this,
+                    "pas",
+                    System.currentTimeMillis(),
+                    true);
+            StartAppSDK.init(this, "203823129", true);
+            // StartAppAd.showSplash(this, savedInstanceState, splashConfig);
+        } else {
+            StartAppSDK.setUserConsent (this,
+                    "pas",
+                    System.currentTimeMillis(),
+                    false);
+            // otherwise we don't allow return ads and turn off splash
+            StartAppSDK.init(this, "203823129", false);
+            StartAppAd.disableSplash();
+        }
+
         setContentView(R.layout.activity_main);
+        loadAd();
+        initMobFoxSDK();
+        initMobFoxInterstitial();
         fileAdapter = new DownloadFileAdapter(downloadingFragment);
 
         TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(
@@ -259,20 +306,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
         //checkNetworkState();
-
-        // Prepare the interstitial Ad
-        sonshubInterstitialAd = new InterstitialAd(getApplicationContext());
-        // Insert the Ad Unit ID
-        if (BuildConfig.DEBUG) {
-            sonshubInterstitialAd.setAdUnitId(getString(R.string.interstitial_test_ads));
-        } else {
-            sonshubInterstitialAd.setAdUnitId(getString(R.string.interstitial_ads));
-        }
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-        // Load requested Ad
-        sonshubInterstitialAd.loadAd(adRequest);
         isTelevision = Configs.isTelevision(this);
 
         toolbar = findViewById(R.id.toolbar);
@@ -435,11 +468,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         CustomTabsHelper.addKeepAliveExtra(context, customTabsIntent.intent);
         tinyDb = new TinyDb(context);
 
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                //.addTestDevice("DED5E5589FE9B73E06F70486636F2945") // Tecno Camon C7
-                .build();
-
         // This switch statement checks tiny db for each item clicked and know which specific genre was clicked
         // to handle logic properly...
         // This switch statement different categories which are movies, music, news, featureimages, featured
@@ -478,19 +506,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             tinyDb.putString("downloadLink", matcher.group(0));
                             downloadBtn.setOnClickListener(view -> {
                                 bottomSheetDialog.dismiss();
-                                if (sonshubInterstitialAd.isLoaded()){
-                                    sonshubInterstitialAd.show();
-                                    sonshubInterstitialAd.setAdListener(new AdListener(){
-                                        @Override
-                                        public void onAdClosed() {
-                                            MainActivity.sonshubInterstitialAd.loadAd(adRequest);
-                                            downloadFile(matcher2,context);
-                                        }
-                                    });
-                                } else {
-                                    downloadFile(matcher2,context);
-                                    MainActivity.sonshubInterstitialAd.loadAd(adRequest);
-                                }
+                                downloadFile(matcher2, context);
                             });
 
                         } else {
@@ -530,26 +546,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         pattern = Pattern.compile("http.*?\\.mp3");
                         matcher = pattern.matcher(content);
-                        final Matcher matcher2= matcher;
+                        final Matcher matcher2 = matcher;
                         if (matcher.find()){
                             //put the download link in tinyDb for the exoplayer to pick up
                             tinyDb.putString("downloadLink", matcher.group(0));
-
                             downloadBtn.setOnClickListener(view -> {
                                 bottomSheetDialog.dismiss();
-                                if (sonshubInterstitialAd.isLoaded()){
-                                    sonshubInterstitialAd.show();
-                                    sonshubInterstitialAd.setAdListener(new AdListener(){
-                                        @Override
-                                        public void onAdClosed() {
-                                            sonshubInterstitialAd.loadAd(adRequest);
-                                            downloadFile(matcher2,context);
-                                        }
-                                    });
-                                } else {
-                                    downloadFile(matcher2,context);
-                                    MainActivity.sonshubInterstitialAd.loadAd(adRequest);
-                                }
+                                downloadFile(matcher2, context);
                             });
 
                             streamBtn.setOnClickListener(view -> {
@@ -623,19 +626,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             downloadBtn.setOnClickListener(view -> {
                                 bottomSheetDialog.dismiss();
-                                if (MainActivity.sonshubInterstitialAd.isLoaded()){
-                                    MainActivity.sonshubInterstitialAd.show();
-                                    MainActivity.sonshubInterstitialAd.setAdListener(new AdListener(){
-                                        @Override
-                                        public void onAdClosed() {
-                                            MainActivity.sonshubInterstitialAd.loadAd(adRequest);
-                                            downloadFile(matcher2,context);
-                                        }
-                                    });
-                                } else {
-                                    downloadFile(matcher2,context);
-                                    MainActivity.sonshubInterstitialAd.loadAd(adRequest);
-                                }
+                                downloadFile(matcher2, context);
                             });
 
                             streamBtn.setOnClickListener(view -> {
@@ -741,23 +732,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             downloadBtn.setOnClickListener(view -> {
                                 bottomSheetDialog.dismiss();
-                                if (MainActivity.sonshubInterstitialAd.isLoaded()){
-                                    MainActivity.sonshubInterstitialAd.show();
-                                    MainActivity.sonshubInterstitialAd.setAdListener(new AdListener(){
-                                        @Override
-                                        public void onAdClosed() {
-                                            AdRequest adRequest1 = new AdRequest.Builder()
-                                                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                                                    //.addTestDevice("DED5E5589FE9B73E06F70486636F2945") // Tecno Camon C7
-                                                    .build();
-                                            MainActivity.sonshubInterstitialAd.loadAd(adRequest1);
-                                            downloadFile(matcher2,context);
-                                        }
-                                    });
-                                } else {
-                                    downloadFile(matcher2,context);
-                                    MainActivity.sonshubInterstitialAd.loadAd(adRequest);
-                                }
+                                downloadFile(matcher2, context);
                             });
 
                             streamBtn.setOnClickListener(view -> {
@@ -863,7 +838,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void checkForUpdate() {
         appUpdaterUtils = new AppUpdaterUtils(this)
                 .setUpdateFrom(UpdateFrom.JSON)
-                .setUpdateJSON("https://gigabytedevelopersinc.com/apps/sonshub/update/update.json")
+                .setUpdateJSON("https://gigabytedevelopersinc.com/apps/updater/sonshub/update.json")
                 .withListener(new AppUpdaterUtils.UpdateListener() {
                     @Override
                     public void onSuccess(Update update, Boolean isUpdateAvailable) {
@@ -903,8 +878,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 optionButtonConfirm.setVisibility(View.VISIBLE);
                                 optionButtonConfirm.setText(getString(R.string.update_play_store));
                                 continueButtonConfirm.setOnClickListener(v1 -> {
-                                    dm = (DownloadManager) getContext().getSystemService(DOWNLOAD_SERVICE);
-                                    Toast.makeText(getContext(), "App Update Downloading... Please Wait", Toast.LENGTH_LONG).show();
+                                    bottomSheetDialogConfirm.dismiss();
+                                    Toast.makeText(getContext(), "App Update Downloading... Please Wait", Toast.LENGTH_SHORT).show();
                                     File file = new File(Environment.getExternalStorageDirectory()
                                             + "/SonsHub" + "/AppUpdate" + "/sonshub_mobile.apk"
                                     );
@@ -973,140 +948,111 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void downloadAndInstall() {
-        File sdrFolder = new File(Environment.getExternalStorageDirectory()
-                + "/SonsHub" + "/AppUpdate");
-        String path = Environment.getExternalStorageDirectory()
-                + "/SonsHub/" + "AppUpdate/" + "sonshub_mobile";
-
-        boolean success = false;
-        if (!sdrFolder.exists()) {
-            success = sdrFolder.mkdir();
-        }
-        if (!success) {
-            String PATH = Environment.getExternalStorageDirectory()
-                    + "/SonsHub/" + "AppUpdate/";
-            file = new File(PATH);
-            file.mkdirs();
-        } else {
-            String PATH = Environment.getExternalStorageDirectory()
-                    + "/SonsHub/" + "AppUpdate/";
-            file = new File(PATH);
-            file.mkdirs();
-        }
-
         String downloadLink;
         if (com.gigabytedevelopersinc.apps.sonshub.BuildConfig.DEBUG) {
-            downloadLink = "https://gigabytedevelopersinc.com/apps/sonshub/update/sonshub_mobile_debug.apk";
+            downloadLink = "https://gigabytedevelopersinc.com/apps/updater/sonshub/debug/sonshub_mobile.apk";
         } else {
-            downloadLink = "https://gigabytedevelopersinc.com/apps/sonshub/update/sonshub_mobile_release.apk";
+            downloadLink = "https://gigabytedevelopersinc.com/apps/updater/sonshub/release/sonshub_mobile.apk";
         }
-        DownloadManager.Request request = new DownloadManager.Request(
-                Uri.parse(downloadLink));
-        request.setDestinationUri(
-                Uri.fromFile(new File(Environment.getExternalStorageDirectory()
-                        + "/SonsHub" + "/AppUpdate" + "/sonshub_mobile.apk"))
-        );
+        final String rootFolder = Environment.getExternalStorageDirectory() + "/SonsHub/" + "AppUpdate/";
 
-        enqueue = dm.enqueue(request);
+        BottomSheetDialog updateDownloadBottomSheet = new BottomSheetDialog(MainActivity.this);
+        final View updateDownloadView = LayoutInflater.from(MainActivity.this).inflate(R.layout.update_download_bottom_sheet, null);
+        TextView updateDownloadTitle = updateDownloadView.findViewById(R.id.update_downloading_title);
+        ProgressBar downloadProgress = updateDownloadView.findViewById(R.id.updateProgressBar);
+        TextView downloadProgressText = updateDownloadView.findViewById(R.id.updateViewProgress);
+        Button cancelButton = updateDownloadView.findViewById(R.id.cancelButton);
+        Button pauseButton = updateDownloadView.findViewById(R.id.pauseButton);
+        pauseButton.setOnClickListener(v -> {
+            if (Status.RUNNING == PRDownloader.getStatus(downloadId)) {
+                PRDownloader.pause(downloadId);
+                return;
+            }
+            pauseButton.setEnabled(false);
+            downloadProgress.setIndeterminate(true);
+            downloadProgress.getIndeterminateDrawable().setColorFilter(
+                    Color.parseColor("#9C27B0"), android.graphics.PorterDuff.Mode.SRC_IN);
 
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                    Toast.makeText(MainActivity.this, "Download Completed", Toast.LENGTH_LONG).show();
+            if (Status.PAUSED == PRDownloader.getStatus(downloadId)) {
+                PRDownloader.resume(downloadId);
+                return;
+            }
+        });
+        cancelButton.setOnClickListener(v -> {
+            PRDownloader.cancel(downloadId);
+        });
+        updateDownloadBottomSheet.setCancelable(false);
+        updateDownloadBottomSheet.setContentView(updateDownloadView);
+        updateDownloadBottomSheet.show();
 
-                    long downloadId = intent.getLongExtra(
-                            DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-                    DownloadManager.Query query = new DownloadManager.Query();
-                    query.setFilterById(enqueue);
-                    Cursor c = dm.query(query);
-                    if (c.moveToFirst()) {
-                        int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
-                        if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
-                            String uriString = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-
-                            Timber.tag("ainfo").d(uriString);
-
-                            if(downloadId == c.getInt(0)) {
-                                Timber.tag("DOWNLOAD PATH:").d(c.getString(c.getColumnIndex("local_uri")));
-
-
-                                Timber.tag("isRooted:").d(String.valueOf(isRooted()));
-                                if (!isRooted()) {
-                                    //if your device is not rooted
-                                    Intent intent_install = new Intent(Intent.ACTION_VIEW);
-                                    intent_install.setDataAndType(
-                                            Uri.fromFile(new File(Environment.getExternalStorageDirectory()
-                                                    + "/SonsHub" + "/AppUpdate/" + "sonshub_mobile.apk")),
-                                            "application/vnd.android.package-archive"
-                                    );
-                                    Timber.tag("phone path").d(Environment.getExternalStorageDirectory()
-                                            + "/SonsHub" + "/AppUpdate/" + "sonshub_mobile.apk"
-                                    );
-                                    startActivity(intent_install);
-                                    Toast.makeText(MainActivity.this, "App Installing", Toast.LENGTH_LONG).show();
-                                } else {
-                                    //if your device is rooted then you can install or update app in background directly
-                                    Toast.makeText(MainActivity.this, "App Installing... Please Wait", Toast.LENGTH_LONG).show();
-                                    File file = new File(path);
-                                    Timber.tag("IN INSTALLER:").d(path);
-                                    if(file.exists()){
-                                        try {
-                                            String command;
-                                            Timber.tag("IN File exists:").d(path);
-
-                                            command = "pm install -r " + path;
-                                            Timber.tag("COMMAND:").d(command);
-                                            Process proc = Runtime.getRuntime().exec(new String[] {
-                                                    "su",
-                                                    "-c",
-                                                    command
-                                            });
-                                            proc.waitFor();
-                                            Toast.makeText(MainActivity.this, "App Installed Successfully", Toast.LENGTH_LONG).show();
-
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                            }
-                        }
+        downloadId = PRDownloader.download(downloadLink, rootFolder, "sonshub_mobile.apk")
+                .build()
+                .setOnStartOrResumeListener(new OnStartOrResumeListener() {
+                    @Override
+                    public void onStartOrResume() {
+                        downloadProgress.setIndeterminate(false);
+                        pauseButton.setEnabled(true);
+                        pauseButton.setText(R.string.pause);
+                        cancelButton.setEnabled(true);
                     }
-                    c.close();
-                }
-            }
-        };
+                })
+                .setOnPauseListener(new OnPauseListener() {
+                    @Override
+                    public void onPause() {
+                        pauseButton.setText(R.string.resume);
+                    }
+                })
+                .setOnCancelListener(new OnCancelListener() {
+                    @Override
+                    public void onCancel() {
+                        Toast.makeText(getContext(), R.string.message_download_canceled, Toast.LENGTH_LONG).show();
+                        downloadProgress.setProgress(0);
+                        downloadProgressText.setText("");
+                        downloadId = 0;
+                        downloadProgress.setIndeterminate(false);
+                        updateDownloadBottomSheet.dismiss();
+                    }
+                })
+                .setOnProgressListener(new OnProgressListener() {
+                    @Override
+                    public void onProgress(Progress progress) {
+                        long progressPercent = progress.currentBytes * 100 / progress.totalBytes;
+                        downloadProgress.setProgress((int) progressPercent);
+                        downloadProgressText.setText(DownloadUtils.getProgressDisplayLine(progress.currentBytes, progress.totalBytes));
+                        downloadProgress.setIndeterminate(false);
+                    }
+                })
+                .start(new OnDownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        Toast.makeText(getContext(), R.string.message_download_completed, Toast.LENGTH_LONG).show();
+                        updateDownloadBottomSheet.dismiss();
+                        installApk(new File(rootFolder + "/" + "sonshub_mobile.apk"), MainActivity.this);
+                    }
 
-        this.registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                    @Override
+                    public void onError(com.downloader.Error error) {
+                        updateDownloadBottomSheet.dismiss();
+                        Toast.makeText(getContext(), R.string.message_download_failed, Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
-    private static boolean isRooted() {
-        return findBinary("su");
-    }
+    private static void installApk(File file, Context context) {
+        String type = "application/vnd.android.package-archive";
 
-    public static boolean findBinary(String binaryName) {
-        boolean found = false;
-        if (!found) {
-            String[] places = {
-                    "/sbin/",
-                    "/system/bin/",
-                    "/system/xbin/",
-                    "/data/local/xbin/",
-                    "/data/local/bin/",
-                    "/system/sd/xbin/",
-                    "/system/bin/failsafe/",
-                    "/data/local/"
-            };
-            for (String where : places) {
-                if ( new File( where + binaryName ).exists() ) {
-                    found = true;
-                    break;
-                }
-            }
+
+        Uri uri = FileProvider.getUriForFile(context.getApplicationContext(), context.getApplicationContext().getPackageName() + ".provider", file);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            uri = Uri.fromFile(file);
         }
-        return found;
+
+        Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+        intent.setDataAndType(uri, type);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        context.startActivity(intent);
     }
 
     public static synchronized MainActivity getInstance() {
@@ -1174,11 +1120,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressLint({"InflateParams", "SetTextI18n"})
     @Override
     public boolean onOptionsItemSelected(@NotNull MenuItem item) {
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                //.addTestDevice("DED5E5589FE9B73E06F70486636F2945") // Tecno Camon C7
-                .build();
-
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MainActivity.this);
         final View optionsView = LayoutInflater.from(MainActivity.this).inflate(R.layout.options_sheet, null);
 
@@ -1191,41 +1132,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
 
             case R.id.nav_download:
-                if (sonshubInterstitialAd.isLoaded()) {
-                    sonshubInterstitialAd.show();
-                    sonshubInterstitialAd.setAdListener(new AdListener() {
-                        public void onAdClosed() {
-                            sonshubInterstitialAd.loadAd(adRequest);
-                            startActivity(new Intent(MainActivity.this, DownloadActivity.class));
-                        }
-                    });
-                } else {
-                    startActivity(new Intent(this, DownloadActivity.class));
-                    sonshubInterstitialAd.loadAd(adRequest);
-                }
+                showAd();
+                loadAd();
+                startActivity(new Intent(MainActivity.this, DownloadActivity.class));
+                showAd();
                 return true;
 
             case R.id.nav_music_play:
-                if (sonshubInterstitialAd.isLoaded()) {
-                    sonshubInterstitialAd.show();
-                    sonshubInterstitialAd.setAdListener(new AdListener() {
-                        public void onAdClosed() {
-                            sonshubInterstitialAd.loadAd(adRequest);
-                            player.setPlayWhenReady(false);
-                            startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
-                            overridePendingTransition(R.anim.push_up_in, R.anim.hold);
-                        }
-                    });
-                } else {
-                    player.setPlayWhenReady(false);
-                    startActivity(new Intent(this, MusicMainActivity.class));
-                    overridePendingTransition(R.anim.push_up_in, R.anim.hold);
-                    sonshubInterstitialAd.loadAd(adRequest);
-                }
+                showAd();
+                loadAd();
+                player.setPlayWhenReady(false);
+                startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
+                showAd();
+                overridePendingTransition(R.anim.push_up_in, R.anim.hold);
                 return true;
 
             case R.id.nav_sub_menu:
-                sonshubInterstitialAd.loadAd(adRequest);
+                loadAd();
                 // For Rating SonsHub Mobile
                 Intent rateIntent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse("market://details?id=com.gigabytedevelopersinc.apps.sonshub")
@@ -1239,22 +1162,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 share.putExtra(Intent.EXTRA_SUBJECT, "Check out SonsHub Mobile");
                 share.putExtra(Intent.EXTRA_TEXT, shareSub);
                 optionMusicPlayer.setOnClickListener(v -> {
-                    if (sonshubInterstitialAd.isLoaded()) {
-                        sonshubInterstitialAd.show();
-                        sonshubInterstitialAd.setAdListener(new AdListener() {
-                            public void onAdClosed() {
-                                sonshubInterstitialAd.loadAd(adRequest);
-                                player.setPlayWhenReady(false);
-                                startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
-                                overridePendingTransition(R.anim.push_up_in, R.anim.hold);
-                            }
-                        });
-                    } else {
-                        player.setPlayWhenReady(false);
-                        startActivity(new Intent(this, MusicMainActivity.class));
-                        overridePendingTransition(R.anim.push_up_in, R.anim.hold);
-                        sonshubInterstitialAd.loadAd(adRequest);
-                    }
+                    loadAd();
+                    player.setPlayWhenReady(false);
+                    startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
+                    overridePendingTransition(R.anim.push_up_in, R.anim.hold);
                     bottomSheetDialog.dismiss();
                 });
                 optionShare.setOnClickListener(v -> startActivity(Intent.createChooser(share,
@@ -1271,6 +1182,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
+        startAppAd.onBackPressed();
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
             return;
@@ -1290,37 +1202,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressLint({"InflateParams", "SetTextI18n"})
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                //.addTestDevice("DED5E5589FE9B73E06F70486636F2945") // Tecno Camon C7
-                .build();
         int id = menuItem.getItemId();
         drawerLayout = findViewById(R.id.drawer_layout);
         if (id == R.id.nav_home) {
+            loadAd();
+            showAd();
             HomeFragment homeFragment = new HomeFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, homeFragment);
             toolbar.setTitle(R.string.nav_home);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_music) {
+            loadAd();
+            showAd();
             MusicFragment musicFragment = new MusicFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, musicFragment);
             toolbar.setTitle(R.string.nav_music);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_video) {
+            loadAd();
+            showAd();
             VideosFragment videosFragment = new VideosFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, videosFragment);
             toolbar.setTitle(R.string.nav_video);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_gist) {
+            loadAd();
+            showAd();
             GistFragment gistFragment = new GistFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, gistFragment);
             toolbar.setTitle(R.string.nav_gist);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_word_of_faith) {
+            loadAd();
+            showAd();
             WordOfFaithFragment wordOfFaithFragment = new WordOfFaithFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, wordOfFaithFragment);
@@ -1328,6 +1246,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentTransaction.commit();
         } else if (id == R.id.nav_sonshub_tv) {
             drawerLayout.closeDrawers();
+            loadAd();
+            showAd();
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
             final View generalNoticeView = LayoutInflater.from(this).inflate(R.layout.general_notice, null);
 
@@ -1358,25 +1278,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             bottomSheetDialog.setContentView(generalNoticeView);
             bottomSheetDialog.show();
         } else if (id == R.id.nav_music_player) {
-            if (sonshubInterstitialAd.isLoaded()) {
-                sonshubInterstitialAd.show();
-                sonshubInterstitialAd.setAdListener(new AdListener() {
-                    public void onAdClosed() {
-                        sonshubInterstitialAd.loadAd(adRequest);
-                        player.setPlayWhenReady(false);
-                        startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
-                        overridePendingTransition(R.anim.push_up_in, R.anim.hold);
-                    }
-                });
-            } else {
-                player.setPlayWhenReady(false);
-                startActivity(new Intent(this, MusicMainActivity.class));
-                overridePendingTransition(R.anim.push_up_in, R.anim.hold);
-                sonshubInterstitialAd.loadAd(adRequest);
-            }
+            loadAd();
+            player.setPlayWhenReady(false);
+            startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
+            overridePendingTransition(R.anim.push_up_in, R.anim.hold);
             drawerLayout.closeDrawers();
         } else if (id == R.id.nav_about) {
             AboutFragment aboutFragment = new AboutFragment();
+            loadAd();
+            showAd();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, aboutFragment);
             toolbar.setTitle(R.string.nav_about);
@@ -1504,7 +1414,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent mail = new Intent(Intent.ACTION_SENDTO);
             mail.setType("text/html");
             mail.setData(Uri.parse("mailto:"));
-            mail.putExtra(Intent.EXTRA_EMAIL, new String[]{ "gigabytedevelopers@gmail.com"});
+            mail.putExtra(Intent.EXTRA_EMAIL, new String[]{ "support@gigabytedevelopersinc.com"});
             mail.putExtra(Intent.EXTRA_SUBJECT, "Hello, Gigabyte Developers");
             startActivity(Intent.createChooser(mail, "Talk to Gigabyte Developers with"));
             bottomSheetDialog.dismiss();
@@ -1589,6 +1499,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
+        startAppAd.onResume();
+        MobfoxSDK.onResume(this);
         fetch.getDownloadsInGroup(GROUP_ID, downloads -> {
             final ArrayList<Download> list = new ArrayList<>(downloads);
             Collections.sort(list, (first, second) -> Long.compare(first.getCreated(), second.getCreated()));
@@ -1614,17 +1526,108 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(sonshubNotificaticationBroadcastReceiver);
         super.onPause();
+        startAppAd.onPause();
+        MobfoxSDK.onPause(this);
         fetch.removeListener(fetchListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        MobfoxSDK.onDestroy(this);
         releasePlayer();
         fetch.close();
     }
 
+    public void loadAd() {
+        startAppAd.loadAd(StartAppAd.AdMode.AUTOMATIC);
+    }
+
+    public void showAd() {
+        startAppAd.showAd(new AdDisplayListener() {
+            @Override
+            public void adHidden(Ad ad) {
+            }
+            @Override
+            public void adDisplayed(Ad ad) {
+                loadAd();
+            }
+            @Override
+            public void adClicked(Ad ad) {
+            }
+            @Override
+            public void adNotDisplayed(Ad ad) {
+            }
+        });
+    }
+
+    private void initMobFoxSDK() {
+        // MobfoxSDK.init(this);
+    }
+
+    private void initMobFoxInterstitial() {
+        // clearMobFoxInterstitials();
+
+        mMFXInterstitialAd = MobfoxSDK.createInterstitial(MainActivity.this,
+                MOBFOX_HASH_INTER_HTML,
+                interstitialListener);
+        MobfoxSDK.loadInterstitial(mMFXInterstitialAd);
+    }
+
+    private void clearMobFoxInterstitials() {
+        if (mMFXInterstitialAd != null) {
+            MobfoxSDK.releaseInterstitial(mMFXInterstitialAd);
+            mMFXInterstitialAd = null;
+        }
+    }
+
+    private void showMobFoxInterstitial() {
+        MobfoxSDK.showInterstitial(mMFXInterstitialAd);
+    }
+
+    private MFXInterstitialListener interstitialListener = new MFXInterstitialListener() {
+        @Override
+        public void onInterstitialLoaded(MFXInterstitial interstitial) {
+            Toast.makeText(MainActivity.this,"onInterstitialLoaded",Toast.LENGTH_SHORT).show();
+
+            showMobFoxInterstitial();
+        }
+
+        @Override
+        public void onInterstitialLoadFailed(MFXInterstitial interstitial, String code) {
+            Toast.makeText(MainActivity.this,"onInterstitialLoadFailed: "+code,Toast.LENGTH_SHORT).show();
+            initMobFoxInterstitial();
+        }
+
+        @Override
+        public void onInterstitialClosed(MFXInterstitial interstitial) {
+            Toast.makeText(MainActivity.this,"onInterstitialClosed",Toast.LENGTH_SHORT).show();
+
+            MobfoxSDK.releaseInterstitial(mMFXInterstitialAd);
+        }
+
+        @Override
+        public void onInterstitialClicked(MFXInterstitial interstitial, String url) {
+            Toast.makeText(MainActivity.this,"onInterstitialClicked",Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onInterstitialShown(MFXInterstitial interstitial) {
+            Toast.makeText(MainActivity.this,"onInterstitialShown",Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onInterstitialFinished(MFXInterstitial interstitial) {
+            Toast.makeText(MainActivity.this,"onInterstitialFinished",Toast.LENGTH_SHORT).show();
+        }
+    };
+
     public void setDownloadingFragment(DownloadingFragment downloadingFragment) {
         this.downloadingFragment = downloadingFragment;
+    }
+
+    @Override
+    public void onConsentDialogDismissed() {
+        showAd();
     }
 }

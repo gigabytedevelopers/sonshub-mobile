@@ -1,9 +1,7 @@
 package com.gigabytedevelopersinc.apps.sonshub.fragments;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
@@ -11,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
 import android.view.*;
 import com.android.volley.*;
 import com.android.volley.toolbox.HttpHeaderParser;
@@ -26,7 +23,6 @@ import com.gigabytedevelopersinc.apps.sonshub.adapters.MainListAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.MovieAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.MusicAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.NewsAdapter;
-import com.gigabytedevelopersinc.apps.sonshub.fragments.downloads.DownloadingFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.music.MusicFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.videos.MoviesFragment;
 import com.gigabytedevelopersinc.apps.sonshub.models.MainListModel;
@@ -35,30 +31,22 @@ import com.gigabytedevelopersinc.apps.sonshub.models.MusicModel;
 import com.gigabytedevelopersinc.apps.sonshub.models.NewsModel;
 import com.gigabytedevelopersinc.apps.sonshub.utils.ClickListener;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
-import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Data;
 import com.glide.slider.library.Animations.DescriptionAnimation;
 import com.glide.slider.library.SliderLayout;
 import com.glide.slider.library.SliderTypes.BaseSliderView;
 import com.glide.slider.library.SliderTypes.DefaultSliderView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import timber.log.Timber;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity.*;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -184,7 +172,7 @@ public class HomeFragment extends Fragment {
 
         musicView.setOnClickListener(view1 ->{
             MusicFragment musicFragment = new MusicFragment();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(getFragmentManager()).beginTransaction();
+            FragmentTransaction fragmentTransaction = getParentFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, musicFragment);
             fragmentTransaction.commit();
             fragmentTransaction.addToBackStack(null);
@@ -192,7 +180,7 @@ public class HomeFragment extends Fragment {
 
         movieView.setOnClickListener(view1 ->{
             MoviesFragment moviesFragment = new MoviesFragment();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(getFragmentManager()).beginTransaction();
+            FragmentTransaction fragmentTransaction = getParentFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, moviesFragment);
             fragmentTransaction.commit();
             fragmentTransaction.addToBackStack(null);
@@ -200,7 +188,7 @@ public class HomeFragment extends Fragment {
 
         gistView.setOnClickListener(view1 ->{
             LatestPostFrag gistFragment = new LatestPostFrag();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(getFragmentManager()).beginTransaction();
+            FragmentTransaction fragmentTransaction = getParentFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, gistFragment);
             MainActivity.toolbar.setTitle("Latest Posts");
             fragmentTransaction.commit();
@@ -357,7 +345,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getContext()));
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         requestQueue.add(featuredRequest);
         featuredRequest.setRetryPolicy(new RetryPolicy() {
             @Override
@@ -463,7 +451,7 @@ public class HomeFragment extends Fragment {
             }
         };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getContext()));
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         requestQueue.add(movieRequest);
         movieRequest.setRetryPolicy(new RetryPolicy() {
             @Override
@@ -568,7 +556,7 @@ public class HomeFragment extends Fragment {
             }
         };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getContext()));
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         requestQueue.add(musicRequest);
         musicRequest.setRetryPolicy(new RetryPolicy() {
             @Override
@@ -674,7 +662,7 @@ public class HomeFragment extends Fragment {
             }
         };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getContext()));
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         requestQueue.add(gistRequest);
 
         gistRequest.setRetryPolicy(new RetryPolicy() {
@@ -786,58 +774,6 @@ public class HomeFragment extends Fragment {
 
         Gson gson = new Gson();
         return gson.toJson(newsModels);
-    }
-
-    @SuppressLint("InflateParams")
-    public static void downloadFile(Matcher matcher,Context context){
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-        final View generalNoticeView = LayoutInflater.from(context).inflate(R.layout.general_notice, null);
-
-        Button cancelButton = generalNoticeView.findViewById(R.id.cancelButton);
-        Button continueButton = generalNoticeView.findViewById(R.id.continueButton);
-
-        String downloadFileUrl = matcher.group(0);
-        Data.sampleUrls = new String[]{downloadFileUrl};
-        Timber.d(Arrays.toString(Data.sampleUrls));
-        String fileName = downloadFileUrl.substring(downloadFileUrl.lastIndexOf('/') + 1);
-        if (need2Download(fileName)){
-            DownloadingFragment.enqueueDownload();
-        } else {
-            continueButton.setOnClickListener(v -> {
-                File basePathMp3 = new File(Environment.getExternalStorageDirectory() + "/SonsHub" + "/Music");
-                File basePathVideo = new File(Environment.getExternalStorageDirectory() + "/SonsHub" + "/Videos");
-
-                File fullPathMp3 = new File(basePathMp3, fileName);
-                File fullPathVideo = new File(basePathVideo, fileName);
-                if (fileName.toLowerCase().endsWith(".mp3")) {
-                    fullPathMp3.delete();
-                } else if (fileName.toLowerCase().endsWith(".mp4")) {
-                    fullPathVideo.delete();
-                } else {
-                    Toast.makeText(context, "We encountered an error ;(", Toast.LENGTH_LONG).show();
-                }
-                DownloadingFragment.enqueueDownload();
-                bottomSheetDialog.dismiss();
-            });
-            cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
-            bottomSheetDialog.setCancelable(false);
-            bottomSheetDialog.setContentView(generalNoticeView);
-            bottomSheetDialog.show();
-        }
-
-    }
-
-    public static boolean need2Download(String fileName) {
-        File basePathMp3 = new File(Environment.getExternalStorageDirectory() + "/SonsHub" + "/Music");
-        File basePathVideo = new File(Environment.getExternalStorageDirectory() + "/SonsHub" + "/Videos");
-
-        File fullPathMp3 = new File(basePathMp3, fileName);
-        File fullPathVideo = new File(basePathVideo, fileName);
-
-        /*if (fullPathMp3.exists() || fullPathVideo.exists()) {
-            return false;
-        }*/
-        return !fullPathMp3.exists() && !fullPathVideo.exists();
     }
 
     @Override

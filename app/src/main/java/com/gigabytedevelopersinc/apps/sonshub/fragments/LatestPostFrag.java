@@ -140,7 +140,7 @@ public class LatestPostFrag extends Fragment {
                 } catch (Exception npe) {
                     npe.printStackTrace();
                 }
-                Snackbar.make(Objects.requireNonNull(getActivity())
+                Snackbar.make(requireActivity()
                                 .findViewById(android.R.id.content),
                         "error connecting to server",
                         Snackbar.LENGTH_SHORT).show();
@@ -313,7 +313,7 @@ public class LatestPostFrag extends Fragment {
                         }
                     }else {
                         System.out.println("Load More Error" + error);
-                        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Error connecting to server", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireActivity().getApplicationContext(), "Error connecting to server", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 }
@@ -321,7 +321,7 @@ public class LatestPostFrag extends Fragment {
 
             };
 
-            RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
+            RequestQueue requestQueue = Volley.newRequestQueue(requireActivity());
             requestQueue.add(africanRequest);
 
             africanRequest.setRetryPolicy(new RetryPolicy() {

@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!--Open source license-->
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/open_source_title"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/open_source_license"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="bold"
-        android:fontFamily="@font/petitabold"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/margin_normal"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/open_source_license"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:fontFamily="@font/petitabold"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+    </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/margin_small">
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_below="@id/open_source_title"
+        android:layout_above="@id/open_source_button">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -341,20 +350,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="1.0dp"
                 android:background="@color/grey"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end">
-                <Button
-                    android:id="@+id/continue_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/continue_on"
-                    android:fontFamily="@font/petitabold"
-                    android:textColor="@color/colorPrimary"
-                    style="@style/Widget.AppCompat.Button.Borderless"/>
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/open_source_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="end"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:id="@+id/continue_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/continue_on"
+            android:fontFamily="@font/petitabold"
+            android:textColor="@color/colorPrimary"
+            style="@style/Widget.AppCompat.Button.Borderless"/>
+    </LinearLayout>
+</RelativeLayout>
