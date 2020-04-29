@@ -20,24 +20,3 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.startapp.** {
-      *;
-}
-
--keep class com.truenet.** {
-      *;
-}
-
--keepattributes Exceptions, InnerClasses, Signature, Deprecated, SourceFile, LineNumberTable, *Annotation*, EnclosingMethod
--dontwarn android.webkit.JavascriptInterface
--dontwarn com.startapp.**
-
--dontwarn org.jetbrains.annotations.**
-
-# Mobfox
--keepclassmembers class * {
-   @android.webkit.JavascriptInterface <methods>;
-}
-# MobFox SDK
--keep class com.mobfox.** { *; }
--keepclassmembers class com.mobfox.** { *; }

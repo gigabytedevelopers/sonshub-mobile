@@ -190,18 +190,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- added for MobfoxSDK -->
-        <service
-            android:name="com.mobfox.android.dmp.services.MobFoxService"
-            android:launchMode="singleTop" /> <!-- new service -->
-
-        <!-- MobfoxSDK: needed for displaying internal browser -->
-        <activity
-            android:name="com.mobfox.android.core.InAppBrowser"
-            android:configChanges="orientation|screenSize"
-            android:hardwareAccelerated="true"
-            />
-
         <receiver android:name=".receivers.BootReceiver" />
     </application>
 </manifest>

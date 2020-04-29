@@ -29,7 +29,6 @@ import com.gigabytedevelopersinc.apps.sonshub.services.notification.MyFirebaseMe
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.AnalyticsManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.database.FirebaseDatabase;
-import com.mobfox.android.MobfoxSDK;
 
 import kotlin.collections.MapsKt;
 import kotlin.jvm.functions.Function1;
@@ -67,8 +66,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
             // Enables Crash, Error Reporting for detailed, well structured Error messages on Firebase Console
             Timber.plant(new FabricTree());
 
-            // Initialize Live Banner Ads immediately SonsHub Mobile is opened
-            MobfoxSDK.init(this);
             if (Build.VERSION.SDK_INT >= 24) {
                 try {
                     Method m = StrictMode.class.getMethod(getResources().getString(R.string.runtimeStrictMode));
@@ -86,9 +83,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
         } else {
             // Disable Crash, Error Reporting since we can easily make use of the logcat during development
             Timber.plant(new Timber.DebugTree());
-
-            // Initialize Sample Banner Ads immediately SonsHub Mobile is opened
-            MobfoxSDK.init(this);
         }
         SystemClock.sleep(TimeUnit.SECONDS.toMillis(1));
 

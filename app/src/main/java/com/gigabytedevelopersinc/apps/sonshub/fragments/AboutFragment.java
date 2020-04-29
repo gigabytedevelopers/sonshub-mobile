@@ -297,7 +297,7 @@ public class AboutFragment extends Fragment {
         updateCheck.show();
         AppUpdaterUtils appUpdaterUtils = new AppUpdaterUtils(getContext())
                 .setUpdateFrom(UpdateFrom.JSON)
-                .setUpdateJSON("https://gigabytedevelopersinc.com/apps/updater/sonshub/update.json")
+                .setUpdateJSON("https://www.gigabytedevelopersinc.com/apps/sonshub/updater/update.json")
                 .withListener(new AppUpdaterUtils.UpdateListener() {
                     @Override
                     public void onSuccess(Update update, Boolean isUpdateAvailable) {
@@ -410,9 +410,9 @@ public class AboutFragment extends Fragment {
     private void downloadAndInstall() {
         String downloadLink;
         if (BuildConfig.DEBUG) {
-            downloadLink = "https://gigabytedevelopersinc.com/apps/updater/sonshub/debug/sonshub_mobile.apk";
+            downloadLink = "https://www.gigabytedevelopersinc.com/apps/sonshub/updater/debug/sonshub_mobile.apk";
         } else {
-            downloadLink = "https://gigabytedevelopersinc.com/apps/updater/sonshub/release/sonshub_mobile.apk";
+            downloadLink = "https://www.gigabytedevelopersinc.com/apps/sonshub/updater/release/sonshub_mobile.apk";
         }
 
         final String rootFolder = Environment.getExternalStorageDirectory() + "/SonsHub/" + "AppUpdate/";

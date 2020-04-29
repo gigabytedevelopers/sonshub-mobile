@@ -94,16 +94,6 @@ import com.google.firebase.database.*;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.leinardi.android.speeddial.SpeedDialView;
-import com.mobfox.android.MobfoxSDK;
-import com.mobfox.android.MobfoxSDK.MFXInterstitial;
-import com.mobfox.android.MobfoxSDK.MFXInterstitialListener;
-import com.mobfox.android.core.gdpr.GDPRParams;
-import com.startapp.consentdialog.ConsentDialogFragment;
-import com.startapp.consentdialog.ConsentDialogListener;
-import com.startapp.sdk.adsbase.Ad;
-import com.startapp.sdk.adsbase.StartAppAd;
-import com.startapp.sdk.adsbase.StartAppSDK;
-import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener;
 
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
@@ -123,7 +113,7 @@ import java.util.regex.Pattern;
 import static com.gigabytedevelopersinc.apps.sonshub.App.getContext;
 
 @SuppressLint("StaticFieldLeak")
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ConsentDialogListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "SonsHub Mobile";
     private DrawerLayout drawerLayout;
     public static Toolbar toolbar;
@@ -135,12 +125,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     boolean doubleBackToExitPressedOnce = false;
     public static PlayerView playerView;
     public static SimpleExoPlayer player;
-
-    // Ads (StartApp)
-    private StartAppAd startAppAd = new StartAppAd(this);
-
-    // Ads (MobFox)
-    private MFXInterstitial mMFXInterstitialAd = null;
 
     private static boolean isTelevision;
     private static MainActivity sonshubAppInstance;
@@ -181,28 +165,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (ConsentDialogFragment.isUserDecisionSaved(this)) {
-            // allow return ads if we already have user decision
-            StartAppSDK.setUserConsent (this,
-                    "pas",
-                    System.currentTimeMillis(),
-                    true);
-            StartAppSDK.init(this, "203823129", true);
-            // StartAppAd.showSplash(this, savedInstanceState, splashConfig);
-        } else {
-            StartAppSDK.setUserConsent (this,
-                    "pas",
-                    System.currentTimeMillis(),
-                    false);
-            // otherwise we don't allow return ads and turn off splash
-            StartAppSDK.init(this, "203823129", false);
-            StartAppAd.disableSplash();
-        }
-
         setContentView(R.layout.activity_main);
-        loadAd();
-        initMobFoxSDK();
-        initMobFoxInterstitial();
         fileAdapter = new DownloadFileAdapter(downloadingFragment);
 
         TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(
@@ -838,7 +801,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void checkForUpdate() {
         appUpdaterUtils = new AppUpdaterUtils(this)
                 .setUpdateFrom(UpdateFrom.JSON)
-                .setUpdateJSON("https://gigabytedevelopersinc.com/apps/updater/sonshub/update.json")
+                .setUpdateJSON("https://www.gigabytedevelopersinc.com/apps/sonshub/updater/update.json")
                 .withListener(new AppUpdaterUtils.UpdateListener() {
                     @Override
                     public void onSuccess(Update update, Boolean isUpdateAvailable) {
@@ -950,9 +913,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void downloadAndInstall() {
         String downloadLink;
         if (com.gigabytedevelopersinc.apps.sonshub.BuildConfig.DEBUG) {
-            downloadLink = "https://gigabytedevelopersinc.com/apps/updater/sonshub/debug/sonshub_mobile.apk";
+            downloadLink = "https://www.gigabytedevelopersinc.com/apps/sonshub/updater/debug/sonshub_mobile.apk";
         } else {
-            downloadLink = "https://gigabytedevelopersinc.com/apps/updater/sonshub/release/sonshub_mobile.apk";
+            downloadLink = "https://www.gigabytedevelopersinc.com/apps/sonshub/updater/release/sonshub_mobile.apk";
         }
         final String rootFolder = Environment.getExternalStorageDirectory() + "/SonsHub/" + "AppUpdate/";
 
@@ -1132,21 +1095,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
 
             case R.id.nav_download:
-                loadAd();
                 startActivity(new Intent(MainActivity.this, DownloadActivity.class));
-                showAd();
                 return true;
 
             case R.id.nav_music_play:
-                loadAd();
                 player.setPlayWhenReady(false);
                 startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
-                showAd();
                 overridePendingTransition(R.anim.push_up_in, R.anim.hold);
                 return true;
 
             case R.id.nav_sub_menu:
-                loadAd();
                 // For Rating SonsHub Mobile
                 Intent rateIntent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse("market://details?id=com.gigabytedevelopersinc.apps.sonshub")
@@ -1160,7 +1118,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 share.putExtra(Intent.EXTRA_SUBJECT, "Check out SonsHub Mobile");
                 share.putExtra(Intent.EXTRA_TEXT, shareSub);
                 optionMusicPlayer.setOnClickListener(v -> {
-                    loadAd();
                     player.setPlayWhenReady(false);
                     startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
                     overridePendingTransition(R.anim.push_up_in, R.anim.hold);
@@ -1180,7 +1137,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        startAppAd.onBackPressed();
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
             return;
@@ -1203,40 +1159,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = menuItem.getItemId();
         drawerLayout = findViewById(R.id.drawer_layout);
         if (id == R.id.nav_home) {
-            loadAd();
-            showAd();
             HomeFragment homeFragment = new HomeFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, homeFragment);
             toolbar.setTitle(R.string.nav_home);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_music) {
-            loadAd();
-            showAd();
             MusicFragment musicFragment = new MusicFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, musicFragment);
             toolbar.setTitle(R.string.nav_music);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_video) {
-            loadAd();
-            showAd();
             VideosFragment videosFragment = new VideosFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, videosFragment);
             toolbar.setTitle(R.string.nav_video);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_gist) {
-            loadAd();
-            showAd();
             GistFragment gistFragment = new GistFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, gistFragment);
             toolbar.setTitle(R.string.nav_gist);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_word_of_faith) {
-            loadAd();
-            showAd();
             WordOfFaithFragment wordOfFaithFragment = new WordOfFaithFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, wordOfFaithFragment);
@@ -1244,8 +1190,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentTransaction.commit();
         } else if (id == R.id.nav_sonshub_tv) {
             drawerLayout.closeDrawers();
-            loadAd();
-            showAd();
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
             final View generalNoticeView = LayoutInflater.from(this).inflate(R.layout.general_notice, null);
 
@@ -1276,15 +1220,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             bottomSheetDialog.setContentView(generalNoticeView);
             bottomSheetDialog.show();
         } else if (id == R.id.nav_music_player) {
-            loadAd();
             player.setPlayWhenReady(false);
             startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
             overridePendingTransition(R.anim.push_up_in, R.anim.hold);
             drawerLayout.closeDrawers();
         } else if (id == R.id.nav_about) {
             AboutFragment aboutFragment = new AboutFragment();
-            loadAd();
-            showAd();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, aboutFragment);
             toolbar.setTitle(R.string.nav_about);
@@ -1497,8 +1438,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        startAppAd.onResume();
-        MobfoxSDK.onResume(this);
         fetch.getDownloadsInGroup(GROUP_ID, downloads -> {
             final ArrayList<Download> list = new ArrayList<>(downloads);
             Collections.sort(list, (first, second) -> Long.compare(first.getCreated(), second.getCreated()));
@@ -1524,108 +1463,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(sonshubNotificaticationBroadcastReceiver);
         super.onPause();
-        startAppAd.onPause();
-        MobfoxSDK.onPause(this);
         fetch.removeListener(fetchListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MobfoxSDK.onDestroy(this);
         releasePlayer();
         fetch.close();
-    }
-
-    public void loadAd() {
-        startAppAd.loadAd(StartAppAd.AdMode.AUTOMATIC);
-    }
-
-    public void showAd() {
-        startAppAd.showAd(new AdDisplayListener() {
-            @Override
-            public void adHidden(Ad ad) {
-            }
-            @Override
-            public void adDisplayed(Ad ad) {
-                loadAd();
-            }
-            @Override
-            public void adClicked(Ad ad) {
-            }
-            @Override
-            public void adNotDisplayed(Ad ad) {
-            }
-        });
-    }
-
-    private void initMobFoxSDK() {
-        // MobfoxSDK.init(this);
-    }
-
-    private void initMobFoxInterstitial() {
-        // clearMobFoxInterstitials();
-
-        mMFXInterstitialAd = MobfoxSDK.createInterstitial(MainActivity.this,
-                MOBFOX_HASH_INTER_HTML,
-                interstitialListener);
-        MobfoxSDK.loadInterstitial(mMFXInterstitialAd);
-    }
-
-    private void clearMobFoxInterstitials() {
-        if (mMFXInterstitialAd != null) {
-            MobfoxSDK.releaseInterstitial(mMFXInterstitialAd);
-            mMFXInterstitialAd = null;
-        }
-    }
-
-    private void showMobFoxInterstitial() {
-        MobfoxSDK.showInterstitial(mMFXInterstitialAd);
-    }
-
-    private MFXInterstitialListener interstitialListener = new MFXInterstitialListener() {
-        @Override
-        public void onInterstitialLoaded(MFXInterstitial interstitial) {
-            Toast.makeText(MainActivity.this,"onInterstitialLoaded",Toast.LENGTH_SHORT).show();
-
-            showMobFoxInterstitial();
-        }
-
-        @Override
-        public void onInterstitialLoadFailed(MFXInterstitial interstitial, String code) {
-            Toast.makeText(MainActivity.this,"onInterstitialLoadFailed: "+code,Toast.LENGTH_SHORT).show();
-            initMobFoxInterstitial();
-        }
-
-        @Override
-        public void onInterstitialClosed(MFXInterstitial interstitial) {
-            Toast.makeText(MainActivity.this,"onInterstitialClosed",Toast.LENGTH_SHORT).show();
-
-            MobfoxSDK.releaseInterstitial(mMFXInterstitialAd);
-        }
-
-        @Override
-        public void onInterstitialClicked(MFXInterstitial interstitial, String url) {
-            Toast.makeText(MainActivity.this,"onInterstitialClicked",Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onInterstitialShown(MFXInterstitial interstitial) {
-            Toast.makeText(MainActivity.this,"onInterstitialShown",Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onInterstitialFinished(MFXInterstitial interstitial) {
-            Toast.makeText(MainActivity.this,"onInterstitialFinished",Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    public void setDownloadingFragment(DownloadingFragment downloadingFragment) {
-        this.downloadingFragment = downloadingFragment;
-    }
-
-    @Override
-    public void onConsentDialogDismissed() {
-        showAd();
     }
 }
