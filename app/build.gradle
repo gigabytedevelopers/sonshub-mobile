@@ -8,6 +8,11 @@ if (!project.hasProperty("disable-performance-plugin")) {
     apply plugin: 'com.google.firebase.firebase-perf'
 }
 
+// Load keystore
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion 29
     applicationVariants.all { variant ->
@@ -27,10 +32,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file('C:/Users/Gigabyte/keystore.jks')
-            storePassword 'Doc.d.doc'
-            keyAlias 'key0'
-            keyPassword 'Doc.d.doc'
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
         }
     }
     buildTypes {
