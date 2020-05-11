@@ -1,10 +1,8 @@
 package com.gigabytedevelopersinc.apps.sonshub.activities;
 
 import android.annotation.SuppressLint;
-import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.content.*;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.media.AudioManager;
@@ -13,7 +11,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.*;
-import android.provider.Settings;
 import android.text.Html;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,15 +18,6 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.crashlytics.android.Crashlytics;
-import com.downloader.OnCancelListener;
-import com.downloader.OnDownloadListener;
-import com.downloader.OnPauseListener;
-import com.downloader.OnProgressListener;
-import com.downloader.OnStartOrResumeListener;
-import com.downloader.PRDownloader;
-import com.downloader.Progress;
-import com.downloader.Status;
 import com.gigabytedevelopersinc.apps.sonshub.App;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.DownloadFileAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.AbstractFetchListener;
@@ -44,7 +32,6 @@ import com.gigabytedevelopersinc.apps.sonshub.fragments.downloads.DownloadingFra
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.services.notification.SonsHubDownloadNotificationManager;
 import com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout;
-import com.gigabytedevelopersinc.apps.sonshub.utils.DownloadUtils;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Data;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.IndividualUser;
 import com.github.javiersantos.appupdater.AppUpdater;
@@ -66,7 +53,6 @@ import com.google.android.exoplayer2.upstream.*;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -75,7 +61,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.gigabytedevelopersinc.apps.sonshub.R;
@@ -90,8 +75,6 @@ import com.gigabytedevelopersinc.apps.sonshub.utils.NotificationUtil;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Configs;
 
-import com.google.firebase.database.*;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.leinardi.android.speeddial.SpeedDialView;
 
@@ -105,12 +88,9 @@ import saschpe.android.customtabs.WebViewFallback;
 import timber.log.Timber;
 
 import java.io.File;
-import java.lang.Process;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.gigabytedevelopersinc.apps.sonshub.App.getContext;
 
 @SuppressLint("StaticFieldLeak")
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -155,10 +135,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final long UNKNOWN_REMAINING_TIME = -1;
     private static final long UNKNOWN_DOWNLOADED_BYTES_PER_SECOND = 0;
     private static final int GROUP_ID = "listGroup".hashCode();
-    int downloadId;
-
-    public static final String MOBFOX_HASH_INTER_HTML   = "267d72ac3f77a3f447b32cf7ebf20673";
-    public static final String MOBFOX_HASH_INTER_VIDEO  = "80187188f458cfde788d961b6882fd53";
 
     @SuppressLint({"InflateParams", "HardwareIds"})
     @Override
@@ -813,6 +789,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         tinyDb.putString("updateDownloadURL", String.valueOf(update.getUrlToDownload()));
 
                         if (isUpdateAvailable) {
+                            Toast.makeText(appContext, getString(R.string.toast_success_new_version), Toast.LENGTH_LONG).show();
                             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MainActivity.this);
                             final View updateNoticeView = LayoutInflater.from(MainActivity.this).inflate(R.layout.updater_notice, null);
 
@@ -821,51 +798,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             LinearLayout closeButton = updateNoticeView.findViewById(R.id.close);
                             updateNoticeText.setText(update.getReleaseNotes());
                             continueButton.setOnClickListener(v -> {
-                                bottomSheetDialog.dismiss();
-                                BottomSheetDialog bottomSheetDialogConfirm = new BottomSheetDialog(MainActivity.this);
-                                final View generalNoticeViewConfirm = LayoutInflater.from(MainActivity.this).inflate(R.layout.general_notice, null);
-
-                                TextView generalNoticeTextConfirm = generalNoticeViewConfirm.findViewById(R.id.generalNoticeText);
-                                Button cancelButtonConfirm = generalNoticeViewConfirm.findViewById(R.id.cancelButton);
-                                Button continueButtonConfirm = generalNoticeViewConfirm.findViewById(R.id.continueButton);
-                                Button optionButtonConfirm = generalNoticeViewConfirm.findViewById(R.id.optionButton);
-
-                                generalNoticeTextConfirm.setText("Did you install your current version of SonsHub Mobile from the Google Play Store? If yes, use the first button to update from Play Store.\n\nDid you install your current version of SonsHub Mobile elsewhere (not from Play Store)? If yes, use the second button to manually download the latest update from our Server.");
-                                cancelButtonConfirm.setVisibility(View.GONE);
-                                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                                        RelativeLayout.LayoutParams.MATCH_PARENT,
-                                        RelativeLayout.LayoutParams.WRAP_CONTENT
+                                Intent playStore = new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse("market://details?id=com.gigabytedevelopersinc.apps.sonshub")
                                 );
-                                continueButtonConfirm.setLayoutParams(layoutParams);
-                                continueButtonConfirm.setText(getString(R.string.update_server));
-                                optionButtonConfirm.setVisibility(View.VISIBLE);
-                                optionButtonConfirm.setText(getString(R.string.update_play_store));
-                                continueButtonConfirm.setOnClickListener(v1 -> {
-                                    bottomSheetDialogConfirm.dismiss();
-                                    Toast.makeText(getContext(), "App Update Downloading... Please Wait", Toast.LENGTH_SHORT).show();
-                                    File file = new File(Environment.getExternalStorageDirectory()
-                                            + "/SonsHub" + "/AppUpdate" + "/sonshub_mobile.apk"
-                                    );
-                                    if (file.exists()) {
-                                        isDeleted = file.delete();
-                                        deleteAndInstall();
-                                    } else {
-                                        firstTimeInstall();
-                                    }
-                                    bottomSheetDialog.dismiss();
-                                });
-                                optionButtonConfirm.setOnClickListener(v1 -> {
-                                    Intent playStore = new Intent(Intent.ACTION_VIEW,
-                                            Uri.parse("market://details?id=com.gigabytedevelopersinc.apps.sonshub")
-                                    );
-                                    startActivity(playStore);
-                                    bottomSheetDialog.dismiss();
-                                });
-                                bottomSheetDialogConfirm.setCancelable(true);
-                                bottomSheetDialogConfirm.setContentView(generalNoticeViewConfirm);
-                                if (!MainActivity.this.isFinishing()) {
-                                    bottomSheetDialogConfirm.show();
-                                }
+                                startActivity(playStore);
+                                bottomSheetDialog.dismiss();
                             });
                             closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
                             bottomSheetDialog.setCancelable(false);
@@ -884,11 +821,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         appUpdaterUtils.start();
     }
 
-    private void firstTimeInstall() {
-        Timber.tag("May be 1st Update:").d("OR deleted from folder");
-        downloadAndInstall();
-    }
-
     public void releasePlayer() {
         if (player != null) {
             playBackPosition = player.getCurrentPosition();
@@ -897,125 +829,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             player.release();
             mAudioManager.abandonAudioFocus(afChangeListener);
         }
-    }
-
-    private void deleteAndInstall() {
-        if (isDeleted) {
-            Timber.tag("Deleted Existed file:").d(String.valueOf(true));
-            downloadAndInstall();
-
-        } else {
-            Timber.tag("NOT DELETED:").d(String.valueOf(false));
-            Toast.makeText(this, "Error in Updating... Please try Later", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void downloadAndInstall() {
-        String downloadLink;
-        if (com.gigabytedevelopersinc.apps.sonshub.BuildConfig.DEBUG) {
-            downloadLink = "https://www.gigabytedevelopersinc.com/apps/sonshub/updater/debug/sonshub_mobile.apk";
-        } else {
-            downloadLink = "https://www.gigabytedevelopersinc.com/apps/sonshub/updater/release/sonshub_mobile.apk";
-        }
-        final String rootFolder = Environment.getExternalStorageDirectory() + "/SonsHub/" + "AppUpdate/";
-
-        BottomSheetDialog updateDownloadBottomSheet = new BottomSheetDialog(MainActivity.this);
-        final View updateDownloadView = LayoutInflater.from(MainActivity.this).inflate(R.layout.update_download_bottom_sheet, null);
-        TextView updateDownloadTitle = updateDownloadView.findViewById(R.id.update_downloading_title);
-        ProgressBar downloadProgress = updateDownloadView.findViewById(R.id.updateProgressBar);
-        TextView downloadProgressText = updateDownloadView.findViewById(R.id.updateViewProgress);
-        Button cancelButton = updateDownloadView.findViewById(R.id.cancelButton);
-        Button pauseButton = updateDownloadView.findViewById(R.id.pauseButton);
-        pauseButton.setOnClickListener(v -> {
-            if (Status.RUNNING == PRDownloader.getStatus(downloadId)) {
-                PRDownloader.pause(downloadId);
-                return;
-            }
-            pauseButton.setEnabled(false);
-            downloadProgress.setIndeterminate(true);
-            downloadProgress.getIndeterminateDrawable().setColorFilter(
-                    Color.parseColor("#9C27B0"), android.graphics.PorterDuff.Mode.SRC_IN);
-
-            if (Status.PAUSED == PRDownloader.getStatus(downloadId)) {
-                PRDownloader.resume(downloadId);
-                return;
-            }
-        });
-        cancelButton.setOnClickListener(v -> {
-            PRDownloader.cancel(downloadId);
-        });
-        updateDownloadBottomSheet.setCancelable(false);
-        updateDownloadBottomSheet.setContentView(updateDownloadView);
-        updateDownloadBottomSheet.show();
-
-        downloadId = PRDownloader.download(downloadLink, rootFolder, "sonshub_mobile.apk")
-                .build()
-                .setOnStartOrResumeListener(new OnStartOrResumeListener() {
-                    @Override
-                    public void onStartOrResume() {
-                        downloadProgress.setIndeterminate(false);
-                        pauseButton.setEnabled(true);
-                        pauseButton.setText(R.string.pause);
-                        cancelButton.setEnabled(true);
-                    }
-                })
-                .setOnPauseListener(new OnPauseListener() {
-                    @Override
-                    public void onPause() {
-                        pauseButton.setText(R.string.resume);
-                    }
-                })
-                .setOnCancelListener(new OnCancelListener() {
-                    @Override
-                    public void onCancel() {
-                        Toast.makeText(getContext(), R.string.message_download_canceled, Toast.LENGTH_LONG).show();
-                        downloadProgress.setProgress(0);
-                        downloadProgressText.setText("");
-                        downloadId = 0;
-                        downloadProgress.setIndeterminate(false);
-                        updateDownloadBottomSheet.dismiss();
-                    }
-                })
-                .setOnProgressListener(new OnProgressListener() {
-                    @Override
-                    public void onProgress(Progress progress) {
-                        long progressPercent = progress.currentBytes * 100 / progress.totalBytes;
-                        downloadProgress.setProgress((int) progressPercent);
-                        downloadProgressText.setText(DownloadUtils.getProgressDisplayLine(progress.currentBytes, progress.totalBytes));
-                        downloadProgress.setIndeterminate(false);
-                    }
-                })
-                .start(new OnDownloadListener() {
-                    @Override
-                    public void onDownloadComplete() {
-                        Toast.makeText(getContext(), R.string.message_download_completed, Toast.LENGTH_LONG).show();
-                        updateDownloadBottomSheet.dismiss();
-                        installApk(new File(rootFolder + "/" + "sonshub_mobile.apk"), MainActivity.this);
-                    }
-
-                    @Override
-                    public void onError(com.downloader.Error error) {
-                        updateDownloadBottomSheet.dismiss();
-                        Toast.makeText(getContext(), R.string.message_download_failed, Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
-    private static void installApk(File file, Context context) {
-        String type = "application/vnd.android.package-archive";
-
-
-        Uri uri = FileProvider.getUriForFile(context.getApplicationContext(), context.getApplicationContext().getPackageName() + ".provider", file);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            uri = Uri.fromFile(file);
-        }
-
-        Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-        intent.setDataAndType(uri, type);
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        context.startActivity(intent);
     }
 
     public static synchronized MainActivity getInstance() {

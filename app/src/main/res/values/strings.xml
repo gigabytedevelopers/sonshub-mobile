@@ -89,7 +89,6 @@
     <string name="custom_notify_channel">customNotificationChannel</string>
     <string name="back_button">Go Back</string>
     <string name="update_play_store">Update from Google PlayStore</string>
-    <string name="update_server">Update Locally from Our Server</string>
     <string name="toast_success_new_version">New version update found!</string>
     <string name="snackBar_update_check_cancel">OK, We would inform you when a new version update is available!</string>
     <string name="update_check_title">Check for Update</string>
