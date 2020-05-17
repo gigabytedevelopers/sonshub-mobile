@@ -33,7 +33,6 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicM
 import com.gigabytedevelopersinc.apps.sonshub.services.notification.SonsHubDownloadNotificationManager;
 import com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Data;
-import com.gigabytedevelopersinc.apps.sonshub.utils.misc.IndividualUser;
 import com.github.javiersantos.appupdater.AppUpdater;
 import com.github.javiersantos.appupdater.AppUpdaterUtils;
 import com.github.javiersantos.appupdater.enums.AppUpdaterError;

@@ -29,7 +29,6 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.viewmodels.ViewMo
 import com.gigabytedevelopersinc.apps.sonshub.services.notification.MyFirebaseMessagingService;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.AnalyticsManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.database.FirebaseDatabase;
 
 import kotlin.collections.MapsKt;
 import kotlin.jvm.functions.Function1;
@@ -59,7 +58,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
         super.onCreate();
         sContext = getApplicationContext();
         sInstance = this;
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         registerActivityLifecycleCallbacks(sInstance);
 
         if (!BuildConfig.DEBUG) {
