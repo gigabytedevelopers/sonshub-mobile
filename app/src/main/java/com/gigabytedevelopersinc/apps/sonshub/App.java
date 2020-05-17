@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.os.SystemClock;
+
 import com.gigabytedevelopersinc.apps.sonshub.Repository.RepositoriesModuleKt;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Fetch;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.FetchConfiguration;
@@ -60,6 +61,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
         sInstance = this;
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         registerActivityLifecycleCallbacks(sInstance);
+
         if (!BuildConfig.DEBUG) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
