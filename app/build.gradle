@@ -18,6 +18,7 @@ android {
             outputFileName = "SonsHub-${variant.name}-${variant.versionName}.apk"
         }
     }
+
     defaultConfig {
         applicationId "com.gigabytedevelopersinc.apps.sonshub"
         minSdkVersion 19
@@ -28,6 +29,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
+
     signingConfigs {
         release {
             storeFile file(keystoreProperties['storeFile'])
@@ -36,23 +38,40 @@ android {
             keyPassword keystoreProperties['keyPassword']
         }
     }
+
     buildTypes {
         release {
 		signingConfig signingConfigs.release
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            manifestPlaceholders = [appNameSuffix: ""]
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            versionNameSuffix "-debug"
+            minifyEnabled false
+            applicationIdSuffix '.dev'
+            manifestPlaceholders = [appNameSuffix: " Dev"]
+            debuggable true
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            multiDexEnabled = true
+        }
     }
+
     dataBinding {
         enabled = true
     }
+
     androidExtensions {
         experimental = true
     }
+
     lintOptions {
         abortOnError false
         disable 'MissingTranslation'
     }
+
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8
@@ -149,6 +168,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.3'
 }
+
 configurations {
     implementation.exclude group: "com.android.support", module: "customtabs"
     implementation.exclude group: "com.google.firebase", module: "firebase-measurement-connector-impl"
