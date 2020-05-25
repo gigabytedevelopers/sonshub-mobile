@@ -99,6 +99,7 @@ abstract class SonsHubDownloadNotificationManager(context: Context) : FetchNotif
             .setContentTitle(context.getString(com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.R.string.fetch_notification_default_channel_name))
             .setContentText("")
             .setStyle(style)
+            .setOnlyAlertOnce(true)
             .setGroup(groupId.toString())
             .setGroupSummary(true)
         return false
@@ -316,6 +317,7 @@ abstract class SonsHubDownloadNotificationManager(context: Context) : FetchNotif
                 .setTimeoutAfter(DEFAULT_NOTIFICATION_TIMEOUT_AFTER_RESET)
                 .setOngoing(false)
                 .setGroup(groupId.toString())
+                .setOnlyAlertOnce(true)
                 .setSmallIcon(R.drawable.ic_file_download)
                 .mActions.clear()
             return notificationBuilder
