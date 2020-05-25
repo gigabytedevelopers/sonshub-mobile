@@ -1,9 +1,10 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+
+apply plugin: 'com.google.firebase.crashlytics'
 
 // Load keystore
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -151,6 +152,5 @@ dependencies {
 configurations {
     implementation.exclude group: "com.android.support", module: "customtabs"
     implementation.exclude group: "com.google.firebase", module: "firebase-measurement-connector-impl"
-    // -Pdisable-performance-plugin
 }
 apply plugin: 'com.google.gms.google-services'
