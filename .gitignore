@@ -24,7 +24,6 @@ out/
 build/
 
 # Local config files
-crowdin.properties
 local.properties
 keystore.properties
 assetlinks.json
@@ -65,7 +64,7 @@ captures/
 .cxx/
 
 # Google Services (e.g. APIs or Firebase)
-*.json
+google-services.json
 
 # Version control
 vcs.xml
