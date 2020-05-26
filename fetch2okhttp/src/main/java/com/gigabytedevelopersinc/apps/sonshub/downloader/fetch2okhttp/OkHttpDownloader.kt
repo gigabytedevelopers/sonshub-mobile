@@ -106,7 +106,7 @@ open class OkHttpDownloader @JvmOverloads constructor(
             code = okHttpResponse.code()
         }
         val success = okHttpResponse.isSuccessful
-        var contentLength = getContentLengthFromHeader(responseHeaders, -1)
+        val contentLength = getContentLengthFromHeader(responseHeaders, -1L)
         val byteStream: InputStream? = okHttpResponse.body()?.byteStream()
         val errorResponseString: String? = if (!success) {
             copyStreamToString(byteStream, false)
@@ -115,10 +115,6 @@ open class OkHttpDownloader @JvmOverloads constructor(
         }
 
         val hash = getContentHash(responseHeaders)
-
-        if (contentLength < 1) {
-            contentLength = responseHeaders["content-length"]?.firstOrNull()?.toLong() ?: -1L
-        }
 
         val acceptsRanges = code == HttpURLConnection.HTTP_PARTIAL ||
                 responseHeaders["accept-ranges"]?.firstOrNull() == "bytes"
