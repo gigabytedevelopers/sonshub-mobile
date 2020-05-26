@@ -13,6 +13,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 import timber.log.Timber;
@@ -30,7 +32,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private NotificationUtil notificationUtils;
 
     @Override
-    public void onNewToken(String token) {
+    public void onNewToken(@NotNull String token) {
         super.onNewToken(token);
         /*Timber.tag("NEW_TOKEN").e(token);
         Timber.tag("Refreshed token:").e(token);
