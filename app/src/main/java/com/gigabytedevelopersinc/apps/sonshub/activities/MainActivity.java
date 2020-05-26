@@ -60,6 +60,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.gigabytedevelopersinc.apps.sonshub.R;
@@ -277,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onToggleChanged(boolean isOpen) {
-                //Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
+                Timber.tag(TAG).d("Speed dial toggle state changed. Open = %s", isOpen);
             }
         });
 

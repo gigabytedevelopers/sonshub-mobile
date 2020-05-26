@@ -9,6 +9,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.IOException;
 
+import timber.log.Timber;
+
 /**
  * @author Created by Emmanuel Nwokoma (Founder and CEO at Gigabyte Developers) on 12/29/2018
  **/
@@ -33,6 +35,6 @@ public class RegistrationService extends IntentService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.e("Registration Token", registrationToken);
+        Timber.tag("Registration Token").e(registrationToken);
     }
 }

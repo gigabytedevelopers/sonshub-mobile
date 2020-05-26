@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.crashlytics.android.Crashlytics;
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
@@ -19,7 +18,6 @@ import org.json.JSONObject;
 import timber.log.Timber;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import static com.gigabytedevelopersinc.apps.sonshub.utils.misc.Configs.TOPIC_GLOBAL;
 
@@ -34,8 +32,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String token) {
         super.onNewToken(token);
-        Timber.tag("NEW_TOKEN").e(token);
-        /*Log.e("Refreshed token:",token);
+        /*Timber.tag("NEW_TOKEN").e(token);
+        Timber.tag("Refreshed token:").e(token);
         String refreshedToken = Objects.requireNonNull(FirebaseInstanceId.getInstance().getInstanceId().getResult()).getToken();
 
         // Saving reg id to shared preferences
