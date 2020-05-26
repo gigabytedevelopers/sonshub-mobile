@@ -42,9 +42,6 @@ import java.util.concurrent.TimeUnit
 
 class App : Application(), Application.ActivityLifecycleCallbacks {
 
-    private var context: Context? = null
-    private var instance: App? = null
-
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
