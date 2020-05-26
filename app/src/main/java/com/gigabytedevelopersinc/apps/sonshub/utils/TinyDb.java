@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
+import timber.log.Timber;
+
 public class TinyDb {
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;
@@ -103,7 +105,7 @@ public class TinyDb {
 
         if (isExternalStorageReadable() && isExternalStorageWritable() && !mFolder.exists()) {
             if (!mFolder.mkdirs()) {
-                Log.e("ERROR", "Failed to setup folder");
+                Timber.tag("TinyDB ERROR").e("Failed to setup folder");
                 return "";
             }
         }
