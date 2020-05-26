@@ -3,6 +3,7 @@ package com.gigabytedevelopersinc.apps.sonshub.players.music.network.conversion
 import java.lang.reflect.Type
 
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Converter
@@ -47,6 +48,6 @@ class LyricsConverterFactory : Converter.Factory() {
     }
 
     companion object {
-        private val MEDIA_TYPE = MediaType.parse("text/plain")
+        private val MEDIA_TYPE = "text/plain".toMediaTypeOrNull()
     }
 }
