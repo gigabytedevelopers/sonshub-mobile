@@ -27,6 +27,7 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.listeners.SortMen
 import com.gigabytedevelopersinc.apps.sonshub.players.music.util.SpacesItemDecoration
 import kotlinx.android.synthetic.main.music_layout_recyclerview_padding.recyclerView
 import org.koin.android.ext.android.inject
+import org.koin.core.qualifier.named
 
 /**
  * Project - SonsHub
@@ -44,7 +45,7 @@ import org.koin.android.ext.android.inject
 
 class AlbumsFragment : MediaItemFragment() {
     private lateinit var albumAdapter: AlbumAdapter
-    private val sortOrderPref by inject<Pref<AlbumSortOrder>>(name = PREF_ALBUM_SORT_ORDER)
+    private val sortOrderPref by inject<Pref<AlbumSortOrder>>(named(PREF_ALBUM_SORT_ORDER))
 
     override fun onCreateView(
         inflater: LayoutInflater,

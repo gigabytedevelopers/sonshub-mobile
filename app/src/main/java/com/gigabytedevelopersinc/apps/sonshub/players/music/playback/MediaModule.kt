@@ -6,7 +6,8 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.players.Rea
 import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.players.RealQueue
 import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.players.RealSongPlayer
 import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.players.SongPlayer
-import org.koin.dsl.module.module
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
 /**
  * Project - SonsHub

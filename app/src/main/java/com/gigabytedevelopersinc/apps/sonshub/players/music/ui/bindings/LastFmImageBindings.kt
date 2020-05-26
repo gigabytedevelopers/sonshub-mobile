@@ -23,7 +23,7 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.network.models.Artwo
 import com.gigabytedevelopersinc.apps.sonshub.players.music.network.models.ArtworkSize.MEGA
 import com.gigabytedevelopersinc.apps.sonshub.players.music.network.models.ofSize
 import com.gigabytedevelopersinc.apps.sonshub.players.music.util.Utils.getAlbumArtUri
-import org.koin.standalone.StandAloneContext
+import org.koin.core.context.GlobalContext
 import timber.log.Timber
 
 /**
@@ -163,8 +163,7 @@ private fun fetchArtistImage(
     artworkSize: ArtworkSize,
     callback: (url: String) -> Unit
 ) {
-    val lastFmService = StandAloneContext.getKoin()
-            .koinContext.get<LastFmRestService>()
+    val lastFmService = GlobalContext.get().koin.get<LastFmRestService>()
     lastFmService.getArtistInfo(artistName)
             .ioToMain()
             .subscribeForOutcome { outcome ->
@@ -190,8 +189,7 @@ private fun fetchAlbumImage(
     artworkSize: ArtworkSize,
     callback: (url: String) -> Unit
 ) {
-    val lastFmService = StandAloneContext.getKoin()
-            .koinContext.get<LastFmRestService>()
+    val lastFmService = GlobalContext.get().koin.get<LastFmRestService>()
     lastFmService.getAlbumInfo(artistName, albumName)
             .ioToMain()
             .subscribeForOutcome { outcome ->

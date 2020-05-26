@@ -29,6 +29,7 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.fragments.base.Me
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.listeners.SortMenuListener
 import kotlinx.android.synthetic.main.music_layout_recyclerview.recyclerView
 import org.koin.android.ext.android.inject
+import org.koin.core.qualifier.named
 
 /**
  * Project - SonsHub
@@ -46,7 +47,7 @@ import org.koin.android.ext.android.inject
 
 class SongsFragment : MediaItemFragment() {
     private lateinit var songsAdapter: SongsAdapter
-    private val sortOrderPref by inject<Pref<SongSortOrder>>(name = PREF_SONG_SORT_ORDER)
+    private val sortOrderPref by inject<Pref<SongSortOrder>>(named(PREF_SONG_SORT_ORDER))
 
     override fun onCreateView(
         inflater: LayoutInflater,

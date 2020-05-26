@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.EUICC_SERVICE;
-import static com.gigabytedevelopersinc.apps.sonshub.App.getContext;
+import static com.gigabytedevelopersinc.apps.sonshub.App.Companion.*;
 
 /**
  * Project - SonsHub

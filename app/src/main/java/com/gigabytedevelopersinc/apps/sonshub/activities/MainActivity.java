@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static Fetch fetch;
     private DownloadingFragment downloadingFragment;
     public static DownloadFileAdapter fileAdapter;
-    private static Context appContext = App.getContext();
+    private static Context appContext = App.Companion.getContext();
     private static final String FETCH_NAMESPACE = "Downloading";
     private static final long UNKNOWN_REMAINING_TIME = -1;
     private static final long UNKNOWN_DOWNLOADED_BYTES_PER_SECOND = 0;

@@ -6,7 +6,10 @@ import android.content.ContentResolver
 import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.MediaSessionConnection
 import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.RealMediaSessionConnection
 import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService
-import org.koin.dsl.module.module
+import io.reactivex.android.schedulers.AndroidSchedulers
+import org.koin.core.qualifier.named
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
 /**
  * Project - SonsHub
@@ -22,6 +25,8 @@ import org.koin.dsl.module.module
  * Desc: MainModule
  **/
 
+const val MAIN = "main"
+
 val mainModule = module {
 
     factory<ContentResolver> {
@@ -32,4 +37,8 @@ val mainModule = module {
         val component = ComponentName(get(), TimberMusicService::class.java)
         RealMediaSessionConnection(get(), component)
     } bind MediaSessionConnection::class
+
+    factory(named(MAIN)) {
+        AndroidSchedulers.mainThread()
+    }
 }

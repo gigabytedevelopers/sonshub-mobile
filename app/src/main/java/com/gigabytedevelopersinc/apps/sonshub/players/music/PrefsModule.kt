@@ -11,7 +11,8 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.SongSortOr
 import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.SongSortOrder.SONG_A_Z
 import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.StartPage
 import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.StartPage.SONGS
-import org.koin.dsl.module.module
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
 /**
  * Project - SonsHub
@@ -35,22 +36,22 @@ const val PREF_LAST_FOLDER = "last_folder"
 val prefsModule = module {
     single { rxkPrefs(get<Application>()) }
 
-    factory(name = PREF_SONG_SORT_ORDER) {
+    factory(named(PREF_SONG_SORT_ORDER)) {
         get<RxkPrefs>().enum(PREF_SONG_SORT_ORDER, SONG_A_Z,
                 SongSortOrder.Companion::fromString, SongSortOrder.Companion::toString)
     }
 
-    factory(name = PREF_ALBUM_SORT_ORDER) {
+    factory(named(PREF_ALBUM_SORT_ORDER)) {
         get<RxkPrefs>().enum(PREF_ALBUM_SORT_ORDER, ALBUM_A_Z,
                 AlbumSortOrder.Companion::fromString, AlbumSortOrder.Companion::toString)
     }
 
-    factory(name = PREF_START_PAGE) {
+    factory(named(PREF_START_PAGE)) {
         get<RxkPrefs>().enum(PREF_START_PAGE, SONGS,
                 StartPage.Companion::fromString, StartPage.Companion::toString)
     }
 
-    factory(name = PREF_LAST_FOLDER) {
+    factory(named(PREF_LAST_FOLDER)) {
         val defaultFolder = getExternalStoragePublicDirectory(DIRECTORY_MUSIC).path
         get<RxkPrefs>().string(PREF_LAST_FOLDER, defaultFolder)
     }

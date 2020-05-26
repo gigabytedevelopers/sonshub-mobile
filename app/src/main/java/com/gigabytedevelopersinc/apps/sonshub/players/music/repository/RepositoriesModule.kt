@@ -2,7 +2,9 @@ package com.gigabytedevelopersinc.apps.sonshub.Repository
 
 import com.gigabytedevelopersinc.apps.sonshub.players.music.PREF_ALBUM_SORT_ORDER
 import com.gigabytedevelopersinc.apps.sonshub.players.music.PREF_SONG_SORT_ORDER
-import org.koin.dsl.module.module
+import org.koin.core.qualifier.named
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
 /**
  * Project - SonsHub
@@ -21,11 +23,11 @@ import org.koin.dsl.module.module
 val repositoriesModule = module {
 
     factory {
-        RealSongsRepository(get(), get(name = PREF_SONG_SORT_ORDER))
+        RealSongsRepository(get(), get(named(PREF_SONG_SORT_ORDER)))
     } bind SongsRepository::class
 
     factory {
-        RealAlbumRepository(get(), get(name = PREF_ALBUM_SORT_ORDER))
+        RealAlbumRepository(get(), get(named(PREF_ALBUM_SORT_ORDER)))
     } bind AlbumRepository::class
 
     factory {

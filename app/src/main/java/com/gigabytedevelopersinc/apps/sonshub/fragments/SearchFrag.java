@@ -61,7 +61,7 @@ public class SearchFrag extends Fragment {
     private Pattern pattern;
     private Matcher matcher;
     private String webSearch;
-    private static Context appContext = App.getContext();
+    private static Context appContext = App.Companion.getContext();
 
 
     public SearchFrag() {

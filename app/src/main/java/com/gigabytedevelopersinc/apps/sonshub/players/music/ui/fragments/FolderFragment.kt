@@ -17,6 +17,7 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.adapters.FolderAd
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.fragments.base.MediaItemFragment
 import kotlinx.android.synthetic.main.music_layout_recyclerview_padding.recyclerView
 import org.koin.android.ext.android.inject
+import org.koin.core.qualifier.named
 
 /**
  * Project - SonsHub
@@ -37,7 +38,7 @@ class FolderFragment : MediaItemFragment() {
 
     private val songsRepository by inject<SongsRepository>()
     private val foldersRepository by inject<FoldersRepository>()
-    private val lastFolderPref by inject<Pref<String>>(name = PREF_LAST_FOLDER)
+    private val lastFolderPref by inject<Pref<String>>(named(PREF_LAST_FOLDER))
 
     override fun onCreateView(
         inflater: LayoutInflater,
