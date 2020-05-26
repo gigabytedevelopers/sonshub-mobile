@@ -2,7 +2,6 @@ package com.gigabytedevelopersinc.apps.sonshub.services.notification;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Configs;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;

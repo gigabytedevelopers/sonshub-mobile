@@ -60,7 +60,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.gigabytedevelopersinc.apps.sonshub.R;

@@ -2,11 +2,9 @@ package com.gigabytedevelopersinc.apps.sonshub.utils.misc;
 
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Priority;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Request;
-import com.gigabytedevelopersinc.apps.sonshub.utils.DownloadUtils;
 import timber.log.Timber;
 
 import java.io.*;

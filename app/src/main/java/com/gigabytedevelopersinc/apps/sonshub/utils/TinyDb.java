@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 import com.google.gson.Gson;
 
 import java.io.File;

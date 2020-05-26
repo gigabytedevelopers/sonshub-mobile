@@ -6,7 +6,6 @@ import android.os.Bundle;
 import com.gigabytedevelopersinc.apps.sonshub.BuildConfig;
 import com.gigabytedevelopersinc.apps.sonshub.utils.LogUtils;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import org.jetbrains.annotations.Contract;
 
 /**
  * @author Created by Emmanuel Nwokoma (Founder and CEO at Gigabyte Developers) on 12/15/2018
