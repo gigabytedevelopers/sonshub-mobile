@@ -28,28 +28,24 @@ public class LogUtils {
     }
 
     public static void LOGD(final String tag, String message) {
-        // noinspection PointlessBooleanExpression,ConstantConditions
         if (BuildConfig.DEBUG || Log.isLoggable(tag, Log.DEBUG)) {
             Timber.tag(tag).d(message);
         }
     }
 
     public static void LOGD(final String tag, String message, Throwable cause) {
-        // noinspection PointlessBooleanExpression,ConstantConditions
         if (BuildConfig.DEBUG || Log.isLoggable(tag, Log.DEBUG)) {
             Timber.tag(tag).d(cause, message);
         }
     }
 
     public static void LOGV(final String tag, String message) {
-        // noinspection PointlessBooleanExpression,ConstantConditions
         if (BuildConfig.DEBUG && Log.isLoggable(tag, Log.VERBOSE)) {
             Timber.tag(tag).v(message);
         }
     }
 
     public static void LOGV(final String tag, String message, Throwable cause) {
-        // noinspection PointlessBooleanExpression,ConstantConditions
         if (BuildConfig.DEBUG && Log.isLoggable(tag, Log.VERBOSE)) {
             Timber.tag(tag).v(cause, message);
         }
