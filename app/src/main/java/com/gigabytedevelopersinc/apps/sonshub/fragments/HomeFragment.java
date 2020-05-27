@@ -307,8 +307,6 @@ public class HomeFragment extends Fragment {
                         // initialize SliderLayout
                         sliderView
                                 .image(list.get(j))
-                                .setRequestOption(requestOptions)
-                                .setRequestOption(requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL))
                                 .setProgressBarVisible(true)
                                 .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                                     @Override
