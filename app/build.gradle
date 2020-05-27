@@ -94,7 +94,7 @@ dependencies {
     implementation "androidx.browser:browser:1.2.0"
     implementation 'com.google.firebase:firebase-core:17.4.2'
     implementation 'com.google.firebase:firebase-messaging:20.2.0'
-    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'jp.wasabeef:glide-transformations:3.1.1'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.ogaclejapan.smarttablayout:library:2.0.0@aar'
@@ -113,7 +113,7 @@ dependencies {
     implementation "com.github.firdausmaulan:GlideSlider:$glide_slider_version"
     implementation "com.leinardi.android:speed-dial:3.1.1"
     implementation 'saschpe.android:customtabs:2.0.0'
-    kapt 'com.github.bumptech.glide:compiler:4.8.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
