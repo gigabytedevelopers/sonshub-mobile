@@ -126,8 +126,8 @@ class MusicMainActivity : AppCompatActivity(), DeleteSongDialog.OnSongDeleted {
             replaceFragment(fragment = MainFragment())
             Handler().postDelayed({
                 replaceFragment(
-                        R.id.bottomControlsContainer,
-                        BottomControlsFragment()
+                    R.id.bottomControlsContainer,
+                    BottomControlsFragment()
                 )
             }, 150)
 
@@ -136,9 +136,9 @@ class MusicMainActivity : AppCompatActivity(), DeleteSongDialog.OnSongDeleted {
         }
 
         viewModel.navigateToMediaItem
-                .map { it.getContentIfNotHandled() }
-                .filter { it != null }
-                .observe(this) { navigateToMediaItem(it!!) }
+            .map { it.getContentIfNotHandled() }
+            .filter { it != null }
+            .observe(this) { navigateToMediaItem(it!!) }
 
         binding?.let {
             it.viewModel = viewModel
@@ -157,9 +157,9 @@ class MusicMainActivity : AppCompatActivity(), DeleteSongDialog.OnSongDeleted {
         if (getBrowseFragment(mediaId) == null) {
             val fragment = MediaItemFragment.newInstance(mediaId)
             addFragment(
-                    fragment = fragment,
-                    tag = mediaId.type,
-                    addToBackStack = !isRootId(mediaId)
+                fragment = fragment,
+                tag = mediaId.type,
+                addToBackStack = !isRootId(mediaId)
             )
         }
     }

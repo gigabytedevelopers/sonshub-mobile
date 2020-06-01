@@ -46,21 +46,13 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         super.onCreate()
         context = applicationContext
         instance = this
+        disableDeathOnFileUriExposure()
         registerActivityLifecycleCallbacks(instance)
         if (!BuildConfig.DEBUG) {
             val builder = VmPolicy.Builder()
             StrictMode.setVmPolicy(builder.build())
             // Enables Crash, Error Reporting for detailed, well structured Error messages on Firebase Console
             Timber.plant(FabricTree())
-            if (Build.VERSION.SDK_INT >= 24) {
-                try {
-                    val m =
-                        StrictMode::class.java.getMethod(resources.getString(R.string.runtimeStrictMode))
-                    m.invoke(null)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
             // Initialize User Analytics to track usage events within SonsHub Mobile
             AnalyticsManager.initialize(context)
             AnalyticsManager.logEvent(FirebaseAnalytics.Event.APP_OPEN)
@@ -100,6 +92,18 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
                 .build()
         setDefaultInstanceConfiguration(fetchConfiguration)
         setDefaultRxInstanceConfiguration(fetchConfiguration)
+    }
+
+    private fun disableDeathOnFileUriExposure() {
+        if (Build.VERSION.SDK_INT >= 24) {
+            try {
+                val m =
+                    StrictMode::class.java.getMethod(resources.getString(R.string.runtimeStrictMode))
+                m.invoke(null)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private val okHttpDownloader: OkHttpDownloader
