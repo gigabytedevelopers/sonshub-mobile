@@ -43,10 +43,13 @@ import static com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity.fet
  **/
 public class DownloadingFragment extends Fragment implements ActionListener {
 
+    private static Context appContext = App.Companion.getContext();
     private static final int GROUP_ID = "listGroup".hashCode();
+    private static final long UNKNOWN_REMAINING_TIME = -1;
+    private static final long UNKNOWN_DOWNLOADED_BYTES_PER_SECOND = 0;
 
     public static RecyclerView recyclerView;
-    private DownloadFileAdapter fileAdapter;
+    public static DownloadFileAdapter fileAdapter;
 
     public DownloadingFragment() {
         // Required empty public constructor
@@ -106,14 +109,85 @@ public class DownloadingFragment extends Fragment implements ActionListener {
         fetch.retry(id);
     }
 
+    public static void scanFile(Context ctxt, String x, String mimeType) {
+        MediaScannerConnection.scanFile(ctxt, new String[] {x}, new String[] {mimeType}, null);
+    }
+
+    public static final FetchListener fetchListener = new AbstractFetchListener() {
+        @Override
+        public void onAdded(@NotNull Download download) {
+            fileAdapter.addDownload(download);
+        }
+
+        @Override
+        public void onQueued(@NotNull Download download, boolean waitingOnNetwork) {
+            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
+        }
+
+        @Override
+        public void onCompleted(@NotNull Download download) {
+            File file = new File(download.getFile());
+            String fileName = file.getName();
+            if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) {
+                String fileExtension = fileName.substring(fileName.lastIndexOf(".")+1);
+                scanFile(appContext, download.getFile(), fileExtension);
+            }
+            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
+        }
+
+        @Override
+        public void onError(@NotNull Download download, @NotNull Error error, @Nullable Throwable throwable) {
+            super.onError(download, error, throwable);
+            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
+        }
+
+        @Override
+        public void onProgress(@NotNull Download download, long etaInMilliseconds, long downloadedBytesPerSecond) {
+            fileAdapter.update(download, etaInMilliseconds, downloadedBytesPerSecond);
+        }
+
+        @Override
+        public void onPaused(@NotNull Download download) {
+            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
+        }
+
+        @Override
+        public void onResumed(@NotNull Download download) {
+            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
+        }
+
+        @Override
+        public void onCancelled(@NotNull Download download) {
+            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
+        }
+
+        @Override
+        public void onRemoved(@NotNull Download download) {
+            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
+        }
+
+        @Override
+        public void onDeleted(@NotNull Download download) {
+            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
+        }
+    };
+
     @Override
     public void onResume() {
         super.onResume();
+        fetch.getDownloadsInGroup(GROUP_ID, downloads -> {
+            final ArrayList<Download> list = new ArrayList<>(downloads);
+            Collections.sort(list, (first, second) -> Long.compare(first.getCreated(), second.getCreated()));
+            for (Download download : list) {
+                fileAdapter.addDownload(download);
+            }
+        }).addListener(fetchListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        fetch.removeListener(fetchListener);
     }
 
     @Override

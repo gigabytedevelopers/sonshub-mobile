@@ -127,12 +127,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // Downloader
     public static Fetch fetch;
-    private DownloadingFragment downloadingFragment;
-    public static DownloadFileAdapter fileAdapter;
     private static Context appContext = App.Companion.getContext();
     private static final String FETCH_NAMESPACE = "Downloading";
-    private static final long UNKNOWN_REMAINING_TIME = -1;
-    private static final long UNKNOWN_DOWNLOADED_BYTES_PER_SECOND = 0;
     private static final int GROUP_ID = "listGroup".hashCode();
 
     @SuppressLint({"InflateParams", "HardwareIds"})
@@ -141,8 +137,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        fileAdapter = new DownloadFileAdapter(downloadingFragment);
-
         TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(
                 new DefaultBandwidthMeter()
         );
@@ -1184,80 +1178,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bottomSheetDialog.show();
     }
 
-    public void scanFile(Context ctxt, String x, String mimeType) {
-        MediaScannerConnection.scanFile(ctxt, new String[] {x}, new String[] {mimeType}, null);
-    }
-
-    private final FetchListener fetchListener = new AbstractFetchListener() {
-        @Override
-        public void onAdded(@NotNull Download download) {
-            fileAdapter.addDownload(download);
-        }
-
-        @Override
-        public void onQueued(@NotNull Download download, boolean waitingOnNetwork) {
-            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
-        }
-
-        @Override
-        public void onCompleted(@NotNull Download download) {
-            File file = new File(download.getFile());
-            String fileName = file.getName();
-            if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) {
-                String fileExtension = fileName.substring(fileName.lastIndexOf(".")+1);
-                scanFile(appContext, download.getFile(), fileExtension);
-            }
-            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
-        }
-
-        @Override
-        public void onError(@NotNull Download download, @NotNull Error error, @Nullable Throwable throwable) {
-            super.onError(download, error, throwable);
-            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
-        }
-
-        @Override
-        public void onProgress(@NotNull Download download, long etaInMilliseconds, long downloadedBytesPerSecond) {
-            fileAdapter.update(download, etaInMilliseconds, downloadedBytesPerSecond);
-        }
-
-        @Override
-        public void onPaused(@NotNull Download download) {
-            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
-        }
-
-        @Override
-        public void onResumed(@NotNull Download download) {
-            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
-        }
-
-        @Override
-        public void onCancelled(@NotNull Download download) {
-            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
-        }
-
-        @Override
-        public void onRemoved(@NotNull Download download) {
-            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
-        }
-
-        @Override
-        public void onDeleted(@NotNull Download download) {
-            fileAdapter.update(download, UNKNOWN_REMAINING_TIME, UNKNOWN_DOWNLOADED_BYTES_PER_SECOND);
-        }
-    };
-
     @Override
     protected void onResume() {
         super.onResume();
-        fetch.getDownloadsInGroup(GROUP_ID, downloads -> {
-            final ArrayList<Download> list = new ArrayList<>(downloads);
-            Collections.sort(list, (first, second) -> Long.compare(first.getCreated(), second.getCreated()));
-            for (Download download : list) {
-                fileAdapter.addDownload(download);
-            }
-        }).addListener(fetchListener);
-
         // register GCM registration complete receiver
         LocalBroadcastManager.getInstance(this).registerReceiver(sonshubNotificaticationBroadcastReceiver,
                 new IntentFilter(Configs.REGISTRATION_COMPLETE));
@@ -1275,7 +1198,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(sonshubNotificaticationBroadcastReceiver);
         super.onPause();
-        fetch.removeListener(fetchListener);
     }
 
     @Override
