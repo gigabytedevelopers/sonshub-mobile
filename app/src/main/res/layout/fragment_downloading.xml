@@ -13,7 +13,8 @@
         android:layout_marginTop="16dp"
         android:text="@string/wifiOnly"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
 
     <View
         android:layout_width="0dp"
