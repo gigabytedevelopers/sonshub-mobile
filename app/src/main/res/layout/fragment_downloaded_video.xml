@@ -10,6 +10,7 @@
         android:id="@+id/noDownload_videos"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="-48dp"
         android:gravity="center_horizontal|center_vertical"
         android:text="@string/no_downloaded_videos"
         android:visibility="gone"
