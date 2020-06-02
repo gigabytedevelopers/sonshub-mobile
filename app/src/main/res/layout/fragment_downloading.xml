@@ -19,7 +19,7 @@
         android:id="@+id/noOngoingDownloads"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/no_ongoing_downloads"
+        android:text="@string/no_downloads_yet"
         android:visibility="gone"
         android:gravity="center"
         android:textColor="@color/white"
