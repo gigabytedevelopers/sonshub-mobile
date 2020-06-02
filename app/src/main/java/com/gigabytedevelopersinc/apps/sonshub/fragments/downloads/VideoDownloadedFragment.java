@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.DownloadedAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.models.DownloadedModel;
+import com.gigabytedevelopersinc.apps.sonshub.utils.RecyclerViewEmptyObserver;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -37,6 +39,8 @@ import java.util.List;
  * Desc: VideoDownloadedFragment
  **/
 public class VideoDownloadedFragment extends Fragment {
+
+    public TextView noDownloadedVideos;
     private RecyclerView recyclerViewVideo;
 
     public VideoDownloadedFragment() {
@@ -54,15 +58,10 @@ public class VideoDownloadedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerViewVideo = view.findViewById(R.id.recyclerViewDownloadedVideo);
-        TextView downloadText = view.findViewById(R.id.noDownload_tv);
+        noDownloadedVideos = view.findViewById(R.id.noDownload_videos);
 
         ArrayList<File> totalVideo = getVideoListFiles();
-        if (totalVideo != null){
-            if (totalVideo.size() > 0){
-                downloadText.setVisibility(View.GONE);
-                setVideoListAdapter(parseVideoToFileName(totalVideo));
-            }
-        }
+        setVideoListAdapter(parseVideoToFileName(totalVideo));
     }
 
     // For Downloaded Video Files
@@ -92,8 +91,11 @@ public class VideoDownloadedFragment extends Fragment {
             }
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerViewVideo.setLayoutManager(linearLayoutManager);
+        RecyclerViewEmptyObserver viewEmptyObserver = new RecyclerViewEmptyObserver(recyclerViewVideo, noDownloadedVideos);
+
+        adapter.registerAdapterDataObserver(viewEmptyObserver);
         recyclerViewVideo.setAdapter(adapter);
+        recyclerViewVideo.setLayoutManager(linearLayoutManager);
     }
     private ArrayList<File> getVideoListFiles() {
         File file = new File(

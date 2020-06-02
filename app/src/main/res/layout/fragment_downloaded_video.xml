@@ -8,11 +8,12 @@
     tools:context=".fragments.downloads.VideoDownloadedFragment">
 
     <TextView
-        android:id="@+id/noDownload_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:id="@+id/noDownload_videos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal|center_vertical"
         android:text="@string/no_downloaded_videos"
+        android:visibility="gone"
         android:textColor="@color/grey"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
