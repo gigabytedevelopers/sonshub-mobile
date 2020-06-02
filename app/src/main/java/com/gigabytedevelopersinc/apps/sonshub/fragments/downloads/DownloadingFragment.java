@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
@@ -18,6 +20,7 @@ import com.gigabytedevelopersinc.apps.sonshub.adapters.DownloadFileAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.*;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Error;
 import com.gigabytedevelopersinc.apps.sonshub.utils.ActionListener;
+import com.gigabytedevelopersinc.apps.sonshub.utils.RecyclerViewEmptyObserver;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Data;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,6 +51,7 @@ public class DownloadingFragment extends Fragment implements ActionListener {
     private static final long UNKNOWN_REMAINING_TIME = -1;
     private static final long UNKNOWN_DOWNLOADED_BYTES_PER_SECOND = 0;
 
+    public TextView noOngoingDownloads;
     public static RecyclerView recyclerView;
     public static DownloadFileAdapter fileAdapter;
 
@@ -66,11 +70,17 @@ public class DownloadingFragment extends Fragment implements ActionListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         recyclerView = view.findViewById(R.id.downloadingRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        noOngoingDownloads = view.findViewById(R.id.noOngoingDownloads);
 
         fileAdapter = new DownloadFileAdapter(this);
+        RecyclerViewEmptyObserver viewEmptyObserver = new RecyclerViewEmptyObserver(recyclerView, noOngoingDownloads);
+
+        fileAdapter.registerAdapterDataObserver(viewEmptyObserver);
         recyclerView.setAdapter(fileAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        fileAdapter.notifyDataSetChanged();
 
         final SwitchCompat networkSwitch = view.findViewById(R.id.networkSwitch);
         networkSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
