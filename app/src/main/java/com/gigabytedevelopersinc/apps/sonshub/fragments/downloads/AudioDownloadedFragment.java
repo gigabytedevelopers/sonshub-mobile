@@ -19,6 +19,7 @@ import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.DownloadedAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.models.DownloadedModel;
 import com.gigabytedevelopersinc.apps.sonshub.utils.DownloadUtils;
+import com.gigabytedevelopersinc.apps.sonshub.utils.RecyclerViewEmptyObserver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +42,8 @@ import java.util.Objects;
  * Desc: AudioDownloadedFragment
  **/
 public class AudioDownloadedFragment extends Fragment {
+
+    public TextView noDownloadedSongs;
     private RecyclerView recyclerViewAudio;
 
     public AudioDownloadedFragment() {
@@ -58,13 +61,10 @@ public class AudioDownloadedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerViewAudio = view.findViewById(R.id.recyclerViewDownloadedAudio);
-        TextView downloadText = view.findViewById(R.id.noDownload_tv);
+        noDownloadedSongs = view.findViewById(R.id.noDownload_songs);
 
         ArrayList<File> totalAudio = getAudioListFiles();
-        if (totalAudio.size() > 0) {
-            downloadText.setVisibility(View.GONE);
-            setAudioListAdapter(parseAudioToFileName(totalAudio));
-        }
+        setAudioListAdapter(parseAudioToFileName(totalAudio));
     }
 
     // For Downloaded Audio Files
@@ -118,8 +118,11 @@ public class AudioDownloadedFragment extends Fragment {
             }*/
         });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerViewAudio.setLayoutManager(linearLayoutManager);
+        RecyclerViewEmptyObserver viewEmptyObserver = new RecyclerViewEmptyObserver(recyclerViewAudio, noDownloadedSongs);
+
+        adapter.registerAdapterDataObserver(viewEmptyObserver);
         recyclerViewAudio.setAdapter(adapter);
+        recyclerViewAudio.setLayoutManager(linearLayoutManager);
     }
     private ArrayList<File> getAudioListFiles() {
         File file = new File(
