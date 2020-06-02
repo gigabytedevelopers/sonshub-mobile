@@ -96,6 +96,7 @@ public class VideoDownloadedFragment extends Fragment {
         adapter.registerAdapterDataObserver(viewEmptyObserver);
         recyclerViewVideo.setAdapter(adapter);
         recyclerViewVideo.setLayoutManager(linearLayoutManager);
+        adapter.notifyDataSetChanged();
     }
     private ArrayList<File> getVideoListFiles() {
         File file = new File(

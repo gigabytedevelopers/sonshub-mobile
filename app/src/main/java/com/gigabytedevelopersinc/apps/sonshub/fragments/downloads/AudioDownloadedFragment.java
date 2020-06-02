@@ -123,6 +123,7 @@ public class AudioDownloadedFragment extends Fragment {
         adapter.registerAdapterDataObserver(viewEmptyObserver);
         recyclerViewAudio.setAdapter(adapter);
         recyclerViewAudio.setLayoutManager(linearLayoutManager);
+        adapter.notifyDataSetChanged();
     }
     private ArrayList<File> getAudioListFiles() {
         File file = new File(
