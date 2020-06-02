@@ -183,8 +183,8 @@
     <string name="stream_placeholder">Stream Placeholder</string>
     <string name="stream_toggle">Stream Toggle</string>
     <string name="no_downloads_yet">No active downloads yet!</string>
-    <string name="no_downloaded_audio">Sorry, you have not downloaded any songs yet</string>
-    <string name="no_downloaded_videos">Sorry, you have not downloaded any videos yet</string>
+    <string name="no_downloaded_audio">Downloaded songs will be listed here</string>
+    <string name="no_downloaded_videos">Downloaded videos will be listed here</string>
 
     <!-- App Update -->
     <string name="message_download_failed" translatable="false">Cannot download at this time!</string>
