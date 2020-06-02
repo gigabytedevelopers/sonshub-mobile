@@ -14,7 +14,8 @@
         android:text="@string/no_downloaded_videos"
         android:visibility="gone"
         android:textColor="@color/grey"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+        android:fontFamily="@font/petitabold"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewDownloadedVideo"
