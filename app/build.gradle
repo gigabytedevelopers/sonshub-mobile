@@ -42,8 +42,7 @@ android {
     buildTypes {
         release {
 		signingConfig signingConfigs.release
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
             manifestPlaceholders = [appNameSuffix: ""]
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -55,7 +54,6 @@ android {
             debuggable true
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            multiDexEnabled = true
         }
     }
 
