@@ -23,7 +23,7 @@ android {
         applicationId "com.gigabytedevelopersinc.apps.sonshub"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 14
+        versionCode 15
         versionName "1.1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
