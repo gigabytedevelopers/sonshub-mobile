@@ -99,21 +99,27 @@ public class VideoDownloadedFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
     private ArrayList<File> getVideoListFiles() {
-        File file = new File(
+        File filePath = new File(
                 Environment.getExternalStorageDirectory() + "/SonsHub/Videos"
         );
+        boolean isDirectoryCreated = filePath.exists();
 
         ArrayList<File> fileArrayList = new ArrayList<>();
-        File[] listOfFiles = file.listFiles();
+        File[] listOfFiles = filePath.listFiles();
 
-        if (file.exists()) {
+        if (filePath.exists()) {
             assert listOfFiles != null;
             for (File f : listOfFiles) {
                 if (f.getAbsolutePath().endsWith(".mp4"))
                     fileArrayList.add(f);
             }
-        } else {
-            file.mkdir();
+        } else if (!isDirectoryCreated) {
+            isDirectoryCreated = filePath.mkdir();
+            if (!isDirectoryCreated) {
+                Toast.makeText(requireContext(),
+                        "Error creating directory for downloaded videos",
+                        Toast.LENGTH_LONG).show();
+            }
         }
         return fileArrayList;
     }
