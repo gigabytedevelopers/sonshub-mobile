@@ -167,7 +167,7 @@ class BottomControlsFragment : BaseNowPlayingFragment(), BottomSheetListener {
             if (it.isCasting) {
                 isCasting = true
 
-                mainViewModel.castProgressLiveData.observe(this, castProgressObserver)
+                mainViewModel.castProgressLiveData.observe(viewLifecycleOwner, castProgressObserver)
                 bottomContolsAlbumart.setBackgroundResource(0)
                 setLastFmAlbumImage(binding.bottomContolsAlbumart, it.castSongArtist, it.castSongAlbum, ArtworkSize.SMALL, it.castAlbumId.toLong())
 
@@ -197,7 +197,7 @@ class BottomControlsFragment : BaseNowPlayingFragment(), BottomSheetListener {
                 .observe(this) {
                     when (it) {
                         ACTION_CAST_CONNECTED -> {
-                            mainViewModel.castLiveData.observe(this, castStatusObserver)
+                            mainViewModel.castLiveData.observe(viewLifecycleOwner, castStatusObserver)
                         }
                         ACTION_CAST_DISCONNECTED -> {
                             isCasting = false
