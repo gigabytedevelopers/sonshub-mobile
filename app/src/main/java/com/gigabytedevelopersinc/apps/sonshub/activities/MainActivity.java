@@ -15,6 +15,13 @@ import android.text.Html;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
+
+import com.adcolony.sdk.AdColony;
+import com.adcolony.sdk.AdColonyAdOptions;
+import com.adcolony.sdk.AdColonyAdSize;
+import com.adcolony.sdk.AdColonyAdView;
+import com.adcolony.sdk.AdColonyAdViewListener;
+import com.adcolony.sdk.AdColonyZone;
 import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -129,7 +136,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static Fetch fetch;
     private static Context appContext = App.Companion.getContext();
     private static final String FETCH_NAMESPACE = "Downloading";
-    private static final int GROUP_ID = "listGroup".hashCode();
+
+    private AdColonyAdView adView;
+    private RelativeLayout adContainer;
+    private static final String BANNER_ZONE_ID = "vz6b6bc3607a8147ab82";
 
     @SuppressLint({"InflateParams", "HardwareIds"})
     @Override
@@ -137,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        adContainer = findViewById(R.id.ad_container);
         TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(
                 new DefaultBandwidthMeter()
         );
@@ -158,8 +169,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         .build();
         player.setAudioAttributes(mAudioAttributes, true);
         initializePlayer(this, player, playerView, false, playBackPosition, currentWindow, tinyDb.getString("downloadLink"));
+        
         sonshubAppInstance = this;
         checkForUpdate();
+        requestBannerAd();
 
         ImageView toggleStreamLayout = findViewById(R.id.toggle);
         LinearLayout toggleDivider = findViewById(R.id.toggleDivider);
@@ -295,6 +308,54 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent appLinkIntent = getIntent();
         String appLinkAction = appLinkIntent.getAction();
         Uri appLinkData = appLinkIntent.getData();
+
+
+    }
+
+    private void requestBannerAd() {
+        // Optional Ad specific options to be sent with request
+        AdColonyAdOptions adOptions = new AdColonyAdOptions();
+        AdColonyAdViewListener listener = new AdColonyAdViewListener() {
+            @Override
+            public void onRequestFilled(AdColonyAdView adColonyAdView) {
+                Timber.d("onRequestFilled");
+                adContainer.addView(adColonyAdView);
+                adView = adColonyAdView;
+            }
+
+            @Override
+            public void onRequestNotFilled(AdColonyZone zone) {
+                super.onRequestNotFilled(zone);
+                Timber.d("onRequestNotFilled");
+            }
+
+            @Override
+            public void onOpened(AdColonyAdView ad) {
+                super.onOpened(ad);
+                Timber.d("onOpened");
+            }
+
+            @Override
+            public void onClosed(AdColonyAdView ad) {
+                super.onClosed(ad);
+                Timber.d("onClosed");
+            }
+
+            @Override
+            public void onClicked(AdColonyAdView ad) {
+                super.onClicked(ad);
+                Timber.d("onClicked");
+            }
+
+            @Override
+            public void onLeftApplication(AdColonyAdView ad) {
+                super.onLeftApplication(ad);
+                Timber.d("onLeftApplication");
+            }
+
+        };
+        //Request Ad
+        AdColony.requestAdView(BANNER_ZONE_ID, listener, AdColonyAdSize.BANNER, adOptions);
     }
 
     public static void initializePlayer(Context context, SimpleExoPlayer player, PlayerView playerView, boolean playWhenReady, long playBackPosition, int currentWindow, String songLink) {
