@@ -34,6 +34,10 @@ val mediaModule = module {
     } bind Queue::class
 
     factory {
-        RealSongPlayer(get(), get(), get(), get(), get())
+        AudioFocusHelperImplementation(get())
+    } bind (AudioFocusHelper::class)
+
+    factory {
+        RealSongPlayer(get(), get(), get(), get(), get(), get())
     } bind SongPlayer::class
 }
