@@ -152,9 +152,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
 
     // Third Party
-    implementation 'com.afollestad:rxkprefs:1.2.4'
-    implementation 'com.afollestad.material-dialogs:core:2.0.0'
-    implementation 'com.afollestad.material-dialogs:input:2.0.0'
+    implementation 'com.afollestad:rxkprefs:1.2.5'
+    implementation 'com.afollestad.material-dialogs:core:2.1.0'
+    implementation 'com.afollestad.material-dialogs:input:2.1.0'
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
