@@ -6,7 +6,6 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.PowerManager
-import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity
 import timber.log.Timber
 
 /**

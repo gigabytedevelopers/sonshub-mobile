@@ -45,6 +45,7 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.toSongIDs
 import com.gigabytedevelopersinc.apps.sonshub.players.music.models.Song
 import com.gigabytedevelopersinc.apps.sonshub.Repository.SongsRepository
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity
+import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.AudioFocusHelper
 import com.gigabytedevelopersinc.apps.sonshub.players.music.util.MusicUtils
 import timber.log.Timber
 
@@ -122,7 +123,8 @@ class RealSongPlayer(
     private val musicPlayer: MusicPlayer,
     private val songsRepository: SongsRepository,
     private val queueDao: QueueDao,
-    private val queue: Queue
+    private val queue: Queue,
+    audioFocusHelper: AudioFocusHelper
 ) : SongPlayer {
 
     private var isInitialized: Boolean = false
@@ -137,7 +139,15 @@ class RealSongPlayer(
 
     private var mediaSession = MediaSessionCompat(context, context.getString(R.string.app_name)).apply {
         setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
-        setCallback(MediaSessionCallback(this, this@RealSongPlayer, songsRepository, queueDao))
+        setCallback(
+            MediaSessionCallback(
+                this,
+                this@RealSongPlayer,
+                audioFocusHelper,
+                songsRepository,
+                queueDao
+            )
+        )
         setPlaybackState(stateBuilder.build())
 
         val sessionIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
