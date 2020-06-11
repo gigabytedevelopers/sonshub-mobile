@@ -109,6 +109,9 @@ import saschpe.android.customtabs.CustomTabsHelper;
 import saschpe.android.customtabs.WebViewFallback;
 import timber.log.Timber;
 
+import static com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout.State.COLLAPSING;
+import static com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout.State.EXPANDING;
+
 @SuppressLint("StaticFieldLeak")
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "SonsHub Mobile";
@@ -120,6 +123,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     boolean doubleBackToExitPressedOnce = false;
     public static PlayerView playerView;
     public static SimpleExoPlayer player;
+
+    public static ImageView toggleStreamLayout;
+    public static LinearLayout toggleDivider;
+    public static ExpandableLayout expandableLayout;
 
     private static boolean isTelevision;
     private static MainActivity sonshubAppInstance;
@@ -184,25 +191,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         checkForUpdate();
         requestBannerAd();
 
-        ImageView toggleStreamLayout = findViewById(R.id.toggle);
-        LinearLayout toggleDivider = findViewById(R.id.toggleDivider);
-        toggleStreamLayout.setImageResource(R.drawable.ic_toggle_close);
-        ExpandableLayout expandableLayout = findViewById(R.id.expandable_layout);
+        toggleStreamLayout = findViewById(R.id.toggle);
+        toggleDivider = findViewById(R.id.toggleDivider);
+        toggleStreamLayout.setImageResource(R.drawable.ic_toggle_open);
+        expandableLayout = findViewById(R.id.expandable_layout);
+
+        // Start app with collapsed (hidden) mini-player
+        toggleDivider.setVisibility(View.VISIBLE);
+        expandableLayout.collapse();
         toggleStreamLayout.setOnClickListener(v -> {
             //expandableLayout.toggle();
             if (expandableLayout.isExpanded()) {
-                toggleStreamLayout.setImageResource(R.drawable.ic_toggle_open);
+                //toggleStreamLayout.setImageResource(R.drawable.ic_toggle_open);
                 toggleDivider.setVisibility(View.VISIBLE);
                 expandableLayout.collapse();
             } else {
-                toggleStreamLayout.setImageResource(R.drawable.ic_toggle_close);
+                //toggleStreamLayout.setImageResource(R.drawable.ic_toggle_close);
                 toggleDivider.setVisibility(View.GONE);
                 expandableLayout.expand();
             }
         });
         expandableLayout.setOnExpansionUpdateListener((expansionFraction, state) -> {
             Timber.tag("ExpandableLayout").d("State: %s", state);
-            //toggleStreamLayout.setRotation(expansionFraction * 180);
+            if (state == EXPANDING) {
+                toggleStreamLayout.setImageResource(R.drawable.ic_toggle_close);
+                //toggleStreamLayout.setRotation(expansionFraction * 180);
+            } else if (state == COLLAPSING) {
+                toggleStreamLayout.setImageResource(R.drawable.ic_toggle_open);
+            }
         });
 
         streamLayout = findViewById(R.id.stream_layout);
@@ -337,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 playerView.setControllerHideOnTouch(false);
-                if(isPreparing && playbackState == Player.STATE_READY) {
+                if (isPreparing && playbackState == Player.STATE_READY) {
                     // This is accurate
                     isPreparing = false;
                 }
@@ -497,8 +513,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                 streamTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
 
-                                if (!isPreparing){
+                                if (!isPreparing) {
                                     playWhenReady = true;
+                                    expandableLayout.expand();
                                 }
 
                                 MainActivity.initializePlayer(MainActivity.getInstance(),
