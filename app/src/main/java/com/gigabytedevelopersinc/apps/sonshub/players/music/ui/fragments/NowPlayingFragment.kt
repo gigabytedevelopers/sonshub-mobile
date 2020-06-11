@@ -11,7 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
+import com.adcolony.sdk.*
 import com.gigabytedevelopersinc.apps.sonshub.R
 import com.gigabytedevelopersinc.apps.sonshub.databinding.MusicFragmentNowPlayingBinding
 import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.addFragment
@@ -40,6 +42,7 @@ import kotlinx.android.synthetic.main.music_fragment_now_playing.upNextArtist
 import kotlinx.android.synthetic.main.music_fragment_now_playing.upNextTitle
 import kotlinx.android.synthetic.main.music_fragment_now_playing.frag_now_playing_rl
 import org.koin.android.ext.android.inject
+import timber.log.Timber
 import kotlin.math.absoluteValue
 
 /**
@@ -63,7 +66,11 @@ class NowPlayingFragment : BaseNowPlayingFragment(), GestureDetector.OnGestureLi
     private val songsRepository by inject<SongsRepository>()
 
     private lateinit var gestureDetector: GestureDetector
-    val MIN_FLING_VELOCITY = 800
+    private val minFlingVelocity = 800
+
+    private lateinit var adView: AdColonyAdView
+    private lateinit var adContainer: RelativeLayout
+    private val bannerZoneID = "vz6b6bc3607a8147ab82"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,6 +84,8 @@ class NowPlayingFragment : BaseNowPlayingFragment(), GestureDetector.OnGestureLi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
+        adContainer = binding.root.findViewById(R.id.ad_container)
+        requestBannerAd()
 
         binding.let {
             it.viewModel = nowPlayingViewModel
@@ -108,7 +117,7 @@ class NowPlayingFragment : BaseNowPlayingFragment(), GestureDetector.OnGestureLi
                 upNextAlbumArt.setBackgroundResource(R.drawable.music_default_album_art_small_queue)
                 upNextAlbumArt.setImageResource(R.drawable.music_ic_music_note)
                 upNextAlbumArt.setColorFilter(
-                    ContextCompat.getColor(context!!, R.color.colorAccent),
+                    ContextCompat.getColor(requireContext(), R.color.colorAccent),
                     android.graphics.PorterDuff.Mode.SRC_IN
                 )
                 upNextTitle.text = getString(R.string.queue_ended)
@@ -208,7 +217,7 @@ class NowPlayingFragment : BaseNowPlayingFragment(), GestureDetector.OnGestureLi
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        if (velocityX.absoluteValue > MIN_FLING_VELOCITY) {
+        if (velocityX.absoluteValue > minFlingVelocity) {
             if (velocityX < 0) {
                 mainViewModel.transportControls().skipToNext()
             } else {
@@ -230,5 +239,51 @@ class NowPlayingFragment : BaseNowPlayingFragment(), GestureDetector.OnGestureLi
 
     override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
         return true
+    }
+
+
+
+    private fun requestBannerAd() {
+        // Optional Ad specific options to be sent with request
+        val adOptions = AdColonyAdOptions()
+        val listener: AdColonyAdViewListener = object : AdColonyAdViewListener() {
+            override fun onRequestFilled(adColonyAdView: AdColonyAdView) {
+                Timber.d("onRequestFilled")
+                adContainer.addView(adColonyAdView)
+                adView = adColonyAdView
+            }
+
+            override fun onRequestNotFilled(zone: AdColonyZone) {
+                super.onRequestNotFilled(zone)
+                Timber.d("onRequestNotFilled")
+            }
+
+            override fun onOpened(ad: AdColonyAdView) {
+                super.onOpened(ad)
+                Timber.d("onOpened")
+            }
+
+            override fun onClosed(ad: AdColonyAdView) {
+                super.onClosed(ad)
+                Timber.d("onClosed")
+            }
+
+            override fun onClicked(ad: AdColonyAdView) {
+                super.onClicked(ad)
+                Timber.d("onClicked")
+            }
+
+            override fun onLeftApplication(ad: AdColonyAdView) {
+                super.onLeftApplication(ad)
+                Timber.d("onLeftApplication")
+            }
+        }
+        //Request Ad
+        AdColony.requestAdView(
+            bannerZoneID,
+            listener,
+            AdColonyAdSize.BANNER,
+            adOptions
+        )
     }
 }
