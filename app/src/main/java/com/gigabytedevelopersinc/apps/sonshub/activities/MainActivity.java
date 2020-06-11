@@ -203,11 +203,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //expandableLayout.toggle();
             if (expandableLayout.isExpanded()) {
                 //toggleStreamLayout.setImageResource(R.drawable.ic_toggle_open);
-                toggleDivider.setVisibility(View.VISIBLE);
                 expandableLayout.collapse();
             } else {
                 //toggleStreamLayout.setImageResource(R.drawable.ic_toggle_close);
-                toggleDivider.setVisibility(View.GONE);
                 expandableLayout.expand();
             }
         });
@@ -981,36 +979,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = menuItem.getItemId();
         drawerLayout = findViewById(R.id.drawer_layout);
         if (id == R.id.nav_home) {
+            expandableLayout.collapse();
             HomeFragment homeFragment = new HomeFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, homeFragment);
             toolbar.setTitle(R.string.nav_home);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_music) {
+            expandableLayout.collapse();
             MusicFragment musicFragment = new MusicFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, musicFragment);
             toolbar.setTitle(R.string.nav_music);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_video) {
+            expandableLayout.collapse();
             VideosFragment videosFragment = new VideosFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, videosFragment);
             toolbar.setTitle(R.string.nav_video);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_gist) {
+            expandableLayout.collapse();
             GistFragment gistFragment = new GistFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, gistFragment);
             toolbar.setTitle(R.string.nav_gist);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_word_of_faith) {
+            expandableLayout.collapse();
             WordOfFaithFragment wordOfFaithFragment = new WordOfFaithFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, wordOfFaithFragment);
             toolbar.setTitle(R.string.nav_word_of_faith);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_sonshub_tv) {
+            expandableLayout.collapse();
             drawerLayout.closeDrawers();
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
             final View generalNoticeView = LayoutInflater.from(this).inflate(R.layout.general_notice, null);
@@ -1042,11 +1046,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             bottomSheetDialog.setContentView(generalNoticeView);
             bottomSheetDialog.show();
         } else if (id == R.id.nav_music_player) {
-            player.setPlayWhenReady(false);
+            expandableLayout.collapse();
+            //player.setPlayWhenReady(false);
             startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
             overridePendingTransition(R.anim.push_up_in, R.anim.hold);
             drawerLayout.closeDrawers();
         } else if (id == R.id.nav_about) {
+            expandableLayout.collapse();
             AboutFragment aboutFragment = new AboutFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, aboutFragment);
