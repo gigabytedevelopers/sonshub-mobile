@@ -11,32 +11,21 @@ import android.widget.FrameLayout
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.mediarouter.app.MediaRouteButton
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_DRAGGING
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import com.gigabytedevelopersinc.apps.sonshub.R
-import com.gigabytedevelopersinc.apps.sonshub.databinding.MusicMainActivityBinding
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.addFragment
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.filter
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.hide
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.map
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.observe
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.replaceFragment
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.setDataBindingContentView
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.show
-import com.gigabytedevelopersinc.apps.sonshub.players.music.models.MediaID
 import com.gigabytedevelopersinc.apps.sonshub.Repository.SongsRepository
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity.player
+import com.gigabytedevelopersinc.apps.sonshub.databinding.MusicMainActivityBinding
+import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.*
+import com.gigabytedevelopersinc.apps.sonshub.players.music.models.MediaID
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.dialogs.DeleteSongDialog
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.fragments.BottomControlsFragment
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.fragments.MainFragment
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.fragments.base.MediaItemFragment
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.viewmodels.MainViewModel
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.widgets.BottomSheetListener
-import kotlinx.android.synthetic.main.music_main_activity.bottom_sheet_parent
-import kotlinx.android.synthetic.main.music_main_activity.dimOverlay
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.*
+import kotlinx.android.synthetic.main.music_main_activity.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -146,7 +135,7 @@ class MusicMainActivity : AppCompatActivity(), DeleteSongDialog.OnSongDeleted {
         }
         val parentThatHasBottomSheetBehavior = bottom_sheet_parent as FrameLayout
 
-        bottomSheetBehavior = BottomSheetBehavior.from(parentThatHasBottomSheetBehavior)
+        bottomSheetBehavior = from(parentThatHasBottomSheetBehavior)
         bottomSheetBehavior?.isHideable = true
         bottomSheetBehavior?.setBottomSheetCallback(BottomSheetCallback())
 

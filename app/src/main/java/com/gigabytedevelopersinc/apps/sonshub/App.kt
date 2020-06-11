@@ -41,6 +41,7 @@ import timber.log.Timber
 import timber.log.Timber.DebugTree
 import java.util.concurrent.TimeUnit
 
+
 class App : Application(), Application.ActivityLifecycleCallbacks {
 
     private val adColonyAppID = "appacf7d295b66041cf86"
@@ -50,6 +51,7 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         super.onCreate()
         context = applicationContext
         instance = this
+
         disableDeathOnFileUriExposure()
         registerActivityLifecycleCallbacks(instance)
         AdColony.configure(instance, adColonyAppID, bannerZoneID)

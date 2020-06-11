@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private AdColonyAdView adView;
     private RelativeLayout adContainer;
-    private static final String BANNER_ZONE_ID = "vz6b6bc3607a8147ab82";
+    private static final String BANNER_ZONE_ID = Objects.requireNonNull(appContext).getString(R.string.banner_zone_id);
 
     public MainActivity() {
     }
@@ -296,8 +296,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent appLinkIntent = getIntent();
         String appLinkAction = appLinkIntent.getAction();
         Uri appLinkData = appLinkIntent.getData();
-
-
     }
 
     public static void initializePlayer(Context context, SimpleExoPlayer player, PlayerView playerView, boolean playWhenReady, long playBackPosition, int currentWindow, String songLink) {
