@@ -514,18 +514,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 streamTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
 
                                 if (!isPreparing) {
-                                    playWhenReady = true;
                                     expandableLayout.expand();
+                                    initializePlayer(
+                                            getInstance(),
+                                            player,
+                                            playerView,
+                                            true,
+                                            playBackPosition,
+                                            currentWindow,
+                                            matcher2.group(0)
+                                    );
                                 }
-
-                                MainActivity.initializePlayer(MainActivity.getInstance(),
-                                        player,playerView,
-                                        false,
-                                        MainActivity.playBackPosition,
-                                        MainActivity.currentWindow,
-                                        matcher2.group(0)
-                                );
-
                             });
                         } else {
                             downloadBtn.setOnClickListener(onClickListener);
@@ -588,17 +587,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                 streamTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
 
-                                if (!MainActivity.isPreparing){
-                                    MainActivity.playWhenReady = true;
+                                if (!isPreparing){
+                                    playWhenReady = true;
+                                    expandableLayout.expand();
+                                    initializePlayer(
+                                            getInstance(),
+                                            player,
+                                            playerView,
+                                            true,
+                                            playBackPosition,
+                                            currentWindow,
+                                            matcher2.group(0)
+                                    );
                                 }
-
-                                MainActivity.initializePlayer(MainActivity.getInstance(),
-                                        player,playerView,
-                                        false,
-                                        MainActivity.playBackPosition,
-                                        MainActivity.currentWindow,
-                                        matcher2.group(0)
-                                );
                             });
                         } else {
                             downloadBtn.setOnClickListener(onClickListener);
@@ -694,17 +695,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                 streamTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
 
-                                if (!MainActivity.isPreparing){
-                                    MainActivity.playWhenReady = true;//TODO CHANGE THIS TO FALSE AND CHECK
+                                if (!isPreparing){
+                                    playWhenReady = true;
+                                    expandableLayout.expand();
+                                    initializePlayer(
+                                            getInstance(),
+                                            player,
+                                            playerView,
+                                            true,
+                                            playBackPosition,
+                                            currentWindow,
+                                            matcher2.group(0)
+                                    );
                                 }
-
-                                MainActivity.initializePlayer(MainActivity.getInstance(),
-                                        player,playerView,
-                                        false,
-                                        MainActivity.playBackPosition,
-                                        MainActivity.currentWindow,
-                                        matcher2.group(0)
-                                );
                             });
                         } else {
                             downloadBtn.setOnClickListener(onClickListener);
