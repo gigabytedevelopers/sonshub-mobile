@@ -326,19 +326,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         player.addListener(new Player.EventListener() {
             @Override
-            public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
-
-            }
+            public void onTimelineChanged(Timeline timeline, int reason) { }
 
             @Override
-            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
-            }
+            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) { }
 
             @Override
-            public void onLoadingChanged(boolean isLoading) {
-
-            }
+            public void onLoadingChanged(boolean isLoading) { }
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -350,34 +344,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             @Override
-            public void onRepeatModeChanged(int repeatMode) {
-
-            }
+            public void onRepeatModeChanged(int repeatMode) { }
 
             @Override
-            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-
-            }
+            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) { }
 
             @Override
-            public void onPlayerError(ExoPlaybackException error) {
-
-            }
+            public void onPlayerError(ExoPlaybackException error) { }
 
             @Override
-            public void onPositionDiscontinuity(int reason) {
-
-            }
+            public void onPositionDiscontinuity(int reason) { }
 
             @Override
-            public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-
-            }
+            public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) { }
 
             @Override
-            public void onSeekProcessed() {
-
-            }
+            public void onSeekProcessed() { }
         });
     }
 
