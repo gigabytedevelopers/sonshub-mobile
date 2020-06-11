@@ -6,7 +6,6 @@ import android.content.*;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.media.AudioManager;
-import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -26,13 +25,8 @@ import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.gigabytedevelopersinc.apps.sonshub.App;
-import com.gigabytedevelopersinc.apps.sonshub.adapters.DownloadFileAdapter;
-import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.AbstractFetchListener;
-import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Download;
-import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Error;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Fetch;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.FetchConfiguration;
-import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.FetchListener;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2core.Downloader;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2okhttp.OkHttpDownloader;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.downloads.DownloadingFragment;
@@ -115,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static boolean isTelevision;
     private static MainActivity sonshubAppInstance;
 
-    private BroadcastReceiver sonshubNotificaticationBroadcastReceiver, receiver;
+    private BroadcastReceiver sonshubNotificationBroadcastReceiver;
     private AppUpdater appUpdater;
     private AppUpdaterUtils appUpdaterUtils;
     boolean isDeleted;
@@ -140,6 +134,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AdColonyAdView adView;
     private RelativeLayout adContainer;
     private static final String BANNER_ZONE_ID = "vz6b6bc3607a8147ab82";
+
+    public MainActivity() {
+    }
 
     @SuppressLint({"InflateParams", "HardwareIds"})
     @Override
@@ -216,12 +213,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
             final View generalNoticeView = LayoutInflater.from(this).inflate(R.layout.general_notice, null);
 
-            TextView generalNoticeTitle = generalNoticeView.findViewById(R.id.warning);
             TextView generalNoticeText = generalNoticeView.findViewById(R.id.generalNoticeText);
-            ImageView generalNoticeImg = generalNoticeView.findViewById(R.id.warningImg);
             Button cancelButton = generalNoticeView.findViewById(R.id.cancelButton);
             Button continueButton = generalNoticeView.findViewById(R.id.continueButton);
-            Button optionButton = generalNoticeView.findViewById(R.id.optionButton);
 
             generalNoticeText.setText("Hello, We've detected a lack of internet connectivity on your device.\nTo avoid some difficulties using SonsHub Mobile, kindly turn on your Internet Connection.");
             cancelButton.setVisibility(View.GONE);
@@ -238,16 +232,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         // Register Broadcast Receiver for Custom Notifications from Firebase
-        sonshubNotificaticationBroadcastReceiver = new BroadcastReceiver() {
+        sonshubNotificationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (Objects.requireNonNull(intent.getAction()).equals(Configs.REGISTRATION_COMPLETE)) {
-                    // Google Cloud Messaging (GCM) successfully registered
-                    // now subscribe to `global` topic to receive app wide notifications
-                    FirebaseMessaging.getInstance().subscribeToTopic(Configs.TOPIC_GLOBAL);
-                } else {
-                    FirebaseMessaging.getInstance().subscribeToTopic(Configs.TOPIC_GLOBAL);
-                }
+                FirebaseMessaging.getInstance().subscribeToTopic(Configs.TOPIC_GLOBAL);
             }
         };
         //checkNetworkState();
@@ -1243,12 +1231,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         // register GCM registration complete receiver
-        LocalBroadcastManager.getInstance(this).registerReceiver(sonshubNotificaticationBroadcastReceiver,
+        LocalBroadcastManager.getInstance(this).registerReceiver(sonshubNotificationBroadcastReceiver,
                 new IntentFilter(Configs.REGISTRATION_COMPLETE));
 
         // register new push message receiver
         // by doing this, the activity will be notified each time a new message arrives
-        LocalBroadcastManager.getInstance(this).registerReceiver(sonshubNotificaticationBroadcastReceiver,
+        LocalBroadcastManager.getInstance(this).registerReceiver(sonshubNotificationBroadcastReceiver,
                 new IntentFilter(Configs.PUSH_NOTIFICATION));
 
         // clear the notification area when the app is opened
@@ -1257,7 +1245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(sonshubNotificaticationBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(sonshubNotificationBroadcastReceiver);
         super.onPause();
     }
 
