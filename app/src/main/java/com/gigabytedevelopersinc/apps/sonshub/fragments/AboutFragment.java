@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
+
+import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.AnalyticsManager;
 import com.github.javiersantos.appupdater.AppUpdaterUtils;
 import com.github.javiersantos.appupdater.enums.AppUpdaterError;
@@ -15,6 +17,7 @@ import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import com.github.javiersantos.appupdater.objects.Update;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 
@@ -56,6 +59,8 @@ public class AboutFragment extends Fragment {
         Timber.d(AboutFragment.class.getSimpleName());
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_about, container, false);
+        NestedScrollView scrollView = view.findViewById(R.id.nestedScroll);
+
         String url = getResources().getString(R.string.developer_url);
         String faceBookUrl = getResources().getString(R.string.facebook_url);
         String sonsHubUrl = getResources().getString(R.string.website_url);
@@ -250,6 +255,17 @@ public class AboutFragment extends Fragment {
             bottomSheetDialog.setCancelable(false);
             bottomSheetDialog.setContentView(updateNoticeView);
             bottomSheetDialog.show();
+        });
+
+
+
+        scrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (scrollY > oldScrollY) {
+                MainActivity.streamLayout.setVisibility(View.GONE);
+                MainActivity.miniPlayerCollapse();
+            } else if (scrollY < oldScrollY) {
+                MainActivity.streamLayout.setVisibility(View.VISIBLE);
+            }
         });
         return view;
     }

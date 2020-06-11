@@ -828,13 +828,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         appUpdaterUtils.start();
     }
 
-    public void miniPlayerExpand() {
+    public static void miniPlayerExpand() {
         if (!expandableLayout.isExpanded()) {
             expandableLayout.expand();
         }
     }
 
-    public void miniPlayerCollapse() {
+    public static void miniPlayerCollapse() {
         if (expandableLayout.isExpanded()) {
             expandableLayout.collapse();
         }

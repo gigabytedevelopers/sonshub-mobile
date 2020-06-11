@@ -1,5 +1,6 @@
 package com.gigabytedevelopersinc.apps.sonshub.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.*;
@@ -70,18 +71,17 @@ public class HomeFragment extends Fragment {
     private RelativeLayout searchLayout;
     private List<MainListModel> searchList;
     private MainListAdapter searchAdapter;
-    private NestedScrollView scrollView;
+    private static NestedScrollView scrollView;
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
     private Pattern pattern;
     private Matcher matcher;
     MainActivity mainActivity = new MainActivity();
 
-
     public HomeFragment() {
         // Required empty public constructor
     }
 
-
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -145,12 +145,11 @@ public class HomeFragment extends Fragment {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (scrollY > oldScrollY) {
+                    MainActivity.miniPlayerCollapse();
                     MainActivity.streamLayout.setVisibility(View.GONE);
-
-                } else if (scrollY < oldScrollY){
+                } else if (scrollY < oldScrollY) {
                     MainActivity.streamLayout.setVisibility(View.VISIBLE);
                 }
-
             }
         });
 
@@ -196,10 +195,9 @@ public class HomeFragment extends Fragment {
         });
 
         return view;
-
     }
 
-    public static void hideStreamLayout(RecyclerView recyclerView){
+    public static void hideStreamLayout(RecyclerView recyclerView) {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -209,8 +207,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0){
-                    //Scrolling Downl
+                if (dy > 0) {
+                    //Scrolling Down
 
                     MainActivity.streamLayout.setVisibility(View.GONE);
                 } else {
