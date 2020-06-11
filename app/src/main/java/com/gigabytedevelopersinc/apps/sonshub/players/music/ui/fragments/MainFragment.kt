@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.adcolony.sdk.*
 import com.afollestad.rxkprefs.Pref
 import com.google.android.material.appbar.AppBarLayout
 import com.gigabytedevelopersinc.apps.sonshub.players.music.PREF_START_PAGE
@@ -36,6 +38,7 @@ import kotlinx.android.synthetic.main.music_toolbar.mediaRouteButton
 import kotlinx.android.synthetic.main.music_toolbar.toolbar
 import org.koin.android.ext.android.inject
 import org.koin.core.qualifier.named
+import timber.log.Timber
 
 /**
  * Project - SonsHub
@@ -54,6 +57,10 @@ import org.koin.core.qualifier.named
 class MainFragment : Fragment() {
     private val startPagePref by inject<Pref<StartPage>>(named(PREF_START_PAGE))
 
+    private lateinit var adView: AdColonyAdView
+    private lateinit var adContainer: RelativeLayout
+    private val bannerZoneID = "vz6b6bc3607a8147ab82"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,6 +71,8 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        setHasOptionsMenu(true)
+        adContainer = view.findViewById(R.id.ad_container)
+        requestBannerAd()
 
         setupViewPager(viewpager)
         tabLayout.setupWithViewPager(viewpager)
@@ -141,5 +150,49 @@ class MainFragment : Fragment() {
         override fun getCount() = fragments.size
 
         override fun getPageTitle(position: Int) = titles[position]
+    }
+
+    private fun requestBannerAd() {
+        // Optional Ad specific options to be sent with request
+        val adOptions = AdColonyAdOptions()
+        val listener: AdColonyAdViewListener = object : AdColonyAdViewListener() {
+            override fun onRequestFilled(adColonyAdView: AdColonyAdView) {
+                Timber.d("onRequestFilled")
+                adContainer.addView(adColonyAdView)
+                adView = adColonyAdView
+            }
+
+            override fun onRequestNotFilled(zone: AdColonyZone) {
+                super.onRequestNotFilled(zone)
+                Timber.d("onRequestNotFilled")
+            }
+
+            override fun onOpened(ad: AdColonyAdView) {
+                super.onOpened(ad)
+                Timber.d("onOpened")
+            }
+
+            override fun onClosed(ad: AdColonyAdView) {
+                super.onClosed(ad)
+                Timber.d("onClosed")
+            }
+
+            override fun onClicked(ad: AdColonyAdView) {
+                super.onClicked(ad)
+                Timber.d("onClicked")
+            }
+
+            override fun onLeftApplication(ad: AdColonyAdView) {
+                super.onLeftApplication(ad)
+                Timber.d("onLeftApplication")
+            }
+        }
+        //Request Ad
+        AdColony.requestAdView(
+            bannerZoneID,
+            listener,
+            AdColonyAdSize.BANNER,
+            adOptions
+        )
     }
 }
