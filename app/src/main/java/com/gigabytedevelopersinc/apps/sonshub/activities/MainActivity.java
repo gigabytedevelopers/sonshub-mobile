@@ -2,18 +2,43 @@ package com.gigabytedevelopersinc.apps.sonshub.activities;
 
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.telephony.TelephonyManager;
 import android.text.Html;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.adcolony.sdk.AdColony;
 import com.adcolony.sdk.AdColonyAdOptions;
@@ -25,72 +50,64 @@ import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.gigabytedevelopersinc.apps.sonshub.App;
+import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Fetch;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.FetchConfiguration;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2core.Downloader;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2okhttp.OkHttpDownloader;
-import com.gigabytedevelopersinc.apps.sonshub.fragments.downloads.DownloadingFragment;
-import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity;
-import com.gigabytedevelopersinc.apps.sonshub.services.notification.SonsHubDownloadNotificationManager;
-import com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout;
-import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Data;
-import com.github.javiersantos.appupdater.AppUpdater;
-import com.github.javiersantos.appupdater.AppUpdaterUtils;
-import com.github.javiersantos.appupdater.enums.AppUpdaterError;
-import com.github.javiersantos.appupdater.enums.UpdateFrom;
-import com.github.javiersantos.appupdater.objects.Update;
-import com.google.android.exoplayer2.*;
-import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.*;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.navigation.NavigationView;
-
-import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import android.telephony.TelephonyManager;
-import android.view.*;
-import android.widget.*;
-import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.AboutFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.HomeFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.SearchFrag;
+import com.gigabytedevelopersinc.apps.sonshub.fragments.downloads.DownloadingFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.gist.GistFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.music.MusicFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.videos.VideosFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.wordoffaith.WordOfFaithFragment;
+import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity;
+import com.gigabytedevelopersinc.apps.sonshub.services.notification.SonsHubDownloadNotificationManager;
+import com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout;
 import com.gigabytedevelopersinc.apps.sonshub.utils.NotificationUtil;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Configs;
-
+import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Data;
+import com.github.javiersantos.appupdater.AppUpdaterUtils;
+import com.github.javiersantos.appupdater.enums.AppUpdaterError;
+import com.github.javiersantos.appupdater.enums.UpdateFrom;
+import com.github.javiersantos.appupdater.objects.Update;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.leinardi.android.speeddial.SpeedDialView;
 
-import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import okhttp3.OkHttpClient;
 import saschpe.android.customtabs.CustomTabsHelper;
 import saschpe.android.customtabs.WebViewFallback;
 import timber.log.Timber;
-
-import java.io.File;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @SuppressLint("StaticFieldLeak")
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -100,8 +117,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean haveConnectedWifi = false;
     private boolean haveConnectedMobile = false;
     private TinyDb tinyDb;
-    private SearchView searchView;
-    private RelativeLayout searchLayout;
     boolean doubleBackToExitPressedOnce = false;
     public static PlayerView playerView;
     public static SimpleExoPlayer player;
@@ -110,10 +125,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static MainActivity sonshubAppInstance;
 
     private BroadcastReceiver sonshubNotificationBroadcastReceiver;
-    private AppUpdater appUpdater;
-    private AppUpdaterUtils appUpdaterUtils;
-    boolean isDeleted;
-    private File file;
     public static int currentWindow;
     public static long playBackPosition;
     public static boolean playWhenReady = false;
@@ -145,14 +156,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setContentView(R.layout.activity_main);
         adContainer = findViewById(R.id.ad_container);
-        TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(
-                new DefaultBandwidthMeter()
-        );
         playerView = findViewById(R.id.audio_view);
-        player = ExoPlayerFactory.newSimpleInstance(this,
-                new DefaultRenderersFactory(this),
-                new DefaultTrackSelector(adaptiveTrackSelectionFactory),
-                new DefaultLoadControl());
+        player = new SimpleExoPlayer.Builder(this).build();
         tinyDb = new TinyDb(MainActivity.this);
         playerView.setControllerHideOnTouch(false);
 
@@ -165,7 +170,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         .setContentType(C.CONTENT_TYPE_MUSIC)
                         .build();
         player.setAudioAttributes(mAudioAttributes, true);
-        initializePlayer(this, player, playerView, false, playBackPosition, currentWindow, tinyDb.getString("downloadLink"));
+        initializePlayer(
+                this,
+                player,
+                playerView,
+                false,
+                playBackPosition,
+                currentWindow,
+                tinyDb.getString("downloadLink")
+        );
         
         sonshubAppInstance = this;
         checkForUpdate();
@@ -763,13 +776,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     public static MediaSource buildMediaSource(Uri uri) {
-        return new ExtractorMediaSource.Factory(
+        return new ProgressiveMediaSource.Factory(
                 new DefaultHttpDataSourceFactory("exoplayer-codelab")).createMediaSource(uri);
     }
 
     @SuppressLint("InflateParams")
     public void checkForUpdate() {
-        appUpdaterUtils = new AppUpdaterUtils(this)
+        AppUpdaterUtils appUpdaterUtils = new AppUpdaterUtils(this)
                 .setUpdateFrom(UpdateFrom.JSON)
                 .setUpdateJSON("https://www.gigabytedevelopersinc.com/apps/sonshub/updater/update.json")
                 .withListener(new AppUpdaterUtils.UpdateListener() {
@@ -839,7 +852,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) menu.findItem(R.id.nav_search)
+        SearchView searchView = (SearchView) menu.findItem(R.id.nav_search)
                 .getActionView();
         assert searchManager != null;
         searchView.setSearchableInfo(searchManager
