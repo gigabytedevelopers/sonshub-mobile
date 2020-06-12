@@ -169,6 +169,7 @@ class TimberMusicService : MediaBrowserServiceCompat(), KoinComponent, Lifecycle
         log("onDestroy()")
         saveCurrentData()
         player.release()
+        notifications.clearNotifications()
         super.onDestroy()
     }
 

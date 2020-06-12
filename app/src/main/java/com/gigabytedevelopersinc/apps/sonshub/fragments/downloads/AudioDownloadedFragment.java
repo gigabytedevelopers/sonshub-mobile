@@ -9,13 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.gigabytedevelopersinc.apps.sonshub.R;
+import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.DownloadedAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.models.DownloadedModel;
 import com.gigabytedevelopersinc.apps.sonshub.utils.DownloadUtils;
@@ -26,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Project - SonsHub
@@ -91,7 +92,9 @@ public class AudioDownloadedFragment extends Fragment {
                         "com.gigabytedevelopersinc.apps.sonshub",
                         "com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity"
                 );
+                MainActivity.player.setPlayWhenReady(false);
                 startActivity(intent);
+                requireActivity().overridePendingTransition(R.anim.push_up_in, R.anim.hold);
 //                startActivity(Intent.createChooser(intent, "Play this song with"));
             } catch (Exception e) {
                 Toast.makeText(getContext(), "Sorry, our Music Player cannot open this file",

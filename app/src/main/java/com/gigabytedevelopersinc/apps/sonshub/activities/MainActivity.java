@@ -81,7 +81,6 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -375,6 +374,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onSeekProcessed() { }
         });
+    }
+
+    public static boolean isPlaying() {
+        return player.getPlaybackState() == Player.STATE_READY && player.getPlayWhenReady();
     }
 
     @SuppressLint("InflateParams")

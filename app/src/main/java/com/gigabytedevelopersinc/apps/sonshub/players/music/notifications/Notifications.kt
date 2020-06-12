@@ -53,8 +53,8 @@ private const val NOTIFICATION_ID = 888
 interface Notifications {
 
     fun updateNotification(mediaSession: MediaSessionCompat)
-
     fun buildNotification(mediaSession: MediaSessionCompat): Notification
+    fun clearNotifications()
 }
 
 class RealNotifications(
@@ -126,6 +126,10 @@ class RealNotifications(
         }
 
         return builder.build()
+    }
+
+    override fun clearNotifications() {
+        notificationManager.cancel(NOTIFICATION_ID)
     }
 
     private fun getPreviousAction(context: Context): NotificationCompat.Action {
