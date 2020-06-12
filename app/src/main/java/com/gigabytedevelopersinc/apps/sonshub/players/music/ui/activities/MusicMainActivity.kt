@@ -162,7 +162,7 @@ class MusicMainActivity : AppCompatActivity(), DeleteSongDialog.OnSongDeleted {
                 viewModel.transportControls().playFromSearch(songTitle, null)
             }
             ACTION_VIEW -> {
-                val path = getIntent().data?.path ?: return
+                val path = intent.data?.path ?: return
                 val song = songsRepository.getSongFromPath(path)
                 viewModel.mediaItemClicked(song, null)
             }
