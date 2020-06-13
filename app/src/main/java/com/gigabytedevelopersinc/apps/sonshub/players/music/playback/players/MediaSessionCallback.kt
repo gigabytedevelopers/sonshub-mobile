@@ -1,11 +1,10 @@
 package com.gigabytedevelopersinc.apps.sonshub.players.music.playback.players
 
-import android.media.AudioManager
 import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat.*
+import android.support.v4.media.session.PlaybackStateCompat.Builder
 import android.support.v4.media.session.PlaybackStateCompat.STATE_NONE
-import android.support.v4.media.session.PlaybackStateCompat.STATE_PLAYING
+import com.gigabytedevelopersinc.apps.sonshub.Repository.SongsRepository
 import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.Constants.ACTION_PLAY_NEXT
 import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.Constants.ACTION_QUEUE_REORDER
 import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.Constants.ACTION_REPEAT_QUEUE
@@ -23,8 +22,6 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.Constants.
 import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.Constants.SONGS_LIST
 import com.gigabytedevelopersinc.apps.sonshub.players.music.db.QueueDao
 import com.gigabytedevelopersinc.apps.sonshub.players.music.models.MediaID
-import com.gigabytedevelopersinc.apps.sonshub.Repository.SongsRepository
-import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.AudioFocusHelper
 import timber.log.Timber
 
 /**
@@ -44,41 +41,9 @@ import timber.log.Timber
 class MediaSessionCallback(
     private val mediaSession: MediaSessionCompat,
     private val songPlayer: SongPlayer,
-    private val audioFocusHelper: AudioFocusHelper,
     private val songsRepository: SongsRepository,
     private val queueDao: QueueDao
 ) : MediaSessionCompat.Callback() {
-
-    init {
-        audioFocusHelper.onAudioFocusGain {
-            Timber.d("GAIN")
-            val isPlaying = songPlayer.getSession().controller.playbackState.state == STATE_PLAYING
-            if (isAudioFocusGranted && !isPlaying) {
-                songPlayer.playSong()
-            } else audioFocusHelper.setVolume(AudioManager.ADJUST_RAISE)
-            isAudioFocusGranted = false
-        }
-        audioFocusHelper.onAudioFocusLoss {
-            Timber.d("LOSS")
-            abandonPlayback()
-            isAudioFocusGranted = false
-            songPlayer.pause()
-        }
-
-        audioFocusHelper.onAudioFocusLossTransient {
-            Timber.d("TRANSIENT")
-            val isPlaying = songPlayer.getSession().controller.playbackState.state == STATE_PLAYING
-            if (isPlaying) {
-                isAudioFocusGranted = true
-                songPlayer.pause()
-            }
-        }
-
-        audioFocusHelper.onAudioFocusLossTransientCanDuck {
-            Timber.d("TRANSIENT_CAN_DUCK")
-            audioFocusHelper.setVolume(AudioManager.ADJUST_LOWER)
-        }
-    }
 
     override fun onPause() {
         Timber.d("onPause()")
@@ -87,8 +52,7 @@ class MediaSessionCallback(
 
     override fun onPlay() {
         Timber.d("onPlay()")
-        if (audioFocusHelper.requestPlayback())
-            songPlayer.playSong()
+        songPlayer.playSong()
     }
 
     override fun onPlayFromSearch(query: String?, extras: Bundle?) {
