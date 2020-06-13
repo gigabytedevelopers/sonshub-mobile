@@ -59,7 +59,7 @@ class MainFragment : Fragment() {
 
     private lateinit var adView: AdColonyAdView
     private lateinit var adContainer: RelativeLayout
-    private val bannerZoneID = "vz6b6bc3607a8147ab82"
+    private lateinit var bannerZoneID: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,6 +72,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 //        setHasOptionsMenu(true)
         adContainer = view.findViewById(R.id.ad_container)
+        bannerZoneID = getString(R.string.banner_zone_id)
         requestBannerAd()
 
         setupViewPager(viewpager)

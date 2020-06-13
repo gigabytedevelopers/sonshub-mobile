@@ -70,7 +70,7 @@ class NowPlayingFragment : BaseNowPlayingFragment(), GestureDetector.OnGestureLi
 
     private lateinit var adView: AdColonyAdView
     private lateinit var adContainer: RelativeLayout
-    private val bannerZoneID = "vz6b6bc3607a8147ab82"
+    private lateinit var bannerZoneID: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,6 +85,7 @@ class NowPlayingFragment : BaseNowPlayingFragment(), GestureDetector.OnGestureLi
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
         adContainer = binding.root.findViewById(R.id.ad_container)
+        bannerZoneID = getString(R.string.banner_zone_id)
         requestBannerAd()
 
         binding.let {
