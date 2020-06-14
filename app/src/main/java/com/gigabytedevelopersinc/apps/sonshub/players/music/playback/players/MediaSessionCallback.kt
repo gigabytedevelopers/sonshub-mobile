@@ -62,7 +62,7 @@ class MediaSessionCallback(
             Timber.d("LOSS")
             abandonPlayback()
             isAudioFocusGranted = false
-            songPlayer.pause()
+            onPause()
         }
 
         audioFocusHelper.onAudioFocusLossTransient {
@@ -70,7 +70,7 @@ class MediaSessionCallback(
             val isPlaying = songPlayer.getSession().controller.playbackState.state == STATE_PLAYING
             if (isPlaying) {
                 isAudioFocusGranted = true
-                songPlayer.pause()
+                onPause()
             }
         }
 

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gigabytedevelopersinc.apps.sonshub.BuildConfig;
 import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.DownloadedAdapter;
@@ -88,10 +89,17 @@ public class AudioDownloadedFragment extends Fragment {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(uri1, DownloadUtils.getMimeType(requireContext(), uri1));
-                intent.setClassName(
-                        "com.gigabytedevelopersinc.apps.sonshub",
-                        "com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity"
-                );
+                if (!BuildConfig.DEBUG) {
+                    intent.setClassName(
+                            "com.gigabytedevelopersinc.apps.sonshub",
+                            "com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity"
+                    );
+                } else {
+                    intent.setClassName(
+                            "com.gigabytedevelopersinc.apps.sonshub.dev",
+                            "com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity"
+                    );
+                }
                 MainActivity.player.setPlayWhenReady(false);
                 startActivity(intent);
                 requireActivity().overridePendingTransition(R.anim.push_up_in, R.anim.hold);
