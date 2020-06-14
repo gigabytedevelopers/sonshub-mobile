@@ -2,7 +2,6 @@ package com.gigabytedevelopersinc.apps.sonshub.players.music.playback.players
 
 import android.app.Application
 import android.app.PendingIntent
-import android.media.AudioManager
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.*
@@ -102,7 +101,7 @@ class RealSongPlayer(
     private val songsRepository: SongsRepository,
     private val queueDao: QueueDao,
     private val queue: Queue,
-    private val audioFocusHelper: AudioFocusHelper
+    audioFocusHelper: AudioFocusHelper
 ) : SongPlayer {
 
     private var isInitialized: Boolean = false
@@ -121,6 +120,7 @@ class RealSongPlayer(
             MediaSessionCallback(
                 this,
                 this@RealSongPlayer,
+                audioFocusHelper,
                 songsRepository,
                 queueDao
             )
@@ -135,34 +135,6 @@ class RealSongPlayer(
 
     init {
         queue.setMediaSession(mediaSession)
-
-        audioFocusHelper.onAudioFocusGain {
-            Timber.d("GAIN")
-            if (isAudioFocusGranted && !getSession().isPlaying()) {
-                playSong()
-            } else audioFocusHelper.setVolume(AudioManager.ADJUST_RAISE)
-            isAudioFocusGranted = false
-        }
-        audioFocusHelper.onAudioFocusLoss {
-            Timber.d("LOSS")
-            abandonPlayback()
-            isAudioFocusGranted = false
-            pause()
-        }
-
-        audioFocusHelper.onAudioFocusLossTransient {
-            Timber.d("TRANSIENT")
-            if (getSession().isPlaying()) {
-                isAudioFocusGranted = true
-                pause()
-            }
-        }
-
-        audioFocusHelper.onAudioFocusLossTransientCanDuck {
-            Timber.d("TRANSIENT_CAN_DUCK")
-            audioFocusHelper.setVolume(AudioManager.ADJUST_LOWER)
-        }
-
         musicPlayer.onPrepared {
             preparedCallback(this@RealSongPlayer)
             playSong()
@@ -204,8 +176,7 @@ class RealSongPlayer(
             updatePlaybackState {
                 setState(STATE_PLAYING, mediaSession.position(), 1F)
             }
-            if (audioFocusHelper.requestPlayback())
-                musicPlayer.play()
+            musicPlayer.play()
             return
         }
         musicPlayer.reset()
