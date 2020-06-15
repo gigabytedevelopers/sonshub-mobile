@@ -57,10 +57,6 @@ import timber.log.Timber
 class MainFragment : Fragment() {
     private val startPagePref by inject<Pref<StartPage>>(named(PREF_START_PAGE))
 
-    private lateinit var adView: AdColonyAdView
-    private lateinit var adContainer: RelativeLayout
-    private lateinit var bannerZoneID: String
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,9 +67,6 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        setHasOptionsMenu(true)
-        adContainer = view.findViewById(R.id.ad_container)
-        bannerZoneID = getString(R.string.banner_zone_id)
-        requestBannerAd()
 
         setupViewPager(viewpager)
         tabLayout.setupWithViewPager(viewpager)
@@ -151,49 +144,5 @@ class MainFragment : Fragment() {
         override fun getCount() = fragments.size
 
         override fun getPageTitle(position: Int) = titles[position]
-    }
-
-    private fun requestBannerAd() {
-        // Optional Ad specific options to be sent with request
-        val adOptions = AdColonyAdOptions()
-        val listener: AdColonyAdViewListener = object : AdColonyAdViewListener() {
-            override fun onRequestFilled(adColonyAdView: AdColonyAdView) {
-                Timber.d("onRequestFilled")
-                adContainer.addView(adColonyAdView)
-                adView = adColonyAdView
-            }
-
-            override fun onRequestNotFilled(zone: AdColonyZone) {
-                super.onRequestNotFilled(zone)
-                Timber.d("onRequestNotFilled")
-            }
-
-            override fun onOpened(ad: AdColonyAdView) {
-                super.onOpened(ad)
-                Timber.d("onOpened")
-            }
-
-            override fun onClosed(ad: AdColonyAdView) {
-                super.onClosed(ad)
-                Timber.d("onClosed")
-            }
-
-            override fun onClicked(ad: AdColonyAdView) {
-                super.onClicked(ad)
-                Timber.d("onClicked")
-            }
-
-            override fun onLeftApplication(ad: AdColonyAdView) {
-                super.onLeftApplication(ad)
-                Timber.d("onLeftApplication")
-            }
-        }
-        //Request Ad
-        AdColony.requestAdView(
-            bannerZoneID,
-            listener,
-            AdColonyAdSize.BANNER,
-            adOptions
-        )
     }
 }
