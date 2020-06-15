@@ -116,12 +116,13 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    // Amazon Ads
-    implementation 'com.amazon.android:mobile-ads:5.8.1.1'
+    // Chartboost Ads
+    implementation 'com.chartboost:chartboost-sdk:8.0.3'
+    implementation 'com.google.android.gms:play-services-base:17.3.0'
+    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
 
     // AdColony
     implementation 'com.adcolony:sdk:4.1.4'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
 
     // App Update
     implementation 'com.github.javiersantos:AppUpdater:2.7'
