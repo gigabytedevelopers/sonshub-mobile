@@ -86,7 +86,7 @@ public class ChartboostAdWrapper extends FrameLayout {
                 cacheBanner();
             } else {
                 Timber.d("Banner cached");
-                showBannerAd();
+                //showBannerAd();
             }
         }
 
