@@ -150,6 +150,10 @@
         </activity>
 
         <activity android:name=".players.music.ui.activities.ExpandedControlsActivity" />
+
+        <activity
+            android:name="com.amazon.device.ads.AdActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
         <service
             android:name=".players.music.playback.TimberMusicService"
             android:enabled="true"

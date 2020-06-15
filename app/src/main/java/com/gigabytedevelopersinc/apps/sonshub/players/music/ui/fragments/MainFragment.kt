@@ -6,39 +6,29 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.adcolony.sdk.*
 import com.afollestad.rxkprefs.Pref
-import com.google.android.material.appbar.AppBarLayout
-import com.gigabytedevelopersinc.apps.sonshub.players.music.PREF_START_PAGE
 import com.gigabytedevelopersinc.apps.sonshub.R
-import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService.Companion.TYPE_ALL_ALBUMS
-import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService.Companion.TYPE_ALL_ARTISTS
-import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService.Companion.TYPE_ALL_FOLDERS
-import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService.Companion.TYPE_ALL_GENRES
-import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService.Companion.TYPE_ALL_PLAYLISTS
-import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService.Companion.TYPE_ALL_SONGS
+import com.gigabytedevelopersinc.apps.sonshub.players.music.PREF_START_PAGE
 import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.StartPage
 import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.addFragment
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.drawable
 import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.inflateTo
 import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.safeActivity
 import com.gigabytedevelopersinc.apps.sonshub.players.music.models.MediaID
+import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService.Companion.TYPE_ALL_ALBUMS
+import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService.Companion.TYPE_ALL_ARTISTS
+import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService.Companion.TYPE_ALL_GENRES
+import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.TimberMusicService.Companion.TYPE_ALL_SONGS
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.fragments.base.MediaItemFragment
-import kotlinx.android.synthetic.main.music_main_fragment.appBar
-import kotlinx.android.synthetic.main.music_main_fragment.tabLayout
-import kotlinx.android.synthetic.main.music_main_fragment.viewpager
-import kotlinx.android.synthetic.main.music_toolbar.btnSearch
-import kotlinx.android.synthetic.main.music_toolbar.mediaRouteButton
-import kotlinx.android.synthetic.main.music_toolbar.toolbar
+import com.google.android.material.appbar.AppBarLayout
+import kotlinx.android.synthetic.main.music_main_fragment.*
+import kotlinx.android.synthetic.main.music_toolbar.*
 import org.koin.android.ext.android.inject
 import org.koin.core.qualifier.named
-import timber.log.Timber
 
 /**
  * Project - SonsHub

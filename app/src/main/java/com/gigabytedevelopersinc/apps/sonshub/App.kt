@@ -13,6 +13,7 @@ import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import android.os.SystemClock
 import com.adcolony.sdk.AdColony
+import com.amazon.device.ads.AdRegistration
 import com.gigabytedevelopersinc.apps.sonshub.Repository.repositoriesModule
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Fetch.Impl.setDefaultInstanceConfiguration
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.FetchConfiguration
@@ -54,7 +55,9 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
 
         disableDeathOnFileUriExposure()
         registerActivityLifecycleCallbacks(instance)
+
         AdColony.configure(instance, adColonyAppID, bannerZoneID)
+        AdRegistration.setAppKey("862696c9ef8f426e991124f85d8a1c53")
 
         if (!BuildConfig.DEBUG) {
             val builder = VmPolicy.Builder()
