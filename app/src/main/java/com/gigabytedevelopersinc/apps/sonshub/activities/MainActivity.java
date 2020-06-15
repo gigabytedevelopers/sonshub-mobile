@@ -148,10 +148,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static Context appContext = App.Companion.getContext();
     private static final String FETCH_NAMESPACE = "Downloading";
 
-    private AdColonyAdView adView;
-    private RelativeLayout adContainer;
-    private static final String BANNER_ZONE_ID = Objects.requireNonNull(appContext).getString(R.string.banner_zone_id);
-
     public MainActivity() {
     }
 
@@ -161,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        adContainer = findViewById(R.id.ad_container);
         playerView = findViewById(R.id.audio_view);
         player = new SimpleExoPlayer.Builder(this).build();
         tinyDb = new TinyDb(MainActivity.this);
@@ -188,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         
         sonshubAppInstance = this;
         checkForUpdate();
-        requestBannerAd();
+        //requestBannerAd();
 
         toggleStreamLayout = findViewById(R.id.toggle);
         toggleDivider = findViewById(R.id.toggleDivider);
@@ -1213,52 +1208,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bottomSheetDialog.setCancelable(true);
         bottomSheetDialog.setContentView(generalNoticeView);
         bottomSheetDialog.show();
-    }
-
-    private void requestBannerAd() {
-        // Optional Ad specific options to be sent with request
-        AdColonyAdOptions adOptions = new AdColonyAdOptions();
-        AdColonyAdViewListener listener = new AdColonyAdViewListener() {
-            @Override
-            public void onRequestFilled(AdColonyAdView adColonyAdView) {
-                Timber.d("onRequestFilled");
-                adContainer.addView(adColonyAdView);
-                adView = adColonyAdView;
-            }
-
-            @Override
-            public void onRequestNotFilled(AdColonyZone zone) {
-                super.onRequestNotFilled(zone);
-                Timber.d("onRequestNotFilled");
-            }
-
-            @Override
-            public void onOpened(AdColonyAdView ad) {
-                super.onOpened(ad);
-                Timber.d("onOpened");
-            }
-
-            @Override
-            public void onClosed(AdColonyAdView ad) {
-                super.onClosed(ad);
-                Timber.d("onClosed");
-            }
-
-            @Override
-            public void onClicked(AdColonyAdView ad) {
-                super.onClicked(ad);
-                Timber.d("onClicked");
-            }
-
-            @Override
-            public void onLeftApplication(AdColonyAdView ad) {
-                super.onLeftApplication(ad);
-                Timber.d("onLeftApplication");
-            }
-
-        };
-        //Request Ad
-        AdColony.requestAdView(BANNER_ZONE_ID, listener, AdColonyAdSize.BANNER, adOptions);
     }
 
     @Override
