@@ -12,7 +12,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import android.os.SystemClock
-import com.adcolony.sdk.AdColony
+import com.chartboost.sdk.Chartboost
 import com.gigabytedevelopersinc.apps.sonshub.Repository.repositoriesModule
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Fetch.Impl.setDefaultInstanceConfiguration
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.FetchConfiguration
@@ -44,8 +44,8 @@ import java.util.concurrent.TimeUnit
 
 class App : Application(), Application.ActivityLifecycleCallbacks {
 
-    private val adColonyAppID = "appacf7d295b66041cf86"
-    private val bannerZoneID = "vz6b6bc3607a8147ab82"
+    private val appID = "5ee63675bbee080963db16ae"
+    private val appSignature = "71375eccdc048d18acd3cd10d215fd7bfb590e23"
 
     override fun onCreate() {
         super.onCreate()
@@ -54,9 +54,12 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
 
         disableDeathOnFileUriExposure()
         registerActivityLifecycleCallbacks(instance)
-        AdColony.configure(instance, adColonyAppID, bannerZoneID)
 
-        if (!BuildConfig.DEBUG) {
+        //Chartboost.getPIDataUseConsent().value
+        ///Chartboost.setPIDataUseConsent(instance, Chartboost.CBPIDataUseConsent.YES_BEHAVIORAL)
+        Chartboost.startWithAppId(context, appID, appSignature)
+
+    if (!BuildConfig.DEBUG) {
             val builder = VmPolicy.Builder()
             StrictMode.setVmPolicy(builder.build())
             // Enables Crash, Error Reporting for detailed, well structured Error messages on Firebase Console
