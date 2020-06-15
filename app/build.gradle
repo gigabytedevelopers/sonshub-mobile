@@ -119,10 +119,6 @@ dependencies {
     // Amazon Ads
     implementation 'com.amazon.android:mobile-ads:5.8.1.1'
 
-    // AdColony
-    implementation 'com.adcolony:sdk:4.1.4'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
-
     // App Update
     implementation 'com.github.javiersantos:AppUpdater:2.7'
 
