@@ -191,9 +191,4 @@
     <string name="message_download_canceled" translatable="false">Update download canceled!</string>
     <string name="message_download_completed" translatable="false">Download complete!</string>
     <string name="downloading_update_dialog" translatable="false">Downloading update!</string>
-
-    <!-- AdColony -->
-    <string name="adColony_app_id">appacf7d295b66041cf86</string>
-    <string name="banner_zone_id">vz6b6bc3607a8147ab82</string>
-    <string name="interstitial_zone_id">vz2a481e8d0d76452f98</string>
 </resources>
