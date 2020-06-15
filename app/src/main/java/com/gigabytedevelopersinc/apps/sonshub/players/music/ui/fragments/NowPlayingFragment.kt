@@ -1,20 +1,11 @@
 package com.gigabytedevelopersinc.apps.sonshub.players.music.ui.fragments
 
 import android.os.Bundle
-import android.support.v4.media.session.PlaybackStateCompat.REPEAT_MODE_ALL
-import android.support.v4.media.session.PlaybackStateCompat.REPEAT_MODE_NONE
-import android.support.v4.media.session.PlaybackStateCompat.REPEAT_MODE_ONE
-import android.support.v4.media.session.PlaybackStateCompat.SHUFFLE_MODE_ALL
-import android.support.v4.media.session.PlaybackStateCompat.SHUFFLE_MODE_NONE
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.widget.RelativeLayout
+import android.support.v4.media.session.PlaybackStateCompat.*
+import android.view.*
 import androidx.core.content.ContextCompat
-import com.adcolony.sdk.*
 import com.gigabytedevelopersinc.apps.sonshub.R
+import com.gigabytedevelopersinc.apps.sonshub.Repository.SongsRepository
 import com.gigabytedevelopersinc.apps.sonshub.databinding.MusicFragmentNowPlayingBinding
 import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.addFragment
 import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.inflateWithBinding
@@ -22,27 +13,11 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.observe
 import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.safeActivity
 import com.gigabytedevelopersinc.apps.sonshub.players.music.models.QueueData
 import com.gigabytedevelopersinc.apps.sonshub.players.music.network.models.ArtworkSize
-import com.gigabytedevelopersinc.apps.sonshub.Repository.SongsRepository
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.bindings.setLastFmAlbumImage
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.fragments.base.BaseNowPlayingFragment
 import com.gigabytedevelopersinc.apps.sonshub.players.music.util.AutoClearedValue
-import kotlinx.android.synthetic.main.music_fragment_now_playing.btnBack
-import kotlinx.android.synthetic.main.music_fragment_now_playing.btnLyrics
-import kotlinx.android.synthetic.main.music_fragment_now_playing.btnNext
-import kotlinx.android.synthetic.main.music_fragment_now_playing.btnPrevious
-import kotlinx.android.synthetic.main.music_fragment_now_playing.btnQueue
-import kotlinx.android.synthetic.main.music_fragment_now_playing.btnRepeat
-import kotlinx.android.synthetic.main.music_fragment_now_playing.btnShuffle
-import kotlinx.android.synthetic.main.music_fragment_now_playing.btnTogglePlayPause
-import kotlinx.android.synthetic.main.music_fragment_now_playing.progressText
-import kotlinx.android.synthetic.main.music_fragment_now_playing.seekBar
-import kotlinx.android.synthetic.main.music_fragment_now_playing.songTitle
-import kotlinx.android.synthetic.main.music_fragment_now_playing.upNextAlbumArt
-import kotlinx.android.synthetic.main.music_fragment_now_playing.upNextArtist
-import kotlinx.android.synthetic.main.music_fragment_now_playing.upNextTitle
-import kotlinx.android.synthetic.main.music_fragment_now_playing.frag_now_playing_rl
+import kotlinx.android.synthetic.main.music_fragment_now_playing.*
 import org.koin.android.ext.android.inject
-import timber.log.Timber
 import kotlin.math.absoluteValue
 
 /**
