@@ -71,17 +71,6 @@
     <string name="continue_without_internet">Continue without Internet</string>
     <string name="continue_with_edge">Continue with 2G Network</string>
 
-    <!--AdMob -->
-    <string name="admob_app_id">ca-app-pub-3567466237147953~5669907731</string>
-    <string name="banner_ads">ca-app-pub-7212695185111501/4320943330</string>
-    <string name="interstitial_ads">ca-app-pub-3567466237147953/7929594789</string>
-    <!--<string name="gift_interstitial_ads">ca-app-pub-5831918283692281/1476297657</string>-->
-
-    <!-- AdMod Test -->
-    <string name="sample_admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
-    <string name="android_banner_test_ad">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="interstitial_test_ads">ca-app-pub-3940256099942544/1033173712</string>
-    <string name="sample_admob_native_ad_id">ca-app-pub-3940256099942544/2247696110</string>
     <string name="photogal_frag">Photo Gallery</string>
     <string name="fiction_frag">Fiction</string>
     <string name="latest_posts">Latest Posts</string>
