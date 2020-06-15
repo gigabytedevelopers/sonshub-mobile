@@ -2,13 +2,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:layout_gravity="bottom">
+    android:layout_alignParentBottom="true">
 
-    <RelativeLayout
-        android:id="@+id/ad_container"
+    <com.gigabytedevelopersinc.apps.sonshub.ui.ChartboostAdWrapper
+        android:id="@+id/adWrapper"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"/>
+        android:layout_height="wrap_content"/>
 
 </FrameLayout>
