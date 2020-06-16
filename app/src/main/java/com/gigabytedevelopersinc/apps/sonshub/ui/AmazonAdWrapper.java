@@ -203,7 +203,7 @@ public class AmazonAdWrapper extends FrameLayout {
     private void showInterstitial() {
         if (showInterstitial && null != mInterstitialAd) {
             if (mInterstitialAd.isReady()) {
-
+                mInterstitialAd.showAd();
                 if (!mInterstitialAd.showAd()) {
                     Timber.w("The ad was not shown. Check the logcat for more information.");
                     loadInterstitialAds();

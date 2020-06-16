@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static Toolbar toolbar;
     private boolean haveConnectedWifi = false;
     private boolean haveConnectedMobile = false;
-    private TinyDb tinyDb;
+    private static TinyDb tinyDb;
     boolean doubleBackToExitPressedOnce = false;
     public static PlayerView playerView;
     public static SimpleExoPlayer player;
@@ -220,7 +220,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                 .into(imageStreamArt);
 
-        streamTitle.setText(Html.fromHtml(titleString), TextView.BufferType.SPANNABLE);
+        streamTitle.setSelected(true);
+        streamTitle.setText(Html.fromHtml(titleString), TextView.BufferType.NORMAL);
 
         if (haveNetworkConnection()) {
             checkNetworkState();
@@ -434,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 new WebViewFallback()));
                         pattern = Pattern.compile("http.*?mp4");
                         matcher = pattern.matcher(content);
-                        final Matcher matcher2= matcher;
+                        final Matcher matcher2 = matcher;
                         if (matcher.find()){
                             //put the download link in tinyDb for the exoplayer to pick up
                             tinyDb.putString("downloadLink", matcher.group(0));
@@ -491,17 +492,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             streamBtn.setOnClickListener(view -> {
                                 bottomSheetDialog.dismiss();
-                                Toast.makeText(context, "Loading Music...", Toast.LENGTH_SHORT).show();
                                 if (player.getPlayWhenReady()){
                                     player.stop();
                                 }
+
                                 Glide.with(context)
                                         .load(imageUrl)
                                         .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
                                         .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                                         .into(imageStreamArt);
-
-                                streamTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
+                                streamTitle.setSelected(true);
+                                streamTitle.setText(Html.fromHtml(title), TextView.BufferType.NORMAL);
 
                                 if (!isPreparing) {
                                     miniPlayerExpand();
@@ -566,7 +567,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             streamBtn.setOnClickListener(view -> {
                                 bottomSheetDialog.dismiss();
                                 Toast.makeText(context, "Loading Music...", Toast.LENGTH_SHORT).show();
-                                if (player.getPlayWhenReady()){
+                                if (player.getPlayWhenReady()) {
                                     player.stop();
                                 }
                                 Glide.with(context)
@@ -577,8 +578,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                 streamTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
 
-                                if (!isPreparing){
-                                    playWhenReady = true;
+                                if (!isPreparing) {
                                     miniPlayerExpand();
                                     initializePlayer(
                                             getInstance(),
@@ -674,7 +674,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             streamBtn.setOnClickListener(view -> {
                                 bottomSheetDialog.dismiss();
                                 Toast.makeText(context, "Loading Music...", Toast.LENGTH_SHORT).show();
-                                if (player.getPlayWhenReady()){
+                                if (player.getPlayWhenReady()) {
                                     player.stop();
                                 }
                                 Glide.with(context)
@@ -685,8 +685,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                 streamTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
 
-                                if (!isPreparing){
-                                    playWhenReady = true;
+                                if (!isPreparing) {
                                     miniPlayerExpand();
                                     initializePlayer(
                                             getInstance(),

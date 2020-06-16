@@ -91,15 +91,23 @@
                     android:layout_height="75dp"
                     app:show_timeout="0"/>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/stream_title"
-                    android:layout_below="@+id/audio_view"
-                    android:padding="@dimen/padding_small"
-                    android:text="@string/sample_music_title"
-                    android:textColor="@color/white"
-                    android:layout_gravity="bottom"/>
+                    android:layout_below="@+id/audio_view">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/stream_title"
+                        android:padding="@dimen/padding_small"
+                        android:text="@string/sample_music_title"
+                        android:textColor="@color/white"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:layout_gravity="bottom"/>
+                </LinearLayout>
             </RelativeLayout>
         </com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout>
     </LinearLayout>
