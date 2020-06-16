@@ -69,26 +69,12 @@ public class AmazonAdWrapper extends FrameLayout {
     }
 
     private void initBannerAd() {
-        if (!BuildConfig.DEBUG) {
-            AdRegistration.enableLogging(false);
-            AdRegistration.enableTesting(false);
-        } else {
-            AdRegistration.enableLogging(true);
-            AdRegistration.enableTesting(true);
-        }
         mAdView = findViewById(R.id.ad_view);
         mAdView.setListener(new BannerAdsListener());
         loadBannerAds();
     }
 
     private static void initInterstitialAd() {
-        if (!BuildConfig.DEBUG) {
-            AdRegistration.enableLogging(false);
-            AdRegistration.enableTesting(false);
-        } else {
-            AdRegistration.enableLogging(true);
-            AdRegistration.enableTesting(true);
-        }
         mInterstitialAd.setListener(new InterstitialAdsListener());
     }
 

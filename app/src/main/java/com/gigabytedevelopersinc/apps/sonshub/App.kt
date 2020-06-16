@@ -55,10 +55,15 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         AdRegistration.setAppKey("862696c9ef8f426e991124f85d8a1c53")
 
         if (!BuildConfig.DEBUG) {
+            AdRegistration.enableLogging(false)
+            AdRegistration.enableTesting(false)
+
             val builder = VmPolicy.Builder()
             StrictMode.setVmPolicy(builder.build())
+
             // Enables Crash, Error Reporting for detailed, well structured Error messages on Firebase Console
             Timber.plant(FabricTree())
+
             // Initialize User Analytics to track usage events within SonsHub Mobile
             AnalyticsManager.initialize(context)
             AnalyticsManager.logEvent(FirebaseAnalytics.Event.APP_OPEN)
@@ -66,6 +71,9 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
             AnalyticsManager.logEvent(FirebaseAnalytics.Event.SHARE)
             // TODO: Grab and Track User ratings too
         } else {
+            AdRegistration.enableLogging(true)
+            AdRegistration.enableTesting(true)
+
             // Disable Crash, Error Reporting since we can easily make use of the logcat during development
             Timber.plant(DebugTree())
         }
