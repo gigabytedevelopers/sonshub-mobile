@@ -445,7 +445,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 bottomSheetDialog.dismiss();
                                 downloadFile(matcher2, context);
                             });
-
                         } else {
                             downloadBtn.setOnClickListener(onClickListener);
                         }
@@ -498,7 +497,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             streamBtn.setOnClickListener(view -> {
                                 bottomSheetDialog.dismiss();
-                                if (player.getPlayWhenReady()){
+                                if (player.getPlayWhenReady()) {
                                     player.stop();
                                 }
 
@@ -515,18 +514,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                             getInstance(),
                                             player,
                                             playerView,
-                                            true,
+                                            false,
                                             playBackPosition,
                                             currentWindow,
                                             matcher2.group(0)
                                     );
                                 }
+                                player.setPlayWhenReady(true);
                             });
                         } else {
                             downloadBtn.setOnClickListener(onClickListener);
                             streamBtn.setOnClickListener(onClickListener);
                         }
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -592,16 +591,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                             getInstance(),
                                             player,
                                             playerView,
-                                            true,
+                                            false,
                                             playBackPosition,
                                             currentWindow,
                                             matcher2.group(0)
                                     );
                                 }
+                                player.setPlayWhenReady(true);
                             });
                         } else {
                             downloadBtn.setOnClickListener(onClickListener);
-
                             streamBtn.setOnClickListener(onClickListener);
                         }
                     }
@@ -639,7 +638,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         button.setOnClickListener(view12 -> CustomTabsHelper.openCustomTab(context, customTabsIntent,
                                 Uri.parse(link),
                                 new WebViewFallback()));
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -709,19 +707,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                             getInstance(),
                                             player,
                                             playerView,
-                                            true,
+                                            false,
                                             playBackPosition,
                                             currentWindow,
                                             matcher2.group(0)
                                     );
                                 }
+                                player.setPlayWhenReady(true);
                             });
                         } else {
                             downloadBtn.setOnClickListener(onClickListener);
-
                             streamBtn.setOnClickListener(onClickListener);
                         }
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
