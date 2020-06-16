@@ -29,7 +29,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
         this.listener = listener;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder{
         private ImageView musicImage;
         private TextView  musicTextName;
         public MyViewHolder(View view){
@@ -46,12 +46,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
 
         MyViewHolder myViewHolder = new MyViewHolder(view);
 
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onItemClick(view,myViewHolder.getAdapterPosition());
-            }
-        });
+        view.setOnClickListener(view1 -> listener.onItemClick(view1,myViewHolder.getAdapterPosition()));
         return myViewHolder;
     }
 

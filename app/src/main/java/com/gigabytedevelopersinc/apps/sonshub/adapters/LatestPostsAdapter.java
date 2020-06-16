@@ -1,21 +1,15 @@
 package com.gigabytedevelopersinc.apps.sonshub.adapters;
 
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.models.MainListModel;
@@ -83,15 +77,10 @@ public class LatestPostsAdapter extends BaseAdapter {
 
         ImageView image = gridView.findViewById(R.id.post_image);
         TextView title = gridView.findViewById(R.id.post_title);
-        TextView descriptionn = gridView.findViewById(R.id.post_description);
+        TextView description = gridView.findViewById(R.id.post_description);
         TextView time = gridView.findViewById(R.id.post_time);
 
-        gridView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onItemClick(gridView,i);
-            }
-        });
+        gridView.setOnClickListener(view1 -> listener.onItemClick(gridView,i));
 
         Glide.with(context)
                 .load(mainListModel.getImageUrl())
@@ -100,7 +89,7 @@ public class LatestPostsAdapter extends BaseAdapter {
                 .into(image);
 
         title.setText(mainListModel.getTitle());
-        descriptionn.setText(mainListModel.getDescription());
+        description.setText(mainListModel.getDescription());
         time.setText(mainListModel.getTime());
 
         return gridView;

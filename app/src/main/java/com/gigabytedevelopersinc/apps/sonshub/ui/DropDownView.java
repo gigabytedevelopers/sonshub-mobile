@@ -53,8 +53,6 @@ public class DropDownView extends RelativeLayout {
     private static final int DROP_DOWN_HEADER_CONTAINER_MIN_DEFAULT_VIEWS = 0;
     @Nullable
     private View expandedView;
-    @Nullable
-    private View headerView;
     private ViewGroup dropDownHeaderContainer;
     private LinearLayout dropDownContainer;
     private boolean isExpanded;
@@ -120,7 +118,6 @@ public class DropDownView extends RelativeLayout {
      * @param headerView your header view
      */
     public void setHeaderView(@NonNull View headerView) {
-        this.headerView = headerView;
         if (dropDownHeaderContainer.getChildCount() > DROP_DOWN_HEADER_CONTAINER_MIN_DEFAULT_VIEWS) {
             for (int i = DROP_DOWN_HEADER_CONTAINER_MIN_DEFAULT_VIEWS; i < dropDownHeaderContainer.getChildCount(); i++) {
                 dropDownHeaderContainer.removeViewAt(i);
@@ -206,9 +203,11 @@ public class DropDownView extends RelativeLayout {
             }
         }
         if (backgroundColor == 0) {
+            assert context != null;
             backgroundColor = ContextCompat.getColor(context, R.color.dDVColorPrimary);
         }
         if (overlayColor == 0) {
+            assert context != null;
             overlayColor = ContextCompat.getColor(context, R.color.dDVTransparentGray);
         }
     }
@@ -304,6 +303,7 @@ public class DropDownView extends RelativeLayout {
     private final OnClickListener emptyDropDownSpaceClickListener = v -> collapseDropDown();
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
+    static
     class TransitionListenerAdapter implements Transition.TransitionListener {
 
         @Override

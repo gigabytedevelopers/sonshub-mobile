@@ -202,8 +202,8 @@ public class NotificationUtil {
     public static boolean isAppIsInBackground(Context context) {
         boolean isInBackground = true;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        assert am != null;
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            assert am != null;
             List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
             for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
                 if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
@@ -215,9 +215,9 @@ public class NotificationUtil {
                 }
             }
         } else {
-            assert am != null;
             List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
             ComponentName componentInfo = taskInfo.get(0).topActivity;
+            assert componentInfo != null;
             if (componentInfo.getPackageName().equals(context.getPackageName())) {
                 isInBackground = false;
             }

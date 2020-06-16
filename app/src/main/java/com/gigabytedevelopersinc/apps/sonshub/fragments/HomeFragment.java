@@ -3,58 +3,69 @@ package com.gigabytedevelopersinc.apps.sonshub.fragments;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.*;
-import com.android.volley.*;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.crashlytics.android.Crashlytics;
 import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
-import com.gigabytedevelopersinc.apps.sonshub.adapters.MainListAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.MovieAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.MusicAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.NewsAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.music.MusicFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.videos.MoviesFragment;
-import com.gigabytedevelopersinc.apps.sonshub.models.MainListModel;
 import com.gigabytedevelopersinc.apps.sonshub.models.MovieModel;
 import com.gigabytedevelopersinc.apps.sonshub.models.MusicModel;
 import com.gigabytedevelopersinc.apps.sonshub.models.NewsModel;
-import com.gigabytedevelopersinc.apps.sonshub.utils.ClickListener;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
 import com.glide.slider.library.Animations.DescriptionAnimation;
 import com.glide.slider.library.SliderLayout;
-import com.glide.slider.library.SliderTypes.BaseSliderView;
 import com.glide.slider.library.SliderTypes.DefaultSliderView;
 import com.google.gson.Gson;
-import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Objects;
+
+import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment {
-    private RelativeLayout movieView,musicView, gistView;
-    private RecyclerView moviesRecyclerView, musicRecyclerView, gistRecyclerView, searchRecyclerView;
+    private RecyclerView moviesRecyclerView, musicRecyclerView, gistRecyclerView;
     private List<MovieModel> movieList;
     private List<MusicModel> musicList, featuredList;
     private List<NewsModel> gistList;
@@ -66,16 +77,9 @@ public class HomeFragment extends Fragment {
     private String ARTICLE_HOME_URL ="https://sonshub.com/wp-json/wp/v2/posts?per_page=10";
     private String FEATURED_AREA_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=19824&per_page=10";
     private SliderLayout mDemoSlider;
-    private ProgressBar moviesProgress, musicProgress,gistProgress,searchProgress;
+    private ProgressBar moviesProgress, musicProgress, gistProgress;
     private TinyDb tinyDb;
-    private RelativeLayout searchLayout;
-    private List<MainListModel> searchList;
-    private MainListAdapter searchAdapter;
-    private static NestedScrollView scrollView;
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
-    private Pattern pattern;
-    private Matcher matcher;
-    MainActivity mainActivity = new MainActivity();
 
     public HomeFragment() {
         // Required empty public constructor
@@ -87,76 +91,50 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        movieView = view.findViewById(R.id.movies_view);
-        musicView = view.findViewById(R.id.music_view);
-        gistView = view.findViewById(R.id.gist_view);
+        RelativeLayout movieView = view.findViewById(R.id.movies_view);
+        RelativeLayout musicView = view.findViewById(R.id.music_view);
+        RelativeLayout gistView = view.findViewById(R.id.gist_view);
         moviesRecyclerView = view.findViewById(R.id.movies_list);
         musicRecyclerView = view.findViewById(R.id.music_list);
         gistRecyclerView = view.findViewById(R.id.gist_list);
-        searchRecyclerView = view.findViewById(R.id.search_recyclerview);
         movieList = new ArrayList<>();
         musicList = new ArrayList<>();
         featuredList = new ArrayList<>();
         gistList = new ArrayList<>();
-        searchList = new ArrayList<>();
         mDemoSlider = view.findViewById(R.id.slider_layout);
         moviesProgress = view.findViewById(R.id.movies_progress);
         musicProgress = view.findViewById(R.id.music_progress);
         gistProgress = view.findViewById(R.id.gist_progress);
         tinyDb = new TinyDb(getContext());
         tinyDb.putString("whichFrag","Home");
-        searchLayout = view.findViewById(R.id.search_layout);
-        searchProgress = view.findViewById(R.id.search_progress);
-        scrollView = view.findViewById(R.id.nestedScroll);
+        NestedScrollView scrollView = view.findViewById(R.id.nestedScroll);
         ArrayList<String> listUrl = new ArrayList<>();
 
         mWaveSwipeRefreshLayout = view.findViewById(R.id.main_swipe);
         mWaveSwipeRefreshLayout.setWaveColor(getResources().getColor(R.color.colorPrimary));
         mWaveSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        mWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getMoviePicAndTitle();
-                getMusicPicAndTitle();
-                getGistList();
+        mWaveSwipeRefreshLayout.setOnRefreshListener(() -> {
+            getMoviePicAndTitle();
+            getMusicPicAndTitle();
+            getGistList();
 
-            }
         });
 
-        adapter = new MovieAdapter(getActivity(), movieList, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-            }
+        adapter = new MovieAdapter(getActivity(), movieList, (view12, position) -> {
         });
-        newsAdapter = new NewsAdapter(getContext(), gistList, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
+        newsAdapter = new NewsAdapter(getContext(), gistList, (view13, position) -> {
 
-            }
         });
-        musicAdapter = new MusicAdapter(getContext(), musicList, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
+        musicAdapter = new MusicAdapter(getContext(), musicList, (view14, position) -> {
 
-            }
         });
 
-        scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY > oldScrollY) {
-                    MainActivity.miniPlayerCollapse();
-                    MainActivity.streamLayout.setVisibility(View.GONE);
-                } else if (scrollY < oldScrollY) {
-                    MainActivity.streamLayout.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        searchAdapter = new MainListAdapter(getContext(), searchList, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-
+        scrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (scrollY > oldScrollY) {
+                MainActivity.miniPlayerCollapse();
+                MainActivity.streamLayout.setVisibility(View.GONE);
+            } else if (scrollY < oldScrollY) {
+                MainActivity.streamLayout.setVisibility(View.VISIBLE);
             }
         });
 
@@ -225,8 +203,8 @@ public class HomeFragment extends Fragment {
             if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                 if (error.getMessage() == null
                         || error.getMessage().equals("")
-                        || error.getCause().getMessage() == null
-                        || error.getCause().getMessage().equals("")) {
+                        || Objects.requireNonNull(error.getCause()).getMessage() == null
+                        || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
                     Toast.makeText(context, "Sorry, There was a Timeout Error", Toast.LENGTH_LONG).show();
                 } else {
                     Crashlytics.log(0, "IGNORE: ", error.getMessage());
@@ -234,8 +212,8 @@ public class HomeFragment extends Fragment {
             } else if (error instanceof AuthFailureError) {
                 if (error.getMessage() == null
                         || error.getMessage().equals("")
-                        || error.getCause().getMessage() == null
-                        || error.getCause().getMessage().equals("")) {
+                        || Objects.requireNonNull(error.getCause()).getMessage() == null
+                        || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
                     Toast.makeText(context, "Ooops... An Authentication Error Occurred", Toast.LENGTH_LONG).show();
                 } else {
                     Crashlytics.log(0, "IGNORE: ", error.getMessage());
@@ -243,8 +221,8 @@ public class HomeFragment extends Fragment {
             } else if (error instanceof ServerError || error.getCause() instanceof ServerError) {
                 if (error.getMessage() == null
                         || error.getMessage().equals("")
-                        || error.getCause().getMessage() == null
-                        || error.getCause().getMessage().equals("")) {
+                        || Objects.requireNonNull(error.getCause()).getMessage() == null
+                        || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
                     Toast.makeText(context, "Ooops... A Server Error Occurred", Toast.LENGTH_LONG).show();
                 } else {
                     Crashlytics.log(0, "IGNORE: ", error.getMessage());
@@ -252,8 +230,8 @@ public class HomeFragment extends Fragment {
             } else if (error instanceof NetworkError) {
                 if (error.getMessage() == null
                         || error.getMessage().equals("")
-                        || error.getCause().getMessage() == null
-                        || error.getCause().getMessage().equals("")) {
+                        || Objects.requireNonNull(error.getCause()).getMessage() == null
+                        || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
                     Toast.makeText(context, "Error Connecting to Server. Check your Network", Toast.LENGTH_LONG).show();
                 } else {
                     Crashlytics.log(0, "IGNORE: ", error.getMessage());
@@ -261,8 +239,8 @@ public class HomeFragment extends Fragment {
             } else if (error instanceof ParseError) {
                 if (error.getMessage() == null
                         || error.getMessage().equals("")
-                        || error.getCause().getMessage() == null
-                        || error.getCause().getMessage().equals("")) {
+                        || Objects.requireNonNull(error.getCause()).getMessage() == null
+                        || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
                     Toast.makeText(context, "Ooops... an Unknown Error Occurred", Toast.LENGTH_LONG).show();
                 } else {
                     Crashlytics.log(0, "IGNORE: ", error.getMessage());
@@ -278,68 +256,55 @@ public class HomeFragment extends Fragment {
     }
 
     private void getFeaturedImages(List<String> list){
-        JsonArrayRequest featuredRequest = new JsonArrayRequest(FEATURED_AREA_URL, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                System.out.println("Featured Image " + response);
-                try {
-                    for (int i = 0; i < response.length(); i++){
-                        JSONObject obj = response.getJSONObject(i);
-                        String featuredTitle = obj.getJSONObject("title").getString("rendered");
-                        String newFeaturedTitle = featuredTitle.trim().replace("DOWNLOAD MUSIC:", "");
-                        String mainMovieTitle = newFeaturedTitle.trim().replace("&#8217;", "'");
-                        String content = obj.getJSONObject("content").getString("rendered");
-                        String featuredImage = obj.getString("jetpack_featured_media_url");
-                        String link = obj.getString("link");
-                        list.add(featuredImage);
-                        updateFeaturedList(featuredImage,mainMovieTitle,content,link);
+        JsonArrayRequest featuredRequest = new JsonArrayRequest(FEATURED_AREA_URL, response -> {
+            System.out.println("Featured Image " + response);
+            try {
+                for (int i = 0; i < response.length(); i++){
+                    JSONObject obj = response.getJSONObject(i);
+                    String featuredTitle = obj.getJSONObject("title").getString("rendered");
+                    String newFeaturedTitle = featuredTitle.trim().replace("DOWNLOAD MUSIC:", "");
+                    String mainMovieTitle = newFeaturedTitle.trim().replace("&#8217;", "'");
+                    String content = obj.getJSONObject("content").getString("rendered");
+                    String featuredImage = obj.getString("jetpack_featured_media_url");
+                    String link = obj.getString("link");
+                    list.add(featuredImage);
+                    updateFeaturedList(featuredImage,mainMovieTitle,content,link);
 
-                    }
-
-                    RequestOptions requestOptions = new RequestOptions();
-
-                    for (int j = 0; j < list.size(); j++) {
-                        DefaultSliderView sliderView = new DefaultSliderView(getContext());
-                        // if you want show image only / without description text use DefaultSliderView instead
-
-                        // initialize SliderLayout
-                        sliderView
-                                .image(list.get(j))
-                                .setProgressBarVisible(true)
-                                .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
-                                    @Override
-                                    public void onSliderClick(BaseSliderView baseSliderView) {
-                                        tinyDb.putString("clicked", "featuredimages");
-                                        tinyDb.putString("featuredimageslist", getDetailsForMusic(featuredList,mDemoSlider.getCurrentPosition()));
-                                        MainActivity mainActivity = new MainActivity();
-                                        mainActivity.fillBottomSheet(getContext(),pattern,matcher,tinyDb);
-                                    }
-                                });
-
-                        //add your extra information
-                        sliderView.bundle(new Bundle());
-
-                        mDemoSlider.addSlider(sliderView);
-                    }
-
-                    // set Slider Transition Animation
-                    // mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Default);
-                    mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Default);
-                    mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
-                    mDemoSlider.setCustomAnimation(new DescriptionAnimation());
-                    mDemoSlider.setDuration(4000);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
 
+                for (int j = 0; j < list.size(); j++) {
+                    DefaultSliderView sliderView = new DefaultSliderView(getContext());
+                    // if you want show image only / without description text use DefaultSliderView instead
+
+                    // initialize SliderLayout
+                    sliderView
+                            .image(list.get(j))
+                            .setProgressBarVisible(true)
+                            .setOnSliderClickListener(baseSliderView -> {
+                                tinyDb.putString("clicked", "featuredimages");
+                                tinyDb.putString("featuredimageslist", getDetailsForMusic(featuredList,mDemoSlider.getCurrentPosition()));
+                                MainActivity mainActivity = new MainActivity();
+                                mainActivity.fillBottomSheet(getContext());
+                            });
+
+                    //add your extra information
+                    sliderView.bundle(new Bundle());
+
+                    mDemoSlider.addSlider(sliderView);
+                }
+
+                // set Slider Transition Animation
+                // mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Default);
+                mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Default);
+                mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+                mDemoSlider.setCustomAnimation(new DescriptionAnimation());
+                mDemoSlider.setDuration(4000);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                checkVolleyErrors(getContext(), error);
-            }
-        });
+
+        }, error -> checkVolleyErrors(getContext(), error));
 
         RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         requestQueue.add(featuredRequest);
@@ -355,7 +320,7 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void retry(VolleyError error) throws VolleyError {
+            public void retry(VolleyError error) {
 
             }
         });
@@ -363,41 +328,35 @@ public class HomeFragment extends Fragment {
     }
 
     private void getMoviePicAndTitle(){
-        JsonArrayRequest movieRequest = new JsonArrayRequest(MOVIE_HOME_URL, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                movieList.clear();
-                moviesProgress.setVisibility(View.GONE);
-                System.out.println(response);
-                try {
-                    for (int i = 0; i < response.length(); i++){
-                        JSONObject obj = response.getJSONObject(i);
-                        String movieTitle = obj.getJSONObject("title").getString("rendered");
-                        String newMovieTitle = movieTitle.trim().replace("DOWNLOAD MOVIE:", "");
-                        String mainMovieTitle = newMovieTitle.trim().replace("&#8217;", "'");
-                        String content = obj.getJSONObject("content").getString("rendered");
-                        String movieImage = obj.getString("jetpack_featured_media_url");
-                        String link = obj.getString("link");
-                        updateMovieList(movieImage,mainMovieTitle, content,link);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        JsonArrayRequest movieRequest = new JsonArrayRequest(MOVIE_HOME_URL, response -> {
+            movieList.clear();
+            moviesProgress.setVisibility(View.GONE);
+            System.out.println(response);
+            try {
+                for (int i = 0; i < response.length(); i++){
+                    JSONObject obj = response.getJSONObject(i);
+                    String movieTitle = obj.getJSONObject("title").getString("rendered");
+                    String newMovieTitle = movieTitle.trim().replace("DOWNLOAD MOVIE:", "");
+                    String mainMovieTitle = newMovieTitle.trim().replace("&#8217;", "'");
+                    String content = obj.getJSONObject("content").getString("rendered");
+                    String movieImage = obj.getString("jetpack_featured_media_url");
+                    String link = obj.getString("link");
+                    updateMovieList(movieImage,mainMovieTitle, content,link);
                 }
-
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }, new Response.ErrorListener() {
-            @Override
-           public void onErrorResponse(VolleyError error) {
-                try {
-                    moviesProgress.setVisibility(View.GONE);
-                } catch (Exception npe) {
-                    npe.printStackTrace();
-                }
 
-                System.out.println("Home Movie list caused crash with error " + error);
-                checkVolleyErrors(getContext(), error);
-           }
-        }){
+        }, error -> {
+            try {
+                moviesProgress.setVisibility(View.GONE);
+            } catch (Exception npe) {
+                npe.printStackTrace();
+            }
+
+            System.out.println("Home Movie list caused crash with error " + error);
+            checkVolleyErrors(getContext(), error);
+       }){
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -461,47 +420,41 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void retry(VolleyError error) throws VolleyError {
+            public void retry(VolleyError error) {
 
             }
         });
     }
 
     private void getMusicPicAndTitle(){
-        JsonArrayRequest musicRequest = new JsonArrayRequest(MUSIC_HOME_URL, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                musicList.clear();
-                mWaveSwipeRefreshLayout.setRefreshing(false);
+        JsonArrayRequest musicRequest = new JsonArrayRequest(MUSIC_HOME_URL, response -> {
+            musicList.clear();
+            mWaveSwipeRefreshLayout.setRefreshing(false);
+            musicProgress.setVisibility(View.GONE);
+            try {
+                for (int i = 0; i < response.length(); i++){
+                    JSONObject obj = response.getJSONObject(i);
+                    String musicTitle = obj.getJSONObject("title").getString("rendered");
+                    String newMusicTitle = musicTitle.trim().replace("MUSIC:", "");
+                    String mainMusicTitle = newMusicTitle.trim().replace("&#8211;", "'");
+                    String content = obj.getJSONObject("content").getString("rendered");
+                    String link = obj.getString("link");
+                    String movieImage = obj.getString("jetpack_featured_media_url");
+                    updateMusicList(movieImage,mainMusicTitle.trim().replace("&#8220:",""), content,link);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            try {
                 musicProgress.setVisibility(View.GONE);
-                try {
-                    for (int i = 0; i < response.length(); i++){
-                        JSONObject obj = response.getJSONObject(i);
-                        String musicTitle = obj.getJSONObject("title").getString("rendered");
-                        String newMusicTitle = musicTitle.trim().replace("MUSIC:", "");
-                        String mainMusicTitle = newMusicTitle.trim().replace("&#8211;", "'");
-                        String content = obj.getJSONObject("content").getString("rendered");
-                        String link = obj.getString("link");
-                        String movieImage = obj.getString("jetpack_featured_media_url");
-                        updateMusicList(movieImage,mainMusicTitle.trim().replace("&#8220:",""), content,link);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception npe) {
+                npe.printStackTrace();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                try {
-                    musicProgress.setVisibility(View.GONE);
-                } catch (Exception npe) {
-                    npe.printStackTrace();
-                }
 
-                System.out.println("Home Music list caused crash with error " + error);
-                checkVolleyErrors(getContext(), error);
-                error.printStackTrace();
-            }
+            System.out.println("Home Music list caused crash with error " + error);
+            checkVolleyErrors(getContext(), error);
+            error.printStackTrace();
         }){
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
@@ -566,48 +519,42 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void retry(VolleyError error) throws VolleyError {
+            public void retry(VolleyError error) {
 
             }
         });
     }
 
     private void getGistList(){
-        JsonArrayRequest gistRequest = new JsonArrayRequest(ARTICLE_HOME_URL, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                gistList.clear();
+        JsonArrayRequest gistRequest = new JsonArrayRequest(ARTICLE_HOME_URL, response -> {
+            gistList.clear();
+            gistProgress.setVisibility(View.GONE);
+            System.out.println("Gist response "+response);
+            try {
+                for (int i = 0; i < response.length(); i++){
+                    JSONObject obj = response.getJSONObject(i);
+                    String gistTitle = obj.getJSONObject("title").getString("rendered");
+                    String gistDescription = obj.getJSONObject("excerpt").getString("rendered");
+                    String newGistDescription = gistDescription.replace("<p>", "");
+                    String newsTime = obj.getString("date");
+                    String content = obj.getJSONObject("content").getString("rendered");
+                    String newsImage = obj.getString("jetpack_featured_media_url");
+                    String link = obj.getString("link");
+                    updateGistList(gistTitle,newGistDescription,newsTime,newsImage, content,link);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            try {
                 gistProgress.setVisibility(View.GONE);
-                System.out.println("Gist response "+response);
-                try {
-                    for (int i = 0; i < response.length(); i++){
-                        JSONObject obj = response.getJSONObject(i);
-                        String gistTitle = obj.getJSONObject("title").getString("rendered");
-                        String gistDescription = obj.getJSONObject("excerpt").getString("rendered");
-                        String newGistDescription = gistDescription.replace("<p>", "");
-                        String newsTime = obj.getString("date");
-                        String content = obj.getJSONObject("content").getString("rendered");
-                        String newsImage = obj.getString("jetpack_featured_media_url");
-                        String link = obj.getString("link");
-                        updateGistList(gistTitle,newGistDescription,newsTime,newsImage, content,link);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception npe) {
+                npe.printStackTrace();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                try {
-                    gistProgress.setVisibility(View.GONE);
-                } catch (Exception npe) {
-                    npe.printStackTrace();
-                }
 
-                System.out.println("Home Gist list caused crash with error " + error);
-                checkVolleyErrors(getContext(), error);
-                error.printStackTrace();
-            }
+            System.out.println("Home Gist list caused crash with error " + error);
+            checkVolleyErrors(getContext(), error);
+            error.printStackTrace();
         }){
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
@@ -673,7 +620,7 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void retry(VolleyError error) throws VolleyError {
+            public void retry(VolleyError error) {
 
             }
         });
@@ -684,15 +631,12 @@ public class HomeFragment extends Fragment {
         movieList.add(movieModel);
         adapter.notifyDataSetChanged();
 
-        adapter = new MovieAdapter(getActivity(), movieList, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                tinyDb.putString("clicked", "movies");
-                tinyDb.putString("movieDetailsList", getDetailsForMovies(movieList,position));
+        adapter = new MovieAdapter(getActivity(), movieList, (view, position) -> {
+            tinyDb.putString("clicked", "movies");
+            tinyDb.putString("movieDetailsList", getDetailsForMovies(movieList,position));
 
-                MainActivity mainActivity = new MainActivity();
-                mainActivity.fillBottomSheet(getContext(),pattern,matcher,tinyDb);
-            }
+            MainActivity mainActivity = new MainActivity();
+            mainActivity.fillBottomSheet(getContext());
         });
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL,false);
@@ -705,16 +649,13 @@ public class HomeFragment extends Fragment {
         musicList.add(musicModel);
         musicAdapter.notifyDataSetChanged();
 
-        musicAdapter = new MusicAdapter(getActivity(), musicList, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                tinyDb.putString("clicked", "music");
-                tinyDb.putString("musicDetailsList", getDetailsForMusic(musicList,position));
+        musicAdapter = new MusicAdapter(getActivity(), musicList, (view, position) -> {
+            tinyDb.putString("clicked", "music");
+            tinyDb.putString("musicDetailsList", getDetailsForMusic(musicList,position));
 
-                MainActivity mainActivity = new MainActivity();
-                mainActivity.fillBottomSheet(getContext(),pattern,matcher,tinyDb);
+            MainActivity mainActivity = new MainActivity();
+            mainActivity.fillBottomSheet(getContext());
 
-            }
         });
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL,false);
@@ -727,15 +668,12 @@ public class HomeFragment extends Fragment {
         gistList.add(newsModel);
         newsAdapter.notifyDataSetChanged();
 
-        newsAdapter = new NewsAdapter(getActivity(), gistList, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                tinyDb.putString("clicked", "featured");
-                tinyDb.putString("featuredDetailsList",getDetailsForGist(gistList, position));
+        newsAdapter = new NewsAdapter(getActivity(), gistList, (view, position) -> {
+            tinyDb.putString("clicked", "featured");
+            tinyDb.putString("featuredDetailsList",getDetailsForGist(gistList, position));
 
-                MainActivity mainActivity = new MainActivity();
-                mainActivity.fillBottomSheet(getContext(),pattern,matcher,tinyDb);
-            }
+            MainActivity mainActivity = new MainActivity();
+            mainActivity.fillBottomSheet(getContext());
         });
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL,false);

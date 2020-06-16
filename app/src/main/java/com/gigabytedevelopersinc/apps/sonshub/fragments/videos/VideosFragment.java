@@ -16,23 +16,19 @@ import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
  * A simple {@link Fragment} subclass.
  */
 public class VideosFragment extends Fragment {
-    private SmartTabLayout smartTabLayout;
-    private ViewPager viewPager;
-
 
     public VideosFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_videos, container, false);
-        smartTabLayout = view.findViewById(R.id.videos_smart_tab);
+        SmartTabLayout smartTabLayout = view.findViewById(R.id.videos_smart_tab);
         smartTabLayout.setDistributeEvenly(true);
-        viewPager = view.findViewById(R.id.videos_view_pager);
+        ViewPager viewPager = view.findViewById(R.id.videos_view_pager);
         FragmentPagerItemAdapter fragmentPagerItemAdapter = new FragmentPagerItemAdapter(getChildFragmentManager(), FragmentPagerItems.with(getContext())
                 .add(R.string.nav_video_movies, MoviesFragment.class)
                 .add(R.string.nav_video_music_videos, MusicVideosFragment.class)

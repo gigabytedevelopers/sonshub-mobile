@@ -25,7 +25,7 @@ public class DownloadedAdapter extends RecyclerView.Adapter<DownloadedAdapter.My
         this.listener = listener;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder{
 
         private TextView title;
         public MyViewHolder(View view){
@@ -41,12 +41,7 @@ public class DownloadedAdapter extends RecyclerView.Adapter<DownloadedAdapter.My
 
         MyViewHolder myViewHolder = new MyViewHolder(view);
 
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onAudioOrVideoClick(view, myViewHolder.getAdapterPosition(),myViewHolder.title.getText().toString());
-            }
-        });
+        view.setOnClickListener(view1 -> listener.onAudioOrVideoClick(view1, myViewHolder.getAdapterPosition(),myViewHolder.title.getText().toString()));
         return myViewHolder;
     }
 

@@ -1,25 +1,26 @@
 package com.gigabytedevelopersinc.apps.sonshub.activities;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
-import com.gigabytedevelopersinc.apps.sonshub.R;
-import org.jetbrains.annotations.NotNull;
-import timber.log.Timber;
 
-import java.util.*;
+import com.gigabytedevelopersinc.apps.sonshub.R;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import timber.log.Timber;
 
 /**
  * Project - SonsHub
@@ -85,51 +86,48 @@ public class SplashActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
         String TAG = "tag";
         Timber.tag(TAG).d("Permission callback called-------");
-        switch (requestCode) {
-            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
-
-                Map<String, Integer> perms = new HashMap<>();
-                // Initialize the map with both permissions
-                // Fill with actual results from user
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < permissions.length; i++) {
-                        perms.put(permissions[i], grantResults[i]);
-                    }
-                    // Check for both permissions
-                    for (int i = 0; i < listPermissionsNeeded.size(); i++) {
-                        if (perms.get(listPermissionsNeeded.get(i)) == PackageManager.PERMISSION_GRANTED) {
-                            Timber.tag(TAG).d("sms & location services permission granted");
-                            // process the normal flow
-                            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                            //else any one or both the permissions are not granted
+        if (requestCode == REQUEST_ID_MULTIPLE_PERMISSIONS) {
+            Map<String, Integer> perms = new HashMap<>();
+            // Initialize the map with both permissions
+            // Fill with actual results from user
+            if (grantResults.length > 0) {
+                for (int i = 0; i < permissions.length; i++) {
+                    perms.put(permissions[i], grantResults[i]);
+                }
+                // Check for both permissions
+                for (int i = 0; i < listPermissionsNeeded.size(); i++) {
+                    if (perms.get(listPermissionsNeeded.get(i)) == PackageManager.PERMISSION_GRANTED) {
+                        Timber.tag(TAG).d("sms & location services permission granted");
+                        // process the normal flow
+                        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                        //else any one or both the permissions are not granted
+                    } else {
+                        Timber.tag(TAG).d("Some permissions are not granted ask again ");
+                        // Permission is denied (this is the first time, when "never ask again" is not checked)
+                        // so ask again explaining the usage of permission
+                        // shouldShowRequestPermissionRationale will return true
+                        // show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, listPermissionsNeeded.get(i))) {
+                            showDialogOK((dialog, which) -> {
+                                switch (which) {
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        checkAndRequestPermissions();
+                                        break;
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        // proceed with logic by disabling the related features or quit the app.
+                                        finish();
+                                        break;
+                                }
+                            });
                         } else {
-                            Timber.tag(TAG).d("Some permissions are not granted ask again ");
-                            // Permission is denied (this is the first time, when "never ask again" is not checked)
-                            // so ask again explaining the usage of permission
-                            // shouldShowRequestPermissionRationale will return true
-                            // show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
-                            if (ActivityCompat.shouldShowRequestPermissionRationale(this, listPermissionsNeeded.get(i))) {
-                                showDialogOK((dialog, which) -> {
-                                    switch (which) {
-                                        case DialogInterface.BUTTON_POSITIVE:
-                                            checkAndRequestPermissions();
-                                            break;
-                                        case DialogInterface.BUTTON_NEGATIVE:
-                                            // proceed with logic by disabling the related features or quit the app.
-                                            finish();
-                                            break;
-                                    }
-                                });
-                            } else {
-                                // Permission is denied (and never ask again is checked)
-                                // shouldShowRequestPermissionRationale will return false
-                                Timber.tag("Go to settings").i("and enable permissions");
-                                // Never ask again was clicked. So, explain why we need permissions
-                                explain();
-                                // Or proceed with logic by disabling the related features or quit the app.
-                            }
+                            // Permission is denied (and never ask again is checked)
+                            // shouldShowRequestPermissionRationale will return false
+                            Timber.tag("Go to settings").i("and enable permissions");
+                            // Never ask again was clicked. So, explain why we need permissions
+                            explain();
+                            // Or proceed with logic by disabling the related features or quit the app.
                         }
                     }
                 }

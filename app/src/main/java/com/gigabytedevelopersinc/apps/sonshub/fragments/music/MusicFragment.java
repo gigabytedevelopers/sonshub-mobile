@@ -16,22 +16,18 @@ import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
  * A simple {@link Fragment} subclass.
  */
 public class MusicFragment extends Fragment {
-    private SmartTabLayout smartTabLayout;
-    private ViewPager viewPager;
-
 
     public MusicFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_music, container, false);
-        smartTabLayout = view.findViewById(R.id.smart_tab);
-        viewPager = view.findViewById(R.id.music_view_pager);
+        SmartTabLayout smartTabLayout = view.findViewById(R.id.smart_tab);
+        ViewPager viewPager = view.findViewById(R.id.music_view_pager);
         FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(getChildFragmentManager(), FragmentPagerItems.with(getContext())
                 .add( R. string.nav_music_african, AfricanFragment.class)
                 .add(R.string.nav_music_album, AlbumFragment.class)

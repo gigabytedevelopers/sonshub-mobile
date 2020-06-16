@@ -1,7 +1,5 @@
 package com.gigabytedevelopersinc.apps.sonshub.models;
 
-import android.widget.LinearLayout;
-
 public class DownloadedModel {
     private String title;
 

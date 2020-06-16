@@ -108,7 +108,7 @@ public class ExpandableLayout extends FrameLayout {
                 View child = getChildAt(i);
                 if (orientation == HORIZONTAL) {
                     int direction = -1;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1 && getLayoutDirection() == LAYOUT_DIRECTION_RTL) {
+                    if (getLayoutDirection() == LAYOUT_DIRECTION_RTL) {
                         direction = 1;
                     }
                     child.setTranslationX(direction * parallaxDelta);

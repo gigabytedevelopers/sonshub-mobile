@@ -120,17 +120,10 @@ public final class Data {
 
     private void moveFile(File file, File dir) throws IOException {
         File newFile = new File(dir, file.getName());
-        FileChannel outputChannel = null;
-        FileChannel inputChannel = null;
-        try {
-            outputChannel = new FileOutputStream(newFile).getChannel();
-            inputChannel = new FileInputStream(file).getChannel();
+        try (FileChannel outputChannel = new FileOutputStream(newFile).getChannel(); FileChannel inputChannel = new FileInputStream(file).getChannel()) {
             inputChannel.transferTo(0, inputChannel.size(), outputChannel);
             inputChannel.close();
             file.delete();
-        } finally {
-            if (inputChannel != null) inputChannel.close();
-            if (outputChannel != null) outputChannel.close();
         }
     }
 }

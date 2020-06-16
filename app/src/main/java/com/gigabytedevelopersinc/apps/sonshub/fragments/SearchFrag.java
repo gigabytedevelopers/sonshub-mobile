@@ -2,21 +2,25 @@ package com.gigabytedevelopersinc.apps.sonshub.fragments;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.android.volley.*;
+import com.android.volley.NetworkResponse;
+import com.android.volley.RequestQueue;
+import com.android.volley.RetryPolicy;
+import com.android.volley.ServerError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
@@ -26,13 +30,9 @@ import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.MainListAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.models.MainListModel;
-import com.gigabytedevelopersinc.apps.sonshub.utils.ClickListener;
-import com.gigabytedevelopersinc.apps.sonshub.utils.OnBottomReachedListener;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
-import org.json.JSONArray;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,8 +41,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity.searchQuery;
 
@@ -58,8 +56,6 @@ public class SearchFrag extends Fragment {
     public Context context;
     public int pageNum;
     public TinyDb tinyDb;
-    private Pattern pattern;
-    private Matcher matcher;
     private String webSearch;
     private static Context appContext = App.Companion.getContext();
 
@@ -85,10 +81,7 @@ public class SearchFrag extends Fragment {
         bufferingProgress = view.findViewById(R.id.progressBar);
         tinyDb = new TinyDb(appContext);
         HomeFragment.hideStreamLayout(searchRecyclerView);
-        searchAdapter = new MainListAdapter(appContext, searchList, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-            }
+        searchAdapter = new MainListAdapter(appContext, searchList, (view1, position) -> {
         });
         getSearchResults();
     }
@@ -106,41 +99,27 @@ public class SearchFrag extends Fragment {
             Toast.makeText(appContext, "Unknown Error try again", Toast.LENGTH_LONG).show();
             Crashlytics.logException(npe);
         }
-        JsonArrayRequest searchRequest = new JsonArrayRequest(SEARCH_URL + webSearch+"&per_page=10&page=1", new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                searchProgress.setVisibility(View.GONE);
-                try {
-                    for (int i =0; i < response.length(); i++){
-                        JSONObject obj = response.getJSONObject(i);
-                        String title = obj.getJSONObject("title").getString("rendered");
-                        String description = obj.getJSONObject("excerpt").getString("rendered");
-                        String time = obj.getString("date");
-                        String content = obj.getJSONObject("content").getString("rendered");
+        JsonArrayRequest searchRequest = new JsonArrayRequest(SEARCH_URL + webSearch+"&per_page=10&page=1", response -> {
+            searchProgress.setVisibility(View.GONE);
+            try {
+                for (int i =0; i < response.length(); i++){
+                    JSONObject obj = response.getJSONObject(i);
+                    String title = obj.getJSONObject("title").getString("rendered");
+                    String description = obj.getJSONObject("excerpt").getString("rendered");
+                    String time = obj.getString("date");
+                    String content = obj.getJSONObject("content").getString("rendered");
 
-                        String movieImage = obj.getString("jetpack_featured_media_url");
-                        String link = obj.getString("link");
+                    String movieImage = obj.getString("jetpack_featured_media_url");
+                    String link = obj.getString("link");
 
-                        updateSearchList(movieImage,title,link,description,time,content,searchQuery);
-                    }
-                } catch (JSONException je) {
-                    je.printStackTrace();
+                    updateSearchList(movieImage,title,link,description,time,content,searchQuery);
                 }
+            } catch (JSONException je) {
+                je.printStackTrace();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if ((error.getMessage() == null)
-                        || error.getMessage().equals("")
-                        || Objects.requireNonNull(error.getCause()).getMessage() == null
-                        || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
-                    HomeFragment.checkVolleyErrors(appContext,error);
-                    error.printStackTrace();
-                } else {
-                    HomeFragment.checkVolleyErrors(appContext,error);
-                    error.printStackTrace();
-                }
-            }
+        }, error -> {
+            HomeFragment.checkVolleyErrors(appContext,error);
+            error.printStackTrace();
         });
 
         RequestQueue requestQueue = Volley.newRequestQueue(Objects.requireNonNull(appContext));
@@ -157,7 +136,7 @@ public class SearchFrag extends Fragment {
             }
 
             @Override
-            public void retry(VolleyError error) throws VolleyError {
+            public void retry(VolleyError error) {
 
             }
         });
@@ -168,26 +147,20 @@ public class SearchFrag extends Fragment {
         searchList.add(mainListModel);
         searchAdapter.notifyDataSetChanged();
 
-        searchAdapter = new MainListAdapter(appContext, searchList, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                tinyDb.putString("clicked", "music");
-                tinyDb.putString("musicDetailsList", getDetails(searchList,position));
+        searchAdapter = new MainListAdapter(appContext, searchList, (view, position) -> {
+            tinyDb.putString("clicked", "music");
+            tinyDb.putString("musicDetailsList", getDetails(searchList,position));
 
-                if (!requireActivity().isFinishing()) {
-                    ((MainActivity) requireActivity()).fillBottomSheet(getContext(),pattern,matcher,tinyDb);
-                }
+            if (!requireActivity().isFinishing()) {
+                ((MainActivity) requireActivity()).fillBottomSheet(getContext());
             }
         });
 
-        searchAdapter.setOnBottomReachedListener(new OnBottomReachedListener() {
-            @Override
-            public void onBottomReached(int position) {
-                String SEARCH_URL = "https://sonshub.com/wp-json/wp/v2/posts?search="+ searchQuery.trim()+"&per_page=10&page=" + pageNum;
-                pageNum = pageNum + 1;
-                bufferingProgress.setVisibility(View.VISIBLE);
-                new Handler().postDelayed(() -> loadMoreSearchList(SEARCH_URL), 5000);
-            }
+        searchAdapter.setOnBottomReachedListener(position -> {
+            String SEARCH_URL = "https://sonshub.com/wp-json/wp/v2/posts?search="+ searchQuery.trim()+"&per_page=10&page=" + pageNum;
+            pageNum = pageNum + 1;
+            bufferingProgress.setVisibility(View.VISIBLE);
+            new Handler().postDelayed(() -> loadMoreSearchList(SEARCH_URL), 5000);
         });
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL,false);
         searchRecyclerView.setLayoutManager(llm);
@@ -196,66 +169,58 @@ public class SearchFrag extends Fragment {
 
     private void loadMoreSearchList(String SEARCH_URL){
         try {
-            JsonArrayRequest africanRequest = new JsonArrayRequest(SEARCH_URL, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    System.out.println(response);
-                    try {
-                        for (int i = 0; i < response.length(); i++){
-                            JSONObject obj = response.getJSONObject(i);
-                            String title = obj.getJSONObject("title").getString("rendered");
-                            String description = obj.getJSONObject("excerpt").getString("rendered");
-                            String time = obj.getString("date");
-                            String content = obj.getJSONObject("content").getString("rendered");
-                            String newTitle = title.trim().replace("DOWNLOAD MOVIE:", "");
-                            String link = obj.getString("link");
-                            String movieImage = obj.getString("jetpack_featured_media_url");
-                            updateloadMoreSearchList(movieImage,newTitle,link,description,time,content);
-                        }
-
-                        bufferingProgress.setVisibility(View.GONE);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+            JsonArrayRequest africanRequest = new JsonArrayRequest(SEARCH_URL, response -> {
+                System.out.println(response);
+                try {
+                    for (int i = 0; i < response.length(); i++){
+                        JSONObject obj = response.getJSONObject(i);
+                        String title = obj.getJSONObject("title").getString("rendered");
+                        String description = obj.getJSONObject("excerpt").getString("rendered");
+                        String time = obj.getString("date");
+                        String content = obj.getJSONObject("content").getString("rendered");
+                        String newTitle = title.trim().replace("DOWNLOAD MOVIE:", "");
+                        String link = obj.getString("link");
+                        String movieImage = obj.getString("jetpack_featured_media_url");
+                        updateloadMoreSearchList(movieImage,newTitle,link,description,time,content);
                     }
+
+                    bufferingProgress.setVisibility(View.GONE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    NetworkResponse response = error.networkResponse;
-                    if (error instanceof ServerError && response != null) {
-                        try {
-                            String res = new String(response.data,
-                                    HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-                            // Now you can use any deserializer to make sense of data
-                            System.out.print("Error Json " + res);
-                            JSONObject obj = new JSONObject(res);
-                            int status = obj.getJSONObject("data").getInt("status");
+            }, error -> {
+                NetworkResponse response = error.networkResponse;
+                if (error instanceof ServerError && response != null) {
+                    try {
+                        String res = new String(response.data,
+                                HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                        // Now you can use any deserializer to make sense of data
+                        System.out.print("Error Json " + res);
+                        JSONObject obj = new JSONObject(res);
+                        int status = obj.getJSONObject("data").getInt("status");
 
-                            if (status == 400){
-                                try {
-                                    bufferingProgress.setVisibility(View.GONE);
-                                    Toast.makeText(appContext, "Page End", Toast.LENGTH_LONG).show();
-                                } catch (NullPointerException ignored) {
-                                    // Ignore this Exception
-                                }
+                        if (status == 400){
+                            try {
+                                bufferingProgress.setVisibility(View.GONE);
+                                Toast.makeText(appContext, "Page End", Toast.LENGTH_LONG).show();
+                            } catch (NullPointerException ignored) {
+                                // Ignore this Exception
                             }
-                        } catch (UnsupportedEncodingException e1) {
-                            // Couldn't properly decode data to string
-                            e1.printStackTrace();
-                        } catch (JSONException e2) {
-                            // returned data is not JSONObject?
-                            e2.printStackTrace();
                         }
-                    } else if ((error.getMessage() == null)
-                            || error.getMessage().equals("")
-                            || Objects.requireNonNull(error.getCause()).getMessage() == null
-                            || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
-                        HomeFragment.checkVolleyErrors(appContext,error);
-                        error.printStackTrace();
-                    } else {
-                        HomeFragment.checkVolleyErrors(appContext,error);
-                        error.printStackTrace();
-                    }
+                    } catch (UnsupportedEncodingException | JSONException e1) {
+                        // Couldn't properly decode data to string
+                        e1.printStackTrace();
+                    } // returned data is not JSONObject?
+
+                } else if ((error.getMessage() == null)
+                        || error.getMessage().equals("")
+                        || Objects.requireNonNull(error.getCause()).getMessage() == null
+                        || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
+                    HomeFragment.checkVolleyErrors(appContext,error);
+                    error.printStackTrace();
+                } else {
+                    HomeFragment.checkVolleyErrors(appContext,error);
+                    error.printStackTrace();
                 }
             });
 
@@ -274,7 +239,7 @@ public class SearchFrag extends Fragment {
                 }
 
                 @Override
-                public void retry(VolleyError error) throws VolleyError {
+                public void retry(VolleyError error) {
 
                 }
             });

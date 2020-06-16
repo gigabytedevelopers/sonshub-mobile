@@ -3,7 +3,7 @@ package com.gigabytedevelopersinc.apps.sonshub.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+
 import com.gigabytedevelopersinc.apps.sonshub.services.notification.MyFirebaseMessagingService;
 import com.gigabytedevelopersinc.apps.sonshub.utils.Utils;
 

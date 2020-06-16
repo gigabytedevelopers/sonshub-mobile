@@ -97,7 +97,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import okhttp3.OkHttpClient;
 import saschpe.android.customtabs.CustomTabsHelper;
 import saschpe.android.customtabs.WebViewFallback;
 import timber.log.Timber;
@@ -293,7 +292,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         // Initialize Downloader
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         final FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(sonshubAppInstance)
                 .setDownloadConcurrentLimit(6)
                 .setHttpDownloader(new OkHttpDownloader(Downloader.FileDownloaderType.PARALLEL))
@@ -371,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @SuppressLint("InflateParams")
-    public void fillBottomSheet(Context context, Pattern pattern, Matcher matcher, TinyDb tinyDb) {
+    public void fillBottomSheet(Context context) {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(Objects.requireNonNull(context));
         View detailsView = LayoutInflater.from(context).inflate(R.layout.details_bottomsheet, null);
         ImageView imageView = detailsView.findViewById(R.id.songImage);
@@ -402,12 +400,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         CustomTabsIntent customTabsIntent = builder.build();
         builder.setToolbarColor(context.getResources().getColor(R.color.colorPrimary));
         CustomTabsHelper.addKeepAliveExtra(context, customTabsIntent.intent);
-        tinyDb = new TinyDb(context);
+        TinyDb tinyDb = new TinyDb(context);
 
         // This switch statement checks tiny db for each item clicked and know which specific genre was clicked
         // to handle logic properly...
         // This switch statement different categories which are movies, music, news, featureimages, featured
         final View.OnClickListener onClickListener = view -> Toast.makeText(context, "No Download Link Available at this time", Toast.LENGTH_SHORT).show();
+        Pattern pattern;
+        Matcher matcher;
         switch (tinyDb.getString("clicked")) {
             case "movies":
                 streamBtn.setVisibility(View.GONE);
@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         pattern = Pattern.compile("http.*?mp4");
                         matcher = pattern.matcher(content);
                         final Matcher matcher2 = matcher;
-                        if (matcher.find()){
+                        if (matcher.find()) {
                             //put the download link in tinyDb for the exoplayer to pick up
                             tinyDb.putString("downloadLink", matcher.group(0));
                             downloadBtn.setOnClickListener(view -> {
@@ -488,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         pattern = Pattern.compile("http.*?\\.mp3");
                         matcher = pattern.matcher(content);
                         final Matcher matcher2 = matcher;
-                        if (matcher.find()){
+                        if (matcher.find()) {
                             //put the download link in tinyDb for the exoplayer to pick up
                             tinyDb.putString("downloadLink", matcher.group(0));
                             downloadBtn.setOnClickListener(view -> {
@@ -548,9 +548,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
                                 .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                                 .into(imageView);
-                        String newContentText = content.trim().replace("<img>", "");
-//                        contentView.setText(Html.fromHtml(newContentText), TextView.BufferType.SPANNABLE);
-                        songTitle.setText(Html.fromHtml(title), TextView.BufferType.NORMAL);
+
+                        String newTitle = title.trim()
+                                .replace("DOWNLOAD", "")
+                                .replace("MP3", "")
+                                .replace(":", "");
+                        songTitle.setText(Html.fromHtml(newTitle), TextView.BufferType.NORMAL);
 
                         button.setOnClickListener(view12 -> CustomTabsHelper.openCustomTab(context, customTabsIntent,
                                 Uri.parse(link),
@@ -560,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         matcher = pattern.matcher(content);
                         final Matcher matcher2= matcher;
                         //If the mp3 file is found meaning it's a featured music
-                        if (matcher.find()){
+                        if (matcher.find()) {
                             //put the download link in tinyDb for the exoplayer to pick up
                             tinyDb.putString("downloadLink", matcher.group(0));
 
@@ -581,7 +584,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                         .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
                                         .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                                         .into(imageStreamArt);
-                                streamTitle.setText(Html.fromHtml(title), TextView.BufferType.NORMAL);
+                                streamTitle.setText(Html.fromHtml(newTitle), TextView.BufferType.NORMAL);
 
                                 if (!isPreparing) {
                                     miniPlayerExpand();
@@ -698,7 +701,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                         .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
                                         .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                                         .into(imageStreamArt);
-                                streamTitle.setText(Html.fromHtml(title), TextView.BufferType.NORMAL);
+                                streamTitle.setText(Html.fromHtml(newTitle), TextView.BufferType.NORMAL);
 
                                 if (!isPreparing) {
                                     miniPlayerExpand();
@@ -1090,12 +1093,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         final View generalNoticeView = LayoutInflater.from(this).inflate(R.layout.general_notice, null);
 
-        TextView generalNoticeTitle = generalNoticeView.findViewById(R.id.warning);
         TextView generalNoticeText = generalNoticeView.findViewById(R.id.generalNoticeText);
-        ImageView generalNoticeImg = generalNoticeView.findViewById(R.id.warningImg);
         Button cancelButton = generalNoticeView.findViewById(R.id.cancelButton);
         Button continueButton = generalNoticeView.findViewById(R.id.continueButton);
-        Button optionButton = generalNoticeView.findViewById(R.id.optionButton);
 
         assert info != null;
         if (info.getType() == ConnectivityManager.TYPE_WIFI) {

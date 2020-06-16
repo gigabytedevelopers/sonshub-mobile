@@ -1,35 +1,39 @@
 package com.gigabytedevelopersinc.apps.sonshub.fragments.videos;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.android.volley.*;
+import com.android.volley.Cache;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.ServerError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.crashlytics.android.Crashlytics;
 import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.MainListAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.HomeFragment;
 import com.gigabytedevelopersinc.apps.sonshub.models.MainListModel;
-import com.gigabytedevelopersinc.apps.sonshub.utils.ClickListener;
-import com.gigabytedevelopersinc.apps.sonshub.utils.OnBottomReachedListener;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
-import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,9 +41,8 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
 import static com.gigabytedevelopersinc.apps.sonshub.fragments.HomeFragment.checkVolleyErrors;
 
@@ -55,8 +58,6 @@ public class MoviesFragment extends Fragment {
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
     private ProgressBar progressBar,progressBarLoading;
     int pageNum;
-    private Pattern pattern;
-    private Matcher matcher;
     public MoviesFragment() {
         // Required empty public constructor
     }
@@ -79,21 +80,13 @@ public class MoviesFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
         progressBarLoading = view.findViewById(R.id.progress_bar_loading);
        HomeFragment.hideStreamLayout(recyclerView);
-        adapter = new MainListAdapter(getActivity(), list, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-            }
+        adapter = new MainListAdapter(getActivity(), list, (view1, position) -> {
         });
         progressBarLoading.setVisibility(View.VISIBLE);
         mWaveSwipeRefreshLayout = view.findViewById(R.id.main_swipe);
         mWaveSwipeRefreshLayout.setWaveColor(getResources().getColor(R.color.colorPrimary));
         mWaveSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        mWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getAfricanList();
-            }
-        });
+        mWaveSwipeRefreshLayout.setOnRefreshListener(this::getAfricanList);
         pageNum = 2;
         getAfricanList();
 
@@ -102,44 +95,38 @@ public class MoviesFragment extends Fragment {
     //Method to get the first 10 items from the sonshub api
     private void getAfricanList(){
         String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=586&per_page=10&page=1";
-        JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                list.clear();
-                mWaveSwipeRefreshLayout.setRefreshing(false);
-                System.out.println("African response: "+response);
-                progressBarLoading.setVisibility(View.GONE);
-                try {
-                    for (int i = 0; i < response.length(); i++){
-                        JSONObject obj = response.getJSONObject(i);
-                        String title = obj.getJSONObject("title").getString("rendered");
-                        String description = obj.getJSONObject("excerpt").getString("rendered");
-                        String time = obj.getString("date");
-                        String newTitle = title.trim().replace("<p>", "");
-                        String mainTitle = newTitle.trim().replace("&#8211;", "'");
+        JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, response -> {
+            list.clear();
+            mWaveSwipeRefreshLayout.setRefreshing(false);
+            System.out.println("African response: "+response);
+            progressBarLoading.setVisibility(View.GONE);
+            try {
+                for (int i = 0; i < response.length(); i++){
+                    JSONObject obj = response.getJSONObject(i);
+                    String title = obj.getJSONObject("title").getString("rendered");
+                    String description = obj.getJSONObject("excerpt").getString("rendered");
+                    String time = obj.getString("date");
+                    String newTitle = title.trim().replace("<p>", "");
+                    String mainTitle = newTitle.trim().replace("&#8211;", "'");
 
-                        String newDescription = description.trim().replace("<p>", "");
-                        String mainDescription = newDescription.trim().replace("&#8211;", "'");
-                        String content = obj.getJSONObject("content").getString("rendered");
-                        String movieImage = obj.getString("jetpack_featured_media_url");
-                        String link = obj.getString("link");
-                        updateAfricanList(movieImage,mainTitle,link,mainDescription,time,content);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    String newDescription = description.trim().replace("<p>", "");
+                    String mainDescription = newDescription.trim().replace("&#8211;", "'");
+                    String content = obj.getJSONObject("content").getString("rendered");
+                    String movieImage = obj.getString("jetpack_featured_media_url");
+                    String link = obj.getString("link");
+                    updateAfricanList(movieImage,mainTitle,link,mainDescription,time,content);
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                try {
-                    progressBarLoading.setVisibility(View.GONE);
-                } catch (Exception npe) {
-                    npe.printStackTrace();
-                }
-                checkVolleyErrors(getContext(), error);
-                error.printStackTrace();
+        }, error -> {
+            try {
+                progressBarLoading.setVisibility(View.GONE);
+            } catch (Exception npe) {
+                npe.printStackTrace();
             }
+            checkVolleyErrors(getContext(), error);
+            error.printStackTrace();
         }){
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
@@ -190,7 +177,7 @@ public class MoviesFragment extends Fragment {
             }
         };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        RequestQueue requestQueue = Volley.newRequestQueue(requireActivity());
         requestQueue.add(africanRequest);
 
         africanRequest.setRetryPolicy(new RetryPolicy() {
@@ -205,7 +192,7 @@ public class MoviesFragment extends Fragment {
             }
 
             @Override
-            public void retry(VolleyError error) throws VolleyError {
+            public void retry(VolleyError error) {
 
             }
         });
@@ -215,35 +202,24 @@ public class MoviesFragment extends Fragment {
         MainListModel mainListModel = new MainListModel(imageUrl,title,link,description,time,content);
         list.add(mainListModel);
         adapter.notifyDataSetChanged();
-        adapter = new MainListAdapter(getActivity(), list, new ClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                tinyDb.putString("clicked", "movies");
-                tinyDb.putString("movieDetailsList", getDetails(list,position));
+        adapter = new MainListAdapter(getActivity(), list, (view, position) -> {
+            tinyDb.putString("clicked", "movies");
+            tinyDb.putString("movieDetailsList", getDetails(list,position));
 
-                MainActivity mainActivity = new MainActivity();
-                mainActivity.fillBottomSheet(getContext(),pattern,matcher,tinyDb);
-            }
+            MainActivity mainActivity = new MainActivity();
+            mainActivity.fillBottomSheet(getContext());
         });
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
 
-        adapter.setOnBottomReachedListener(new OnBottomReachedListener() {
-            @Override
-            public void onBottomReached(int position) {
-                String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=586&per_page=10&page=" + pageNum;
-                pageNum = pageNum + 1;
-                progressBar.setVisibility(View.VISIBLE);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadMoreAfricanList(AFRICAN_URL);
-                    }
-                }, 5000);
+        adapter.setOnBottomReachedListener(position -> {
+            String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=586&per_page=10&page=" + pageNum;
+            pageNum = pageNum + 1;
+            progressBar.setVisibility(View.VISIBLE);
+            new Handler().postDelayed(() -> loadMoreAfricanList(AFRICAN_URL), 5000);
 
 
-            }
         });
 
     }
@@ -251,57 +227,49 @@ public class MoviesFragment extends Fragment {
     //Method to load more to the list
     private void loadMoreAfricanList(String AFRICAN_URL){
         try {
-            JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    System.out.println(response);
-                    try {
-                        for (int i = 0; i < response.length(); i++){
-                            JSONObject obj = response.getJSONObject(i);
-                            String title = obj.getJSONObject("title").getString("rendered");
-                            String description = obj.getJSONObject("excerpt").getString("rendered");
-                            String time = obj.getString("date");
-                            String newTitle = title.trim().replace("DOWNLOAD MOVIE:", "");
-                            String content = obj.getJSONObject("content").getString("rendered");
-                            String movieImage = obj.getString("jetpack_featured_media_url");
-                            String link = obj.getString("link");
-                            updateloadMoreAfricanList(movieImage,newTitle,link,description,time,content);
-                        }
-
-                        progressBar.setVisibility(View.GONE);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+            JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, response -> {
+                System.out.println(response);
+                try {
+                    for (int i = 0; i < response.length(); i++){
+                        JSONObject obj = response.getJSONObject(i);
+                        String title = obj.getJSONObject("title").getString("rendered");
+                        String description = obj.getJSONObject("excerpt").getString("rendered");
+                        String time = obj.getString("date");
+                        String newTitle = title.trim().replace("DOWNLOAD MOVIE:", "");
+                        String content = obj.getJSONObject("content").getString("rendered");
+                        String movieImage = obj.getString("jetpack_featured_media_url");
+                        String link = obj.getString("link");
+                        updateloadMoreAfricanList(movieImage,newTitle,link,description,time,content);
                     }
+
+                    progressBar.setVisibility(View.GONE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    NetworkResponse response = error.networkResponse;
-                    if (error instanceof ServerError && response != null) {
-                        try {
-                            String res = new String(response.data,
-                                    HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-                            // Now you can use any deserializer to make sense of data
-                            System.out.print("Error Json " + res);
-                            JSONObject obj = new JSONObject(res);
-                            int status = obj.getJSONObject("data").getInt("status");
+            }, error -> {
+                NetworkResponse response = error.networkResponse;
+                if (error instanceof ServerError && response != null) {
+                    try {
+                        String res = new String(response.data,
+                                HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                        // Now you can use any deserializer to make sense of data
+                        System.out.print("Error Json " + res);
+                        JSONObject obj = new JSONObject(res);
+                        int status = obj.getJSONObject("data").getInt("status");
 
-                            if (status == 400){
-                                progressBar.setVisibility(View.GONE);
-                                Toast.makeText(getContext(), "Page End", Toast.LENGTH_LONG).show();
-                            }
-                        } catch (UnsupportedEncodingException e1) {
-                            // Couldn't properly decode data to string
-                            e1.printStackTrace();
-                        } catch (JSONException e2) {
-                            // returned data is not JSONObject?
-                            e2.printStackTrace();
+                        if (status == 400){
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Page End", Toast.LENGTH_LONG).show();
                         }
-                    } else {
-                        System.out.println("Load More Error" + error);
-                        checkVolleyErrors(getContext(), error);
-                        error.printStackTrace();
-                    }
+                    } catch (UnsupportedEncodingException | JSONException e1) {
+                        // Couldn't properly decode data to string
+                        e1.printStackTrace();
+                    } // returned data is not JSONObject?
+
+                } else {
+                    System.out.println("Load More Error" + error);
+                    checkVolleyErrors(getContext(), error);
+                    error.printStackTrace();
                 }
             }){
 
@@ -322,7 +290,7 @@ public class MoviesFragment extends Fragment {
                 }
 
                 @Override
-                public void retry(VolleyError error) throws VolleyError {
+                public void retry(VolleyError error) {
 
                 }
             });

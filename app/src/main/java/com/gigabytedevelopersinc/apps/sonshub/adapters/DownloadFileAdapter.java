@@ -2,33 +2,29 @@ package com.gigabytedevelopersinc.apps.sonshub.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Download;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Status;
 import com.gigabytedevelopersinc.apps.sonshub.utils.ActionListener;
 import com.gigabytedevelopersinc.apps.sonshub.utils.DownloadUtils;
-import org.jetbrains.annotations.NotNull;
-import timber.log.Timber;
 
-import java.io.File;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.Context.EUICC_SERVICE;
-import static com.gigabytedevelopersinc.apps.sonshub.App.Companion.*;
 
 /**
  * Project - SonsHub

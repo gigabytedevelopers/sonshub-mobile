@@ -1,22 +1,22 @@
 package com.gigabytedevelopersinc.apps.sonshub.adapters;
 
 import android.content.Context;
-import android.view.MenuItem;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.gigabytedevelopersinc.apps.sonshub.R;
-import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.models.MainListModel;
 import com.gigabytedevelopersinc.apps.sonshub.utils.ClickListener;
 import com.gigabytedevelopersinc.apps.sonshub.utils.OnBottomReachedListener;
@@ -30,7 +30,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MyView
     OnBottomReachedListener onBottomReachedListener;
 
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder{
         private ImageView image;
         private TextView title, description, time;
 
@@ -59,23 +59,12 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MyView
     public MainListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view;
         MyViewHolder myViewHolder;
-
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.music_list_item,viewGroup,false);
 
                 myViewHolder = new MyViewHolder(view);
-
-
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        listener.onItemClick(view,myViewHolder.getAdapterPosition());
-                    }
-                });
+                view.setOnClickListener(view1 -> listener.onItemClick(view1,myViewHolder.getAdapterPosition()));
                 return myViewHolder;
-
-
-
     }
 
     @Override

@@ -51,7 +51,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         try {
             // Get updated InstanceID token.
-            String refreshedToken = null;
+            String refreshedToken;
             refreshedToken = FirebaseInstanceId.getInstance().getToken("211008111337", "FCM");
             Timber.tag(TAG).d("Refreshed token: %s", refreshedToken);
 
@@ -76,9 +76,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Timber.tag(TAG).e("From: %s", remoteMessage.getFrom());
-
-        if (remoteMessage == null)
-            return;
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
@@ -110,9 +107,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             // play notification sound
             NotificationUtil notificationUtils = new NotificationUtil(getApplicationContext());
             notificationUtils.playNotificationSound();
-        } else {
-            // If the app is in background, allow Firebase itself to handle the notification
-        }
+        }  // If the app is in background, allow Firebase itself to handle the notification
+
     }
 
     private void handleDataMessage(JSONObject json) {

@@ -18,23 +18,19 @@ import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
  * A simple {@link Fragment} subclass.
  */
 public class GistFragment extends Fragment {
-    private SmartTabLayout smartTabLayout;
-    private ViewPager viewPager;
-
 
     public GistFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_gist, container, false);
-        smartTabLayout = view.findViewById(R.id.gist_smart_tab);
+        SmartTabLayout smartTabLayout = view.findViewById(R.id.gist_smart_tab);
         smartTabLayout.setDistributeEvenly(true);
-        viewPager = view.findViewById(R.id.gist_view_pager);
+        ViewPager viewPager = view.findViewById(R.id.gist_view_pager);
         FragmentPagerItemAdapter fragmentPagerItemAdapter = new FragmentPagerItemAdapter(getChildFragmentManager(), FragmentPagerItems.with(getContext())
                 .add(R.string.nav_gist_article, ArticleFragment.class)
                 .add(R.string.nav_gist_event, EventsFragment.class)
