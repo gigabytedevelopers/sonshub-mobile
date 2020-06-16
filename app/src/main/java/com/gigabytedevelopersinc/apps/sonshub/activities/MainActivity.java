@@ -381,6 +381,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView songContent = detailsView.findViewById(R.id.content_view);
         Button button = detailsView.findViewById(R.id.web_button);
         LinearLayout backButton = detailsView.findViewById(R.id.back);
+        songTitle.setSelected(true);
 
         backButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
         GradientDrawable gd = new GradientDrawable();
@@ -428,8 +429,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 .into(imageView);
                         String newContentText = content.trim().replace("<img>", "");
 //                        contentView.setText(Html.fromHtml(newContentText), TextView.BufferType.SPANNABLE);
-                        songTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
+                        songTitle.setText(Html.fromHtml(title), TextView.BufferType.NORMAL);
                         tinyDb.putString("movie_title", title);
+
                         button.setOnClickListener(view12 -> CustomTabsHelper.openCustomTab(context, customTabsIntent,
                                 Uri.parse(link),
                                 new WebViewFallback()));
@@ -471,10 +473,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
                                 .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                                 .into(imageView);
-                        String newContentText = content.trim().replace("<img>", "");
-//                        contentView.setText(Html.fromHtml(newContentText), TextView.BufferType.SPANNABLE);
-                        songTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
-                        tinyDb.putString("music_title", title);
+
+                        String newTitle = title.trim()
+                                .replace("DOWNLOAD", "")
+                                .replace("MP3", "")
+                                .replace(":", "");
+                        songTitle.setText(Html.fromHtml(newTitle), TextView.BufferType.NORMAL);
+                        tinyDb.putString("music_title", newTitle);
+
                         button.setOnClickListener(view12 -> CustomTabsHelper.openCustomTab(context, customTabsIntent,
                                 Uri.parse(link),
                                 new WebViewFallback()));
@@ -501,8 +507,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                         .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
                                         .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                                         .into(imageStreamArt);
-                                streamTitle.setSelected(true);
-                                streamTitle.setText(Html.fromHtml(title), TextView.BufferType.NORMAL);
+                                streamTitle.setText(Html.fromHtml(newTitle), TextView.BufferType.NORMAL);
 
                                 if (!isPreparing) {
                                     miniPlayerExpand();
@@ -519,7 +524,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             });
                         } else {
                             downloadBtn.setOnClickListener(onClickListener);
-
                             streamBtn.setOnClickListener(onClickListener);
                         }
 
@@ -546,7 +550,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 .into(imageView);
                         String newContentText = content.trim().replace("<img>", "");
 //                        contentView.setText(Html.fromHtml(newContentText), TextView.BufferType.SPANNABLE);
-                        songTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
+                        songTitle.setText(Html.fromHtml(title), TextView.BufferType.NORMAL);
+
                         button.setOnClickListener(view12 -> CustomTabsHelper.openCustomTab(context, customTabsIntent,
                                 Uri.parse(link),
                                 new WebViewFallback()));
@@ -570,13 +575,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 if (player.getPlayWhenReady()) {
                                     player.stop();
                                 }
+
                                 Glide.with(context)
                                         .load(imageUrl)
                                         .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
                                         .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                                         .into(imageStreamArt);
-
-                                streamTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
+                                streamTitle.setText(Html.fromHtml(title), TextView.BufferType.NORMAL);
 
                                 if (!isPreparing) {
                                     miniPlayerExpand();
@@ -619,9 +624,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
                                 .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                                 .into(imageView);
+
                         String newContentText = content.trim().replace("<img>", "");
-                        songTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
+                        String newTitle = title.trim()
+                                .replace("DOWNLOAD", "")
+                                .replace("MP3", "")
+                                .replace(":", "");
+                        songTitle.setText(Html.fromHtml(newTitle), TextView.BufferType.NORMAL);
                         songContent.setText(Html.fromHtml(newContentText), TextView.BufferType.SPANNABLE);
+
                         button.setOnClickListener(view12 -> CustomTabsHelper.openCustomTab(context, customTabsIntent,
                                 Uri.parse(link),
                                 new WebViewFallback()));
@@ -649,10 +660,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
                                 .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                                 .into(imageView);
-                        String newContentText = content.trim().replace("<img>", "");
-//                        contentView.setText(Html.fromHtml(newContentText), TextView.BufferType.SPANNABLE);
-                        songTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
-                        tinyDb.putString("music_title", title);
+
+                        String newTitle = title.trim()
+                                .replace("DOWNLOAD", "")
+                                .replace("MP3", "")
+                                .replace(":", "");
+                        songTitle.setText(Html.fromHtml(newTitle), TextView.BufferType.NORMAL);
+                        tinyDb.putString("music_title", newTitle);
+
                         button.setOnClickListener(view12 -> CustomTabsHelper.openCustomTab(context, customTabsIntent,
                                 Uri.parse(link),
                                 new WebViewFallback()));
@@ -677,13 +692,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 if (player.getPlayWhenReady()) {
                                     player.stop();
                                 }
+
                                 Glide.with(context)
                                         .load(imageUrl)
                                         .transition(GenericTransitionOptions.with(android.R.anim.fade_in))
                                         .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
                                         .into(imageStreamArt);
-
-                                streamTitle.setText(Html.fromHtml(title), TextView.BufferType.SPANNABLE);
+                                streamTitle.setText(Html.fromHtml(title), TextView.BufferType.NORMAL);
 
                                 if (!isPreparing) {
                                     miniPlayerExpand();

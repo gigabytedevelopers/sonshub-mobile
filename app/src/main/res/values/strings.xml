@@ -171,6 +171,9 @@
     <string name="sample_music_title">This is the music title</string>
     <string name="stream_placeholder">Stream Placeholder</string>
     <string name="stream_toggle">Stream Toggle</string>
+    <string name="stream_title_now_playing">Now Playing: </string>
+
+    <!-- Downloader -->
     <string name="no_downloads_yet">No active downloads yet!</string>
     <string name="no_downloaded_audio">Downloaded songs will be listed here</string>
     <string name="no_downloaded_videos">Downloaded videos will be listed here</string>
