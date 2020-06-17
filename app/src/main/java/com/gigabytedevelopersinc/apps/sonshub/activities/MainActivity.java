@@ -40,6 +40,11 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.amazon.device.ads.Ad;
+import com.amazon.device.ads.AdError;
+import com.amazon.device.ads.AdProperties;
+import com.amazon.device.ads.DefaultAdListener;
+import com.amazon.device.ads.InterstitialAd;
 import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -59,6 +64,7 @@ import com.gigabytedevelopersinc.apps.sonshub.fragments.videos.VideosFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.wordoffaith.WordOfFaithFragment;
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.services.notification.SonsHubDownloadNotificationManager;
+import com.gigabytedevelopersinc.apps.sonshub.ui.AmazonAdWrapper;
 import com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout;
 import com.gigabytedevelopersinc.apps.sonshub.utils.NotificationUtil;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
@@ -136,6 +142,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static AudioAttributes mAudioAttributes;
     public static String searchQuery;
 
+    // Ads
+    private static InterstitialAd mInterstitialAd;
+    private boolean showInterstitial = true;
+
     // Downloader
     public static Fetch fetch;
     private static Context appContext = App.Companion.getContext();
@@ -153,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         playerView = findViewById(R.id.audio_view);
         player = new SimpleExoPlayer.Builder(this).build();
         tinyDb = new TinyDb(MainActivity.this);
+        mInterstitialAd = new InterstitialAd(this);
         playerView.setControllerHideOnTouch(false);
 
         mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
@@ -176,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         
         sonshubAppInstance = this;
         checkForUpdate();
-        //requestBannerAd();
+        initializeInterstitialAd();
 
         toggleStreamLayout = findViewById(R.id.toggle);
         toggleDivider = findViewById(R.id.toggleDivider);
@@ -934,12 +945,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_download:
                 startActivity(new Intent(MainActivity.this, DownloadActivity.class));
+                showInterstitial();
                 return true;
 
             case R.id.nav_music_play:
                 player.setPlayWhenReady(false);
                 startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
                 overridePendingTransition(R.anim.push_up_in, R.anim.hold);
+                showInterstitial();
                 return true;
 
             case R.id.nav_sub_menu:
@@ -998,6 +1011,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.drawer_layout);
         if (id == R.id.nav_home) {
             miniPlayerCollapse();
+            showInterstitial();
             HomeFragment homeFragment = new HomeFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, homeFragment);
@@ -1005,6 +1019,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentTransaction.commit();
         } else if (id == R.id.nav_music) {
             miniPlayerCollapse();
+            showInterstitial();
             MusicFragment musicFragment = new MusicFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, musicFragment);
@@ -1012,6 +1027,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentTransaction.commit();
         } else if (id == R.id.nav_video) {
             miniPlayerCollapse();
+            showInterstitial();
             VideosFragment videosFragment = new VideosFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, videosFragment);
@@ -1019,6 +1035,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentTransaction.commit();
         } else if (id == R.id.nav_gist) {
             miniPlayerCollapse();
+            showInterstitial();
             GistFragment gistFragment = new GistFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, gistFragment);
@@ -1026,6 +1043,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentTransaction.commit();
         } else if (id == R.id.nav_word_of_faith) {
             miniPlayerCollapse();
+            showInterstitial();
             WordOfFaithFragment wordOfFaithFragment = new WordOfFaithFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, wordOfFaithFragment);
@@ -1033,6 +1051,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentTransaction.commit();
         } else if (id == R.id.nav_sonshub_tv) {
             miniPlayerCollapse();
+            showInterstitial();
             drawerLayout.closeDrawers();
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
             final View generalNoticeView = LayoutInflater.from(this).inflate(R.layout.general_notice, null);
@@ -1065,12 +1084,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             bottomSheetDialog.show();
         } else if (id == R.id.nav_music_player) {
             miniPlayerCollapse();
-            //player.setPlayWhenReady(false);
+            showInterstitial();
             startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
             overridePendingTransition(R.anim.push_up_in, R.anim.hold);
             drawerLayout.closeDrawers();
         } else if (id == R.id.nav_about) {
             miniPlayerCollapse();
+            showInterstitial();
             AboutFragment aboutFragment = new AboutFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.parent_frame, aboutFragment);
@@ -1213,6 +1233,58 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bottomSheetDialog.setCancelable(true);
         bottomSheetDialog.setContentView(generalNoticeView);
         bottomSheetDialog.show();
+    }
+
+    private void initializeInterstitialAd() {
+        mInterstitialAd.setListener(new InterstitialAdsListener());
+    }
+
+    private static void loadInterstitialAds() {
+        mInterstitialAd.loadAd();
+    }
+
+    private static class InterstitialAdsListener extends DefaultAdListener {
+        /**
+         * This event is called once an ad loads successfully.
+         */
+        @Override
+        public void onAdLoaded(final Ad ad, final AdProperties adProperties) {
+            Timber.i("%s Interstitial ad loaded successfully.", adProperties.getAdType().toString());
+        }
+
+        /**
+         * This event is called if an ad fails to load.
+         */
+        @Override
+        public void onAdFailedToLoad(final Ad ad, final AdError error) {
+            Timber.w("Interstitial Ad failed to load. Code: " + error.getCode() + ", Message: " + error.getMessage());
+            loadInterstitialAds();
+        }
+
+        /**
+         * This event is called when an interstitial ad has been dismissed by the user.
+         */
+        @Override
+        public void onAdDismissed(final Ad ad) {
+            Timber.i("Interstitial Ad has been dismissed by the user.");
+
+            // Once the shown ad is dismissed, its lifecycle is complete and a new ad can be loaded.
+            loadInterstitialAds();
+        }
+    }
+
+    private void showInterstitial() {
+        if (showInterstitial && null != mInterstitialAd) {
+            if (mInterstitialAd.isReady()) {
+                mInterstitialAd.showAd();
+                if (!mInterstitialAd.showAd()) {
+                    Timber.w("The ad was not shown. Check the logcat for more information.");
+                    loadInterstitialAds();
+                }
+            } else {
+                loadInterstitialAds();
+            }
+        }
     }
 
     @Override

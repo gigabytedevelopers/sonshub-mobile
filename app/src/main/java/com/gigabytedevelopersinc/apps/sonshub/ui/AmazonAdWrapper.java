@@ -11,11 +11,9 @@ import com.amazon.device.ads.Ad;
 import com.amazon.device.ads.AdError;
 import com.amazon.device.ads.AdLayout;
 import com.amazon.device.ads.AdProperties;
-import com.amazon.device.ads.AdRegistration;
 import com.amazon.device.ads.DefaultAdListener;
 import com.amazon.device.ads.InterstitialAd;
 import com.crashlytics.android.Crashlytics;
-import com.gigabytedevelopersinc.apps.sonshub.BuildConfig;
 import com.gigabytedevelopersinc.apps.sonshub.R;
 
 import timber.log.Timber;

@@ -47,7 +47,7 @@ import androidx.media.app.NotificationCompat as NotificationMediaCompat
  * Desc: Notifications
  **/
 
-private const val CHANNEL_ID = "timberx_channel_01"
+private const val CHANNEL_ID = "sonshub_channel_01"
 private const val NOTIFICATION_ID = 888
 
 interface Notifications {
