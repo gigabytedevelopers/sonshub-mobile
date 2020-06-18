@@ -64,7 +64,6 @@ import com.gigabytedevelopersinc.apps.sonshub.fragments.videos.VideosFragment;
 import com.gigabytedevelopersinc.apps.sonshub.fragments.wordoffaith.WordOfFaithFragment;
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.services.notification.SonsHubDownloadNotificationManager;
-import com.gigabytedevelopersinc.apps.sonshub.ui.AmazonAdWrapper;
 import com.gigabytedevelopersinc.apps.sonshub.ui.ExpandableLayout;
 import com.gigabytedevelopersinc.apps.sonshub.utils.NotificationUtil;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
