@@ -12,7 +12,7 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     applicationVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "SonsHub Mobile-${variant.name}-${variant.versionName}.apk"
@@ -22,13 +22,14 @@ android {
     defaultConfig {
         applicationId "com.gigabytedevelopersinc.apps.sonshub"
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 17
         versionName "1.1.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
-        setProperty("archivesBaseName", "SonsHub Mobile" + "-v" + versionName + " " + "(" + versionCode + ")")
+        setProperty("archivesBaseName",
+                "SonsHub Mobile" + "-v" + versionName + " " + "(" + versionCode + ")")
     }
 
     signingConfigs {
