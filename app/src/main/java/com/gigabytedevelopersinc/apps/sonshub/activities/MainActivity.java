@@ -1236,6 +1236,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void initializeInterstitialAd() {
         mInterstitialAd.setListener(new InterstitialAdsListener());
+        loadInterstitialAds();
     }
 
     private static void loadInterstitialAds() {
