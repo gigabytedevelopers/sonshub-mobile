@@ -1,6 +1,5 @@
 package com.gigabytedevelopersinc.apps.sonshub.fragments.music;
 
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -58,7 +57,6 @@ public class AfricanFragment extends Fragment {
     int pageNum;
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
 
-
     public AfricanFragment() {
         // Required empty public constructor
     }
@@ -92,13 +90,12 @@ public class AfricanFragment extends Fragment {
 
         progressBarLoading.setVisibility(View.VISIBLE);
         pageNum = 2;
-       HomeFragment.hideStreamLayout(recyclerView);
+        HomeFragment.hideStreamLayout(recyclerView);
         getAfricanList();
-
     }
 
     //Method to get the first 10 items from the sonshub api
-    private void getAfricanList(){
+    private void getAfricanList() {
         list.clear();
         String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=2&per_page=10&page=1";
         JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, response -> {
@@ -107,7 +104,7 @@ public class AfricanFragment extends Fragment {
             System.out.println("African response: "+response);
             progressBarLoading.setVisibility(View.GONE);
             try {
-                for (int i = 0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
                     String title = obj.getJSONObject("title").getString("rendered");
                     String description = obj.getJSONObject("excerpt").getString("rendered");
@@ -128,7 +125,7 @@ public class AfricanFragment extends Fragment {
             }
             HomeFragment.checkVolleyErrors(getContext(), error);
             error.printStackTrace();
-        }){
+        }) {
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -199,7 +196,7 @@ public class AfricanFragment extends Fragment {
         });
     }
 
-    private void updateAfricanList(String imageUrl, String title, String link,String description, String time,String content){
+    private void updateAfricanList(String imageUrl, String title, String link,String description, String time,String content) {
         MainListModel mainListModel = new MainListModel(imageUrl,title,link,description,time,content);
         list.add(mainListModel);
         adapter.notifyDataSetChanged();
@@ -219,13 +216,10 @@ public class AfricanFragment extends Fragment {
             pageNum = pageNum + 1;
             progressBar.setVisibility(View.VISIBLE);
             new Handler().postDelayed(() -> loadMoreAfricanList(AFRICAN_URL), 5000);
-
-
         });
-
     }
 
-    private String getDetails(List<MainListModel> mainList, int position){
+    private String getDetails(List<MainListModel> mainList, int position) {
         List<MainListModel> mainListModels = new ArrayList<>();
         mainListModels.add(mainList.get(position));
 
@@ -235,12 +229,12 @@ public class AfricanFragment extends Fragment {
 
 
     //Method to load more to the list
-    private void loadMoreAfricanList(String AFRICAN_URL){
+    private void loadMoreAfricanList(String AFRICAN_URL) {
         try {
             JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, response -> {
                 System.out.println(response);
                 try {
-                    for (int i = 0; i < response.length(); i++){
+                    for (int i = 0; i < response.length(); i++) {
                         JSONObject obj = response.getJSONObject(i);
                         String title = obj.getJSONObject("title").getString("rendered");
                         String description = obj.getJSONObject("excerpt").getString("rendered");
@@ -248,9 +242,8 @@ public class AfricanFragment extends Fragment {
                         String content = obj.getJSONObject("content").getString("rendered");
                         String link = obj.getString("link");
                         String movieImage = obj.getString("jetpack_featured_media_url");
-                        updateloadMoreAfricanList(movieImage,title,link,description,time,content);
+                        updateLoadMoreAfricanList(movieImage,title,link,description,time,content);
                     }
-
                     progressBar.setVisibility(View.GONE);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -266,7 +259,7 @@ public class AfricanFragment extends Fragment {
                         JSONObject obj = new JSONObject(res);
                         int status = obj.getJSONObject("data").getInt("status");
 
-                        if (status == 400){
+                        if (status == 400) {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Page End", Toast.LENGTH_LONG).show();
                         }
@@ -274,13 +267,12 @@ public class AfricanFragment extends Fragment {
                         // Couldn't properly decode data to string
                         e1.printStackTrace();
                     } // returned data is not JSONObject?
-
                 } else {
                     System.out.println("Load More Error" + error);
                     HomeFragment.checkVolleyErrors(getContext(), error);
                     error.printStackTrace();
                 }
-            }){
+            }) {
 
             };
 
@@ -306,10 +298,9 @@ public class AfricanFragment extends Fragment {
         } catch (NullPointerException ignored) {
             Toast.makeText(getContext(), "Unknown Error Occurred while trying to load results", Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    private void updateloadMoreAfricanList(String imageUrl, String title, String link,String description, String time,String content){
+    private void updateLoadMoreAfricanList(String imageUrl, String title, String link, String description, String time, String content) {
         MainListModel mainListModel = new MainListModel(imageUrl,title,link,description,time,content);
         list.add(mainListModel);
         adapter.notifyDataSetChanged();

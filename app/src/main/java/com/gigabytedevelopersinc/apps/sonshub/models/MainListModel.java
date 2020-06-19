@@ -19,7 +19,7 @@ public class MainListModel {
         this.link = link;
     }
 
-    public MainListModel(String imageUrl, String title, String link , String description, String time, String content){
+    public MainListModel(String imageUrl, String title, String link , String description, String time, String content) {
         this.imageUrl = imageUrl;
         this.title = title;
         this.description = description;

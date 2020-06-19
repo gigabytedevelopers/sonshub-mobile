@@ -171,7 +171,6 @@ public class HomeFragment extends Fragment {
             fragmentTransaction.commit();
             fragmentTransaction.addToBackStack(null);
         });
-
         return view;
     }
 
@@ -198,7 +197,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public static void checkVolleyErrors(Context context, VolleyError error){
+    public static void checkVolleyErrors(Context context, VolleyError error) {
         try {
             if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                 if (error.getMessage() == null
@@ -247,7 +246,7 @@ public class HomeFragment extends Fragment {
                     //Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             if (e.getCause() != null && e.getCause() instanceof UnknownHostException) {
                 Crashlytics.log(0, "IGNORE: ", error.getMessage());
             }
@@ -255,11 +254,11 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void getFeaturedImages(List<String> list){
+    private void getFeaturedImages(List<String> list) {
         JsonArrayRequest featuredRequest = new JsonArrayRequest(FEATURED_AREA_URL, response -> {
             System.out.println("Featured Image " + response);
             try {
-                for (int i = 0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
                     String featuredTitle = obj.getJSONObject("title").getString("rendered");
                     String newFeaturedTitle = featuredTitle.trim().replace("DOWNLOAD MUSIC:", "");
@@ -268,8 +267,7 @@ public class HomeFragment extends Fragment {
                     String featuredImage = obj.getString("jetpack_featured_media_url");
                     String link = obj.getString("link");
                     list.add(featuredImage);
-                    updateFeaturedList(featuredImage,mainMovieTitle,content,link);
-
+                    updateFeaturedList(featuredImage, mainMovieTitle, content, link);
                 }
 
                 for (int j = 0; j < list.size(); j++) {
@@ -303,7 +301,6 @@ public class HomeFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }, error -> checkVolleyErrors(getContext(), error));
 
         RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
@@ -324,16 +321,15 @@ public class HomeFragment extends Fragment {
 
             }
         });
-
     }
 
-    private void getMoviePicAndTitle(){
+    private void getMoviePicAndTitle() {
         JsonArrayRequest movieRequest = new JsonArrayRequest(MOVIE_HOME_URL, response -> {
             movieList.clear();
             moviesProgress.setVisibility(View.GONE);
             System.out.println(response);
             try {
-                for (int i = 0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
                     String movieTitle = obj.getJSONObject("title").getString("rendered");
                     String newMovieTitle = movieTitle.trim().replace("DOWNLOAD MOVIE:", "");
@@ -346,7 +342,6 @@ public class HomeFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }, error -> {
             try {
                 moviesProgress.setVisibility(View.GONE);
@@ -356,7 +351,7 @@ public class HomeFragment extends Fragment {
 
             System.out.println("Home Movie list caused crash with error " + error);
             checkVolleyErrors(getContext(), error);
-       }){
+       }) {
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -426,13 +421,13 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void getMusicPicAndTitle(){
+    private void getMusicPicAndTitle() {
         JsonArrayRequest musicRequest = new JsonArrayRequest(MUSIC_HOME_URL, response -> {
             musicList.clear();
             mWaveSwipeRefreshLayout.setRefreshing(false);
             musicProgress.setVisibility(View.GONE);
             try {
-                for (int i = 0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
                     String musicTitle = obj.getJSONObject("title").getString("rendered");
                     String newMusicTitle = musicTitle.trim().replace("MUSIC:", "");
@@ -455,7 +450,7 @@ public class HomeFragment extends Fragment {
             System.out.println("Home Music list caused crash with error " + error);
             checkVolleyErrors(getContext(), error);
             error.printStackTrace();
-        }){
+        }) {
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -525,13 +520,13 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void getGistList(){
+    private void getGistList() {
         JsonArrayRequest gistRequest = new JsonArrayRequest(ARTICLE_HOME_URL, response -> {
             gistList.clear();
             gistProgress.setVisibility(View.GONE);
             System.out.println("Gist response "+response);
             try {
-                for (int i = 0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
                     String gistTitle = obj.getJSONObject("title").getString("rendered");
                     String gistDescription = obj.getJSONObject("excerpt").getString("rendered");
@@ -555,7 +550,7 @@ public class HomeFragment extends Fragment {
             System.out.println("Home Gist list caused crash with error " + error);
             checkVolleyErrors(getContext(), error);
             error.printStackTrace();
-        }){
+        }) {
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -563,6 +558,7 @@ public class HomeFragment extends Fragment {
                     if (cacheEntry == null) {
                         cacheEntry = new Cache.Entry();
                     }
+
                     final long cacheHitButRefreshed = 3 * 60 * 1000; // in 3 minutes cache will be hit, but also refreshed on background
                     final long cacheExpired = 24 * 60 * 60 * 1000; // in 24 hours this cache entry expires completely
                     long now = System.currentTimeMillis();
@@ -573,14 +569,17 @@ public class HomeFragment extends Fragment {
                     cacheEntry.ttl = ttl;
                     String headerValue;
                     headerValue = response.headers.get("Date");
+
                     if (headerValue != null) {
                         cacheEntry.serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
                     }
                     headerValue = response.headers.get("Last-Modified");
+
                     if (headerValue != null) {
                         cacheEntry.lastModified = HttpHeaderParser.parseDateAsEpoch(headerValue);
                     }
                     cacheEntry.responseHeaders = response.headers;
+
                     final String jsonString = new String(response.data,
                             HttpHeaderParser.parseCharset(response.headers));
                     return Response.success(new JSONArray(jsonString), cacheEntry);
@@ -626,7 +625,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void updateMovieList(String movieImage, String movieTitle, String content,String link){
+    private void updateMovieList(String movieImage, String movieTitle, String content,String link) {
         MovieModel movieModel = new MovieModel(movieImage,movieTitle, content,link);
         movieList.add(movieModel);
         adapter.notifyDataSetChanged();
@@ -644,7 +643,7 @@ public class HomeFragment extends Fragment {
         moviesRecyclerView.setAdapter(adapter);
     }
 
-    private void updateMusicList(String musicImage, String musicTitle, String content,String link){
+    private void updateMusicList(String musicImage, String musicTitle, String content,String link) {
         MusicModel musicModel = new MusicModel(musicImage, musicTitle, content,link);
         musicList.add(musicModel);
         musicAdapter.notifyDataSetChanged();
@@ -663,7 +662,7 @@ public class HomeFragment extends Fragment {
         musicRecyclerView.setAdapter(musicAdapter);
     }
 
-    private void updateGistList(String newsTitle, String newsDescription, String newsTime, String newsImage, String content,String link){
+    private void updateGistList(String newsTitle, String newsDescription, String newsTime, String newsImage, String content,String link) {
         NewsModel newsModel = new NewsModel(newsTitle,newsDescription,newsTime,newsImage, content,link);
         gistList.add(newsModel);
         newsAdapter.notifyDataSetChanged();
@@ -681,12 +680,12 @@ public class HomeFragment extends Fragment {
         gistRecyclerView.setAdapter(newsAdapter);
     }
 
-    private void updateFeaturedList(String musicImage, String musicTitle, String content,String link){
+    private void updateFeaturedList(String musicImage, String musicTitle, String content,String link) {
         MusicModel musicModel = new MusicModel(musicImage, musicTitle, content,link);
         featuredList.add(musicModel);
     }
 
-    private String getDetailsForMovies(List<MovieModel> movieList, int position){
+    private String getDetailsForMovies(List<MovieModel> movieList, int position) {
         List<MovieModel> movieModels = new ArrayList<>();
         movieModels.add(movieList.get(position));
 
@@ -694,7 +693,7 @@ public class HomeFragment extends Fragment {
         return gson.toJson(movieModels);
     }
 
-    private String getDetailsForMusic(List<MusicModel> musicList, int position){
+    private String getDetailsForMusic(List<MusicModel> musicList, int position) {
         List<MusicModel> musicModels = new ArrayList<>();
         musicModels.add(musicList.get(position));
 
@@ -702,7 +701,7 @@ public class HomeFragment extends Fragment {
         return gson.toJson(musicModels);
     }
 
-    private String getDetailsForGist(List<NewsModel> newsList, int position){
+    private String getDetailsForGist(List<NewsModel> newsList, int position) {
         List<NewsModel> newsModels = new ArrayList<>();
         newsModels.add(newsList.get(position));
 
@@ -717,5 +716,4 @@ public class HomeFragment extends Fragment {
         mDemoSlider.stopAutoCycle();
         super.onStop();
     }
-
 }

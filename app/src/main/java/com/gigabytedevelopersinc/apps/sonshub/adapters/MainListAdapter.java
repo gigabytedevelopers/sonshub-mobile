@@ -34,7 +34,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MyView
         private ImageView image;
         private TextView title, description, time;
 
-        public MyViewHolder(View view){
+        public MyViewHolder(View view) {
             super(view);
             image = view.findViewById(R.id.music_image);
             title = view.findViewById(R.id.music_title);
@@ -43,12 +43,12 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MyView
         }
     }
 
-    public void setOnBottomReachedListener(OnBottomReachedListener onBottomReachedListener){
+    public void setOnBottomReachedListener(OnBottomReachedListener onBottomReachedListener) {
 
         this.onBottomReachedListener = onBottomReachedListener;
     }
 
-    public MainListAdapter(Context context, List<MainListModel> list,ClickListener listener){
+    public MainListAdapter(Context context, List<MainListModel> list,ClickListener listener) {
         this.context = context;
         this.list = list;
         this.listener = listener;
@@ -77,7 +77,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MyView
 
         holder.itemView.startAnimation(animation);
         lastPosition = i;
-        if (i == list.size() - 1){
+        if (i == list.size() - 1) {
             onBottomReachedListener.onBottomReached(i);
         }
 

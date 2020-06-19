@@ -19,7 +19,7 @@ public class DownloadedAdapter extends RecyclerView.Adapter<DownloadedAdapter.My
     private List<DownloadedModel> list;
     private DownloadListener listener;
 
-    public DownloadedAdapter(Context context, List<DownloadedModel> list, DownloadListener listener){
+    public DownloadedAdapter(Context context, List<DownloadedModel> list, DownloadListener listener) {
         this.context = context;
         this.list = list;
         this.listener = listener;
@@ -28,7 +28,7 @@ public class DownloadedAdapter extends RecyclerView.Adapter<DownloadedAdapter.My
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
         private TextView title;
-        public MyViewHolder(View view){
+        public MyViewHolder(View view) {
             super(view);
             title = view.findViewById(R.id.title);
         }

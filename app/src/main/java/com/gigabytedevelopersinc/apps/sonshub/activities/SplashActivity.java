@@ -150,7 +150,7 @@ public class SplashActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void explain(){
+    private void explain() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setMessage("You need to give some mandatory permissions to continue. Do you want to go to app settings?")
                 .setPositiveButton("Yes", (paramDialogInterface, paramInt) -> {

@@ -93,7 +93,7 @@ public class MoviesFragment extends Fragment {
     }
 
     //Method to get the first 10 items from the sonshub api
-    private void getAfricanList(){
+    private void getAfricanList() {
         String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=586&per_page=10&page=1";
         JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, response -> {
             list.clear();
@@ -101,7 +101,7 @@ public class MoviesFragment extends Fragment {
             System.out.println("African response: "+response);
             progressBarLoading.setVisibility(View.GONE);
             try {
-                for (int i = 0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
                     String title = obj.getJSONObject("title").getString("rendered");
                     String description = obj.getJSONObject("excerpt").getString("rendered");
@@ -127,7 +127,7 @@ public class MoviesFragment extends Fragment {
             }
             checkVolleyErrors(getContext(), error);
             error.printStackTrace();
-        }){
+        }) {
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -198,7 +198,7 @@ public class MoviesFragment extends Fragment {
         });
     }
 
-    private void updateAfricanList(String imageUrl, String title, String link,String description, String time,String content){
+    private void updateAfricanList(String imageUrl, String title, String link,String description, String time,String content) {
         MainListModel mainListModel = new MainListModel(imageUrl,title,link,description,time,content);
         list.add(mainListModel);
         adapter.notifyDataSetChanged();
@@ -225,12 +225,12 @@ public class MoviesFragment extends Fragment {
     }
 
     //Method to load more to the list
-    private void loadMoreAfricanList(String AFRICAN_URL){
+    private void loadMoreAfricanList(String AFRICAN_URL) {
         try {
             JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, response -> {
                 System.out.println(response);
                 try {
-                    for (int i = 0; i < response.length(); i++){
+                    for (int i = 0; i < response.length(); i++) {
                         JSONObject obj = response.getJSONObject(i);
                         String title = obj.getJSONObject("title").getString("rendered");
                         String description = obj.getJSONObject("excerpt").getString("rendered");
@@ -257,7 +257,7 @@ public class MoviesFragment extends Fragment {
                         JSONObject obj = new JSONObject(res);
                         int status = obj.getJSONObject("data").getInt("status");
 
-                        if (status == 400){
+                        if (status == 400) {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Page End", Toast.LENGTH_LONG).show();
                         }
@@ -271,7 +271,7 @@ public class MoviesFragment extends Fragment {
                     checkVolleyErrors(getContext(), error);
                     error.printStackTrace();
                 }
-            }){
+            }) {
 
             };
 
@@ -301,13 +301,13 @@ public class MoviesFragment extends Fragment {
 
     }
 
-    private void updateloadMoreAfricanList(String imageUrl, String title, String link,String description, String time,String content){
+    private void updateloadMoreAfricanList(String imageUrl, String title, String link,String description, String time,String content) {
         MainListModel mainListModel = new MainListModel(imageUrl,title,link,description,time,content);
         list.add(mainListModel);
         adapter.notifyDataSetChanged();
     }
 
-    private String getDetails(List<MainListModel> mainList, int position){
+    private String getDetails(List<MainListModel> mainList, int position) {
         List<MainListModel> mainListModels = new ArrayList<>();
         mainListModels.add(mainList.get(position));
 

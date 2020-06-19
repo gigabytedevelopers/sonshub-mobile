@@ -24,7 +24,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
     private List<NewsModel> list;
     private ClickListener listener;
 
-    public NewsAdapter(Context context, List<NewsModel> list, ClickListener listener){
+    public NewsAdapter(Context context, List<NewsModel> list, ClickListener listener) {
         this.context = context;
         this.list = list;
         this.listener = listener;
@@ -33,7 +33,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         private TextView newsTitle, newsDescription, newsTime;
         private ImageView newsImage;
-        public MyViewHolder(View view){
+        public MyViewHolder(View view) {
             super(view);
             newsTitle = view.findViewById(R.id.gist_title_text);
             newsDescription = view.findViewById(R.id.gist_title_description);

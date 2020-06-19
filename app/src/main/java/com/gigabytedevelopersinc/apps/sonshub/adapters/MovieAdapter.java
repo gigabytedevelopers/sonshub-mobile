@@ -23,7 +23,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
     private List<MovieModel> list;
     private ClickListener listener;
 
-    public MovieAdapter(Context context, List<MovieModel> list, ClickListener listener){
+    public MovieAdapter(Context context, List<MovieModel> list, ClickListener listener) {
         this.context = context;
         this.list = list;
         this.listener = listener;
@@ -32,7 +32,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         private ImageView musicImage;
         private TextView  musicTextName;
-        public MyViewHolder(View view){
+        public MyViewHolder(View view) {
             super(view);
             musicImage = view.findViewById(R.id.music_image);
             musicTextName = view.findViewById(R.id.music_text_name);

@@ -105,14 +105,14 @@ public class LatestPostFrag extends Fragment {
 
 
     //Method to get the first 10 items from the sonshub api
-    private void getLatestPostList(){
+    private void getLatestPostList() {
         String LATEST_POST_URL = "https://sonshub.com/wp-json/wp/v2/posts?per_page=10&page=1";
         JsonArrayRequest africanRequest = new JsonArrayRequest(LATEST_POST_URL, response -> {
             list.clear();
             System.out.println("African response: "+response);
             progressBarLoading.setVisibility(View.GONE);
             try {
-                for (int i = 0; i < response.length(); i++){
+                for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
                     String title = obj.getJSONObject("title").getString("rendered");
                     String description = obj.getJSONObject("excerpt").getString("rendered");
@@ -136,7 +136,7 @@ public class LatestPostFrag extends Fragment {
                     "error connecting to server",
                     Snackbar.LENGTH_SHORT).show();
             error.printStackTrace();
-        }){
+        }) {
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -207,7 +207,7 @@ public class LatestPostFrag extends Fragment {
         });
     }
 
-    private void updateLatestList(String imageUrl, String title, String link,String description, String time,String content){
+    private void updateLatestList(String imageUrl, String title, String link,String description, String time,String content) {
         MainListModel mainListModel = new MainListModel(imageUrl,title,link,description,time,content);
         list.add(mainListModel);
         adapter.notifyDataSetChanged();
@@ -235,7 +235,7 @@ public class LatestPostFrag extends Fragment {
 
     }
 
-    private String getDetails(List<MainListModel> mainList, int position){
+    private String getDetails(List<MainListModel> mainList, int position) {
         List<MainListModel> mainListModels = new ArrayList<>();
         mainListModels.add(mainList.get(position));
 
@@ -244,11 +244,11 @@ public class LatestPostFrag extends Fragment {
     }
 
     //Method to load more to the list
-    private void loadMoreLatestList(String LATEST_URL){
+    private void loadMoreLatestList(String LATEST_URL) {
         try {
             JsonArrayRequest africanRequest = new JsonArrayRequest(LATEST_URL, response -> {
                 try {
-                    for (int i = 0; i < response.length(); i++){
+                    for (int i = 0; i < response.length(); i++) {
                         JSONObject obj = response.getJSONObject(i);
                         String title = obj.getJSONObject("title").getString("rendered");
                         String description = obj.getJSONObject("excerpt").getString("rendered");
@@ -274,7 +274,7 @@ public class LatestPostFrag extends Fragment {
                         JSONObject obj = new JSONObject(res);
                         int status = obj.getJSONObject("data").getInt("status");
 
-                        if (status == 400){
+                        if (status == 400) {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Page End", Toast.LENGTH_LONG).show();
                         }
@@ -288,7 +288,7 @@ public class LatestPostFrag extends Fragment {
                     Toast.makeText(requireActivity().getApplicationContext(), "Error connecting to server", Toast.LENGTH_SHORT).show();
                     error.printStackTrace();
                 }
-            }){
+            }) {
 
             };
 
@@ -318,7 +318,7 @@ public class LatestPostFrag extends Fragment {
 
     }
 
-    private void updateloadMoreLatestList(String imageUrl, String title,String link ,String description, String time,String content){
+    private void updateloadMoreLatestList(String imageUrl, String title,String link ,String description, String time,String content) {
         MainListModel mainListModel = new MainListModel(imageUrl,title,link,description,time,content);
         list.add(mainListModel);
         adapter.notifyDataSetChanged();

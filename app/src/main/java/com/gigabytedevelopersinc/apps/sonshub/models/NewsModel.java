@@ -3,7 +3,7 @@ package com.gigabytedevelopersinc.apps.sonshub.models;
 public class NewsModel {
     private String title, newsDescription, newsTime, imageUrl, content, link;
 
-    public NewsModel(String title, String newsDescription, String newsTime, String newsImage, String content,String link){
+    public NewsModel(String title, String newsDescription, String newsTime, String newsImage, String content,String link) {
         this.title = title;
         this.newsDescription = newsDescription;
         this.newsTime = newsTime;
@@ -20,7 +20,7 @@ public class NewsModel {
         this.link = link;
     }
 
-    public NewsModel(String newsImage, String title){
+    public NewsModel(String newsImage, String title) {
         this.imageUrl = newsImage;
         this.title = title;
 

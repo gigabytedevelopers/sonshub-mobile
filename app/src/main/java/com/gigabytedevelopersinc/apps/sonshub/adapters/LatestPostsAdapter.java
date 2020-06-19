@@ -24,7 +24,7 @@ public class LatestPostsAdapter extends BaseAdapter {
     private ClickListener listener;
     OnBottomReachedListener onBottomReachedListener;
 
-    public LatestPostsAdapter(Context context, List<MainListModel> list,  ClickListener listener){
+    public LatestPostsAdapter(Context context, List<MainListModel> list,  ClickListener listener) {
         this.context = context;
         this.list = list;
         this.listener = listener;
@@ -46,7 +46,7 @@ public class LatestPostsAdapter extends BaseAdapter {
     }
 
 
-    public void setOnBottomReachedListener(OnBottomReachedListener onBottomReachedListener){
+    public void setOnBottomReachedListener(OnBottomReachedListener onBottomReachedListener) {
 
         this.onBottomReachedListener = onBottomReachedListener;
     }
@@ -55,7 +55,7 @@ public class LatestPostsAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
 
 
-        if (i == list.size() - 1){
+        if (i == list.size() - 1) {
             onBottomReachedListener.onBottomReached(i);
         }
 

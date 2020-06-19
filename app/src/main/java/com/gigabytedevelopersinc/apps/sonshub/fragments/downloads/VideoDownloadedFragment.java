@@ -74,7 +74,7 @@ public class VideoDownloadedFragment extends Fragment {
         }
         return fileNames;
     }
-    private void setVideoListAdapter(List<DownloadedModel> data){
+    private void setVideoListAdapter(List<DownloadedModel> data) {
         DownloadedAdapter adapter = new DownloadedAdapter(getActivity(), data, (view, position, title) -> {
             try {
                 File fileFolder = Environment.getExternalStorageDirectory();

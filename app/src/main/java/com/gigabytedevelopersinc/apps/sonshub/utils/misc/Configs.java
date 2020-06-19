@@ -56,7 +56,7 @@ public class Configs {
         UiModeManager uiModeManager = (UiModeManager) c.getSystemService(Context.UI_MODE_SERVICE);
         assert uiModeManager != null;
         int modeType = uiModeManager.getCurrentModeType();
-        switch (modeType){
+        switch (modeType) {
             case Configuration.UI_MODE_TYPE_TELEVISION:
                 return "TELEVISION";
             case Configuration.UI_MODE_TYPE_WATCH:
@@ -70,7 +70,7 @@ public class Configs {
         }
     }
 
-    static boolean isRooted(){
+    static boolean isRooted() {
         for (String p : Configs.BinaryPlaces) {
             File su = new File(p + "su");
             if (su.exists()) {

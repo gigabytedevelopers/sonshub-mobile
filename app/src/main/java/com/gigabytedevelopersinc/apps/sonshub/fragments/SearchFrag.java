@@ -1,6 +1,5 @@
 package com.gigabytedevelopersinc.apps.sonshub.fragments;
 
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -59,11 +58,9 @@ public class SearchFrag extends Fragment {
     private String webSearch;
     private static Context appContext = App.Companion.getContext();
 
-
     public SearchFrag() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -86,11 +83,11 @@ public class SearchFrag extends Fragment {
         getSearchResults();
     }
 
-    private void getSearchResults(){
+    private void getSearchResults() {
 //        String search = searchQuery.replaceAll(" ", "%20");
 
         try {
-            if (searchQuery != null){
+            if (searchQuery != null) {
                 webSearch = URLEncoder.encode(searchQuery.trim(),"utf-8");
             }
         } catch (UnsupportedEncodingException e) {
@@ -102,7 +99,7 @@ public class SearchFrag extends Fragment {
         JsonArrayRequest searchRequest = new JsonArrayRequest(SEARCH_URL + webSearch+"&per_page=10&page=1", response -> {
             searchProgress.setVisibility(View.GONE);
             try {
-                for (int i =0; i < response.length(); i++){
+                for (int i =0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
                     String title = obj.getJSONObject("title").getString("rendered");
                     String description = obj.getJSONObject("excerpt").getString("rendered");
@@ -142,7 +139,7 @@ public class SearchFrag extends Fragment {
         });
     }
 
-    private void updateSearchList(String imageUrl, String title, String link, String description, String time, String content, String searchQuery){
+    private void updateSearchList(String imageUrl, String title, String link, String description, String time, String content, String searchQuery) {
         MainListModel mainListModel = new MainListModel(imageUrl,title,link ,description,time,content);
         searchList.add(mainListModel);
         searchAdapter.notifyDataSetChanged();
@@ -162,17 +159,18 @@ public class SearchFrag extends Fragment {
             bufferingProgress.setVisibility(View.VISIBLE);
             new Handler().postDelayed(() -> loadMoreSearchList(SEARCH_URL), 5000);
         });
+
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL,false);
         searchRecyclerView.setLayoutManager(llm);
         searchRecyclerView.setAdapter(searchAdapter);
     }
 
-    private void loadMoreSearchList(String SEARCH_URL){
+    private void loadMoreSearchList(String SEARCH_URL) {
         try {
             JsonArrayRequest africanRequest = new JsonArrayRequest(SEARCH_URL, response -> {
                 System.out.println(response);
                 try {
-                    for (int i = 0; i < response.length(); i++){
+                    for (int i = 0; i < response.length(); i++) {
                         JSONObject obj = response.getJSONObject(i);
                         String title = obj.getJSONObject("title").getString("rendered");
                         String description = obj.getJSONObject("excerpt").getString("rendered");
@@ -181,9 +179,8 @@ public class SearchFrag extends Fragment {
                         String newTitle = title.trim().replace("DOWNLOAD MOVIE:", "");
                         String link = obj.getString("link");
                         String movieImage = obj.getString("jetpack_featured_media_url");
-                        updateloadMoreSearchList(movieImage,newTitle,link,description,time,content);
+                        updateLoadMoreSearchList(movieImage,newTitle,link,description,time,content);
                     }
-
                     bufferingProgress.setVisibility(View.GONE);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -199,7 +196,7 @@ public class SearchFrag extends Fragment {
                         JSONObject obj = new JSONObject(res);
                         int status = obj.getJSONObject("data").getInt("status");
 
-                        if (status == 400){
+                        if (status == 400) {
                             try {
                                 bufferingProgress.setVisibility(View.GONE);
                                 Toast.makeText(appContext, "Page End", Toast.LENGTH_LONG).show();
@@ -211,7 +208,6 @@ public class SearchFrag extends Fragment {
                         // Couldn't properly decode data to string
                         e1.printStackTrace();
                     } // returned data is not JSONObject?
-
                 } else if ((error.getMessage() == null)
                         || error.getMessage().equals("")
                         || Objects.requireNonNull(error.getCause()).getMessage() == null
@@ -248,7 +244,7 @@ public class SearchFrag extends Fragment {
         }
     }
 
-    private String getDetails(List<MainListModel> mainList, int position){
+    private String getDetails(List<MainListModel> mainList, int position) {
         List<MainListModel> mainListModels = new ArrayList<>();
         mainListModels.add(mainList.get(position));
 
@@ -256,7 +252,7 @@ public class SearchFrag extends Fragment {
         return gson.toJson(mainListModels);
     }
 
-    private void updateloadMoreSearchList(String imageUrl, String title, String link, String description, String time, String content){
+    private void updateLoadMoreSearchList(String imageUrl, String title, String link, String description, String time, String content) {
         MainListModel mainListModel = new MainListModel(imageUrl,title,link ,description,time,content);
         searchList.add(mainListModel);
     }

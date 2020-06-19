@@ -79,7 +79,7 @@ public class AudioDownloadedFragment extends Fragment {
         }
         return fileNames;
     }
-    private void setAudioListAdapter(List<DownloadedModel> data){
+    private void setAudioListAdapter(List<DownloadedModel> data) {
         DownloadedAdapter adapter = new DownloadedAdapter(getActivity(), data, (view, position, title) -> {
             File fileFolder = Environment.getExternalStorageDirectory();
             File audioUrl = new File(

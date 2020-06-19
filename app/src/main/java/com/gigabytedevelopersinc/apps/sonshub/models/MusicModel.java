@@ -4,7 +4,7 @@ public class MusicModel {
     private String title, musicDescription, musicTime, imageUrl, content,link;
     private int musicOption,musicImageResource;
 
-    public MusicModel(String title, String musicDescription, String musicTime, String imageUrl, int musicOption){
+    public MusicModel(String title, String musicDescription, String musicTime, String imageUrl, int musicOption) {
         this.title = title;
         this.musicDescription = musicDescription;
         this.musicTime = musicTime;
@@ -13,13 +13,13 @@ public class MusicModel {
 
     }
 
-    public MusicModel(String imageUrl, String title, int musicOption){
+    public MusicModel(String imageUrl, String title, int musicOption) {
         this.imageUrl = imageUrl;
         this.title = title;
         this.musicOption = musicOption;
     }
 
-    public MusicModel(int musicImageResource, String title){
+    public MusicModel(int musicImageResource, String title) {
         this.musicImageResource = musicImageResource;
         this.title = title;
     }
@@ -57,7 +57,7 @@ public class MusicModel {
         this.link = link;
     }
 
-    public MusicModel(String imageUrl, String title, String content, String link){
+    public MusicModel(String imageUrl, String title, String content, String link) {
         this.imageUrl = imageUrl;
         this.title = title;
         this.content = content;

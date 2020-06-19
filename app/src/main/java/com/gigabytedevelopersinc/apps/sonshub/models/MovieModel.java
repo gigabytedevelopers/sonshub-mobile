@@ -29,7 +29,7 @@ public class MovieModel {
     private int movieOptions, movieImageResource;
 
 
-    public MovieModel(String title, String movieDescription, String movieTime, String movieImage, int movieOptions){
+    public MovieModel(String title, String movieDescription, String movieTime, String movieImage, int movieOptions) {
         this.title = title;
         this.movieDescription = movieDescription;
         this.movieTime = movieTime;
@@ -37,7 +37,7 @@ public class MovieModel {
         this.movieOptions = movieOptions;
     }
 
-    public MovieModel(String movieImage, String title, int movieOptions){
+    public MovieModel(String movieImage, String title, int movieOptions) {
         this.imageUrl = movieImage;
         this.title = title;
         this.movieOptions = movieOptions;
@@ -77,11 +77,11 @@ public class MovieModel {
         this.movieImageResource = movieImageResource;
     }
 
-    public MovieModel(int movieImageResource, String title){
+    public MovieModel(int movieImageResource, String title) {
         this.movieImageResource = movieImageResource;
         this.title = title;
     }
-    public MovieModel(String movieImage, String title, String content,String link){
+    public MovieModel(String movieImage, String title, String content,String link) {
         this.imageUrl = movieImage;
         this.title = title;
         this.content = content;

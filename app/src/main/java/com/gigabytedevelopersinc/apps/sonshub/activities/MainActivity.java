@@ -328,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         isPreparing = true;
         player.setPlayWhenReady(playWhenReady);
         player.seekTo(currentWindow, playBackPosition);
-//        if (songLink.isEmpty()){
+//        if (songLink.isEmpty()) {
 //            songLink = tinyDb.getString("downloadLink");
 //        }
         Uri uri = Uri.parse(songLink);
@@ -738,7 +738,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @SuppressLint("InflateParams")
-    public static void downloadFile(Matcher matcher,Context context){
+    public static void downloadFile(Matcher matcher,Context context) {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
         final View generalNoticeView = LayoutInflater.from(context).inflate(R.layout.general_notice, null);
 
@@ -750,7 +750,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Timber.d(Arrays.toString(Data.sampleUrls));
         assert downloadFileUrl != null;
         String fileName = downloadFileUrl.substring(downloadFileUrl.lastIndexOf('/') + 1);
-        if (need2Download(fileName)){
+        if (need2Download(fileName)) {
             DownloadingFragment.enqueueDownload();
         } else {
             continueButton.setOnClickListener(v -> {
@@ -904,7 +904,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public boolean onQueryTextChange(String query) {
                 // filter recycler view when text is changed
-                if (query.length() > 1){
+                if (query.length() > 1) {
                     AsyncTask.execute(() -> {
                         //TODO your background code
                         searchQuery = query;
@@ -995,7 +995,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
-        /*if (drawerLayout.isDrawerOpen(drawerLayout)){
+        /*if (drawerLayout.isDrawerOpen(drawerLayout)) {
             drawerLayout.closeDrawers();
         } else {
             finish();
@@ -1178,7 +1178,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         assert cm != null;
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo){
+        for (NetworkInfo ni : netInfo) {
             if (ni.getTypeName().equalsIgnoreCase("WIFI"))
                 if (ni.isConnected())
                     haveConnectedWifi = true;
