@@ -86,6 +86,7 @@ public class AmazonAdWrapper extends FrameLayout {
             LayoutInflater.from(context).inflate(R.layout.ads_wrapper_startapp, this, true);
             initStartAppBannerAd();
         } else {
+            startAppAd = new StartAppAd(appContext);
             initStartAppInterstitialAd();
         }
     }
@@ -107,7 +108,7 @@ public class AmazonAdWrapper extends FrameLayout {
             @Override
             public void onFailedToReceiveAd(View view) {
                 Timber.d("onFailedToReceiveAd: %s", startAppBannerAd.getErrorMessage());
-                loadStartAppBannerAds();
+                //loadStartAppBannerAds();
             }
 
             @Override
@@ -129,7 +130,6 @@ public class AmazonAdWrapper extends FrameLayout {
     }
 
     private void initStartAppInterstitialAd() {
-        startAppAd = new StartAppAd(appContext);
         loadStartAppInterstitialAds();
     }
 
@@ -191,7 +191,7 @@ public class AmazonAdWrapper extends FrameLayout {
         public void onAdFailedToLoad(final Ad ad, final AdError error) {
             Timber.w("Interstitial Ad failed to load. Code: " + error.getCode() + ", Message: " + error.getMessage());
             if (error.getCode().toString().equals("NO_FILL")) {
-                initStartAppInterstitialAd();
+                loadStartAppInterstitialAds();
             } else {
                 loadInterstitialAds();
             }

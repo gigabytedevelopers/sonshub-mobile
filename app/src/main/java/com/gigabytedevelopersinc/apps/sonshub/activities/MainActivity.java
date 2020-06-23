@@ -145,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Ads
     private StartAppAd startAppAd;
     private static InterstitialAd mInterstitialAd;
+    private boolean showInterstitial = true;
+    private boolean showStartAppInterstitial = true;
 
     // Downloader
     public static Fetch fetch;
@@ -191,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sonshubAppInstance = this;
         checkForUpdate();
         initializeInterstitialAd();
+        initStartAppInterstitialAd();
 
         toggleStreamLayout = findViewById(R.id.toggle);
         toggleDivider = findViewById(R.id.toggleDivider);
@@ -1095,9 +1098,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             bottomSheetDialog.show();
         } else if (id == R.id.nav_music_player) {
             miniPlayerCollapse();
-            showInterstitial();
             startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
             overridePendingTransition(R.anim.push_up_in, R.anim.hold);
+            showInterstitial();
             drawerLayout.closeDrawers();
         } else if (id == R.id.nav_about) {
             miniPlayerCollapse();
@@ -1279,7 +1282,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public void onAdFailedToLoad(final Ad ad, final AdError error) {
             Timber.w("Interstitial Ad failed to load. Code: " + error.getCode() + ", Message: " + error.getMessage());
             if (error.getCode().toString().equals("NO_FILL")) {
-                initStartAppInterstitialAd();
+                loadStartAppInterstitialAds();
             } else {
                 loadInterstitialAds();
             }
@@ -1298,7 +1301,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showInterstitial() {
-        if (null != mInterstitialAd) {
+        if (showInterstitial && null != mInterstitialAd) {
             if (mInterstitialAd.isReady()) {
                 mInterstitialAd.showAd();
                 if (!mInterstitialAd.showAd()) {
@@ -1314,7 +1317,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showStartAppInterstitial() {
-        if (null != startAppAd) {
+        if (showStartAppInterstitial && null != startAppAd) {
             if (startAppAd.isReady()) {
                 startAppAd.showAd();
                 if (!startAppAd.showAd()) {
