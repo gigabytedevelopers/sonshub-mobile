@@ -90,6 +90,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.leinardi.android.speeddial.SpeedDialView;
+import com.startapp.sdk.adsbase.StartAppAd;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean haveConnectedWifi = false;
     private boolean haveConnectedMobile = false;
     private static TinyDb tinyDb;
-    boolean doubleBackToExitPressedOnce = false;
+    boolean doubleBackToExitPressedOnce = true;
     public static PlayerView playerView;
     public static SimpleExoPlayer player;
 
@@ -142,8 +143,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static String searchQuery;
 
     // Ads
+    private StartAppAd startAppAd;
     private static InterstitialAd mInterstitialAd;
-    private boolean showInterstitial = true;
 
     // Downloader
     public static Fetch fetch;
@@ -162,8 +163,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         playerView = findViewById(R.id.audio_view);
         player = new SimpleExoPlayer.Builder(this).build();
         tinyDb = new TinyDb(MainActivity.this);
-        mInterstitialAd = new InterstitialAd(this);
         playerView.setControllerHideOnTouch(false);
+
+        // Initialize Ads
+        startAppAd = new StartAppAd(this);
+        mInterstitialAd = new InterstitialAd(this);
 
         mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
@@ -988,13 +992,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
+            startAppAd.showAd();
             super.onBackPressed();
             return;
         }
-        this.doubleBackToExitPressedOnce = true;
+        doubleBackToExitPressedOnce = true;
         Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+        /*if (drawerLayout.isDrawerOpen(drawerLayout)) {
+            drawerLayout.closeDrawers();
+        } else {
+            finish();
+        }
+        //this.doubleBackToExitPressedOnce = true;
+
         /*if (drawerLayout.isDrawerOpen(drawerLayout)) {
             drawerLayout.closeDrawers();
         } else {
@@ -1239,11 +1251,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         loadInterstitialAds();
     }
 
-    private static void loadInterstitialAds() {
+    private void initStartAppInterstitialAd() {
+        loadStartAppInterstitialAds();
+    }
+
+    private void loadInterstitialAds() {
         mInterstitialAd.loadAd();
     }
 
-    private static class InterstitialAdsListener extends DefaultAdListener {
+    private void loadStartAppInterstitialAds() {
+        startAppAd.loadAd();
+    }
+
+    private class InterstitialAdsListener extends DefaultAdListener {
         /**
          * This event is called once an ad loads successfully.
          */
@@ -1258,7 +1278,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void onAdFailedToLoad(final Ad ad, final AdError error) {
             Timber.w("Interstitial Ad failed to load. Code: " + error.getCode() + ", Message: " + error.getMessage());
-            loadInterstitialAds();
+            if (error.getCode().toString().equals("NO_FILL")) {
+                initStartAppInterstitialAd();
+            } else {
+                loadInterstitialAds();
+            }
         }
 
         /**
@@ -1274,15 +1298,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showInterstitial() {
-        if (showInterstitial && null != mInterstitialAd) {
+        if (null != mInterstitialAd) {
             if (mInterstitialAd.isReady()) {
                 mInterstitialAd.showAd();
                 if (!mInterstitialAd.showAd()) {
                     Timber.w("The ad was not shown. Check the logcat for more information.");
+                    showStartAppInterstitial();
                     loadInterstitialAds();
                 }
             } else {
+                showStartAppInterstitial();
                 loadInterstitialAds();
+            }
+        }
+    }
+
+    private void showStartAppInterstitial() {
+        if (null != startAppAd) {
+            if (startAppAd.isReady()) {
+                startAppAd.showAd();
+                if (!startAppAd.showAd()) {
+                    Timber.w("The ad was not shown. Check the logcat for more information.");
+                    loadStartAppInterstitialAds();
+                }
             }
         }
     }
