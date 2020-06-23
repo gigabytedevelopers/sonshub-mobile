@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean haveConnectedWifi = false;
     private boolean haveConnectedMobile = false;
     private static TinyDb tinyDb;
-    boolean doubleBackToExitPressedOnce = true;
+    boolean doubleBackToExitPressedOnce = false;
     public static PlayerView playerView;
     public static SimpleExoPlayer player;
 
@@ -995,7 +995,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
-            startAppAd.showAd();
+            //startAppAd.showAd();
             super.onBackPressed();
             return;
         }
@@ -1003,19 +1003,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
-        /*if (drawerLayout.isDrawerOpen(drawerLayout)) {
-            drawerLayout.closeDrawers();
-        } else {
-            finish();
-        }
-        //this.doubleBackToExitPressedOnce = true;
-
-        /*if (drawerLayout.isDrawerOpen(drawerLayout)) {
-            drawerLayout.closeDrawers();
-        } else {
-            finish();
-        }
-        super.onBackPressed();*/
     }
 
     @SuppressLint({"InflateParams", "SetTextI18n"})
@@ -1311,7 +1298,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             } else {
                 showStartAppInterstitial();
-                loadInterstitialAds();
             }
         }
     }
@@ -1330,6 +1316,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onResume() {
+        startAppAd.onResume();
         super.onResume();
         // register GCM registration complete receiver
         LocalBroadcastManager.getInstance(this).registerReceiver(sonshubNotificationBroadcastReceiver,
@@ -1346,6 +1333,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onPause() {
+        startAppAd.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(sonshubNotificationBroadcastReceiver);
         super.onPause();
     }
