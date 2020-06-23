@@ -74,6 +74,7 @@ public class AmazonAdWrapper extends FrameLayout {
 
     private static void initInterstitialAd() {
         mInterstitialAd.setListener(new InterstitialAdsListener());
+        loadInterstitialAds();
     }
 
     private class BannerAdsListener extends DefaultAdListener {
