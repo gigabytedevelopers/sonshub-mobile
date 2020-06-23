@@ -73,8 +73,8 @@ public class ChartboostAdWrapper extends FrameLayout {
 
     private void initBannerAd() {
         chartboostBanner = findViewById(R.id.ad_view);
-        cacheBanner();
         chartboostBanner.setListener(new BannerAdsListener());
+        cacheBanner();
     }
 
     private class BannerAdsListener implements ChartboostBannerListener {
@@ -82,11 +82,10 @@ public class ChartboostAdWrapper extends FrameLayout {
         public void onAdCached(ChartboostCacheEvent chartboostCacheEvent, ChartboostCacheError chartboostCacheError) {
             if (chartboostCacheError != null) {
                 Timber.d("Banner cached error: %s", chartboostCacheError.code);
-                chartboostBanner.setVisibility(GONE);
                 cacheBanner();
             } else {
                 Timber.d("Banner cached");
-                //showBannerAd();
+                showBannerAd();
             }
         }
 
@@ -124,19 +123,19 @@ public class ChartboostAdWrapper extends FrameLayout {
         return super.onSaveInstanceState();
     }*/
 
-    private void cacheBanner() {
-        chartboostBanner.cache();
+    private void showBannerAd() {
+        chartboostBanner.show();
     }
 
-    private void showBannerAd(){
+    private void cacheBanner(){
         if (isInEditMode()) {
             return;
         }
         //Fixes GPS AIOB Exception
         try {
-            chartboostBanner.setVisibility(VISIBLE);
-            chartboostBanner.show();
-            cacheBanner();
+            if (chartboostBanner != null) {
+                chartboostBanner.cache();
+            }
         } catch (Exception e){
             Crashlytics.logException(e);
         }
