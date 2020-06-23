@@ -23,7 +23,7 @@ android {
         applicationId "com.gigabytedevelopersinc.apps.sonshub"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 17
+        versionCode 18
         versionName "1.1.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -93,7 +93,7 @@ dependencies {
     }
     implementation "androidx.browser:browser:1.2.0"
     implementation 'com.google.firebase:firebase-core:17.4.3'
-    implementation 'com.google.firebase:firebase-messaging:20.2.0'
+    implementation 'com.google.firebase:firebase-messaging:20.2.1'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'jp.wasabeef:glide-transformations:3.1.1'
     implementation 'com.google.code.gson:gson:2.8.6'
@@ -106,7 +106,7 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.5'
     implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.11.5'
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.11.5'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta6'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta7'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'org.jsoup:jsoup:1.11.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
