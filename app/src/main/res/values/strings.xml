@@ -183,4 +183,7 @@
     <string name="message_download_canceled" translatable="false">Update download canceled!</string>
     <string name="message_download_completed" translatable="false">Download complete!</string>
     <string name="downloading_update_dialog" translatable="false">Downloading update!</string>
+
+    <!-- StartApp -->
+    <string name="startApp_AppID">203823129</string>
 </resources>
