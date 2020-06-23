@@ -33,6 +33,8 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.viewmodels.viewMo
 import com.gigabytedevelopersinc.apps.sonshub.services.notification.MyFirebaseMessagingService
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.AnalyticsManager
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.startapp.sdk.adsbase.StartAppAd
+import com.startapp.sdk.adsbase.StartAppSDK
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -53,6 +55,9 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
 
         AdRegistration.setAppKey("862696c9ef8f426e991124f85d8a1c53")
 
+        StartAppAd.disableSplash()
+        StartAppSDK.init(this, getString(R.string.startApp_AppID), true)
+
         if (!BuildConfig.DEBUG) {
             AdRegistration.enableLogging(false)
             AdRegistration.enableTesting(false)
@@ -71,7 +76,8 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
             // TODO: Grab and Track User ratings too
         } else {
             AdRegistration.enableLogging(true)
-            AdRegistration.enableTesting(true)
+            AdRegistration.enableTesting(false)
+            StartAppSDK.setTestAdsEnabled(true)
 
             // Disable Crash, Error Reporting since we can easily make use of the logcat during development
             Timber.plant(DebugTree())
