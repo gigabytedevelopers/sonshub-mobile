@@ -121,6 +121,9 @@ dependencies {
     // Amazon Ads
     implementation 'com.amazon.android:mobile-ads:5.8.1.1'
 
+    // StartApp
+    implementation 'com.startapp:inapp-sdk:4.6.0'
+
     // App Update
     implementation 'com.github.javiersantos:AppUpdater:2.7'
 
