@@ -1333,9 +1333,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onPause() {
-        startAppAd.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(sonshubNotificationBroadcastReceiver);
         super.onPause();
+        startAppAd.onPause();
     }
 
     @Override
