@@ -41,8 +41,11 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
+import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,6 +59,10 @@ public class AfricanFragment extends Fragment {
     private ProgressBar progressBar,progressBarLoading;
     int pageNum;
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
+    private Matcher matcher;
+    private Pattern pattern;
+    public int musicPosition;
+    ArrayList<String> musicLinkList;
 
     public AfricanFragment() {
         // Required empty public constructor
@@ -75,6 +82,7 @@ public class AfricanFragment extends Fragment {
         tinyDb.putString("currentFrag", "africanFragment");
         recyclerView = view.findViewById(R.id.african_list);
         list = new ArrayList<>();
+        musicLinkList = new  ArrayList<>();
 
         setHasOptionsMenu(false);
         manager = new LinearLayoutManager(getActivity());
@@ -82,6 +90,7 @@ public class AfricanFragment extends Fragment {
         progressBarLoading = view.findViewById(R.id.progress_bar_loading);
 
         adapter = new MainListAdapter(getActivity(), list, (view1, position) -> {
+
         });
         mWaveSwipeRefreshLayout = view.findViewById(R.id.main_swipe);
         mWaveSwipeRefreshLayout.setWaveColor(getResources().getColor(R.color.colorPrimary));
@@ -96,6 +105,8 @@ public class AfricanFragment extends Fragment {
 
     //Method to get the first 10 items from the sonshub api
     private void getAfricanList() {
+
+        pattern = Pattern.compile("http.*?\\.mp3");
         list.clear();
         String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=2&per_page=10&page=1";
         JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, response -> {
@@ -196,12 +207,36 @@ public class AfricanFragment extends Fragment {
         });
     }
 
+    private void addToMusicPlayList(Matcher matcher, String content){
+        matcher = pattern.matcher(content);
+        if(matcher.find()){
+            musicLinkList.add(matcher.group(0));
+
+            tinyDb.putListString("allMusicLinkList", musicLinkList);
+
+            for(String musicString : tinyDb.getListString("allMusicLinkList")){
+                System.out.println("list of music links: " + musicString);
+            }
+        }
+
+        /*for(String musicString : musicLinkList){
+            System.out.println("list of music links: " + musicString);
+        }*/
+
+    }
     private void updateAfricanList(String imageUrl, String title, String link,String description, String time,String content) {
+        System.out.println("african content is " + content);
+        addToMusicPlayList(matcher, content);
         MainListModel mainListModel = new MainListModel(imageUrl,title,link,description,time,content);
         list.add(mainListModel);
         adapter.notifyDataSetChanged();
         adapter = new MainListAdapter(getActivity(), list, (view, position) -> {
+            musicPosition = position;
+            tinyDb.putInt("musicPosition", musicPosition);
+            String firstSong = tinyDb.getListString("allMusicLinkList").get(musicPosition);
+            System.out.println("postion taht was clicked is " + tinyDb.getInt("musicPosition") + "fist son link is " + firstSong);
             tinyDb.putString("clicked", "music");
+            //adding the music list
             tinyDb.putString("musicDetailsList", getDetails(list,position));
 
             MainActivity mainActivity = new MainActivity();

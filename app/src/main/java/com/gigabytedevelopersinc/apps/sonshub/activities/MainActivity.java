@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -98,6 +99,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -359,6 +361,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // This is accurate
                     isPreparing = false;
                 }
+                if (playbackState == Player.STATE_ENDED) {
+                    int nexMusicPostistion = tinyDb.getInt("musicPosition") + 1;
+
+                    String nextMusicLink = tinyDb.getListString("allMusicLinkList").get(nexMusicPostistion);
+                    initializePlayer(
+                            getInstance(),
+                            player,
+                            playerView,
+                            false,
+                            playBackPosition,
+                            currentWindow,
+                            nextMusicLink
+                    );
+                    /*String nextMusicLink = tinyDb.getListString("allMusicLinkList").get(tinyDb.getInt("musicPosition"));
+                    isPreparing = true;
+                    player.setPlayWhenReady(playWhenReady);
+                    player.seekTo(currentWindow, playBackPosition);
+
+                    Uri uri = Uri.parse(nextMusicLink);
+                    MediaSource mediaSource = buildMediaSource(uri);
+                    player.prepare(mediaSource, true, false);*/
+                }
+
             }
 
             @Override
@@ -425,6 +450,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final View.OnClickListener onClickListener = view -> Toast.makeText(context, "No Download Link Available at this time", Toast.LENGTH_SHORT).show();
         Pattern pattern;
         Matcher matcher;
+
         switch (tinyDb.getString("clicked")) {
             case "movies":
                 streamBtn.setVisibility(View.GONE);
