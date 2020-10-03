@@ -23,13 +23,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.crashlytics.android.Crashlytics;
 import com.gigabytedevelopersinc.apps.sonshub.App;
 import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.MainListAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.models.MainListModel;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -86,6 +86,7 @@ public class SearchFrag extends Fragment {
     private void getSearchResults() {
 //        String search = searchQuery.replaceAll(" ", "%20");
 
+        FirebaseCrashlytics firebaseCrashlytics = FirebaseCrashlytics.getInstance();
         try {
             if (searchQuery != null) {
                 webSearch = URLEncoder.encode(searchQuery.trim(),"utf-8");
@@ -94,7 +95,7 @@ public class SearchFrag extends Fragment {
             e.printStackTrace();
         } catch (NullPointerException npe) {
             Toast.makeText(appContext, "Unknown Error try again", Toast.LENGTH_LONG).show();
-            Crashlytics.logException(npe);
+            firebaseCrashlytics.recordException(npe);
         }
         JsonArrayRequest searchRequest = new JsonArrayRequest(SEARCH_URL + webSearch+"&per_page=10&page=1", response -> {
             searchProgress.setVisibility(View.GONE);

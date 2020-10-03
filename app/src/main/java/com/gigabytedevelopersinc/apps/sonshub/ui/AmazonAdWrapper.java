@@ -13,9 +13,9 @@ import com.amazon.device.ads.AdLayout;
 import com.amazon.device.ads.AdProperties;
 import com.amazon.device.ads.DefaultAdListener;
 import com.amazon.device.ads.InterstitialAd;
-import com.crashlytics.android.Crashlytics;
 import com.gigabytedevelopersinc.apps.sonshub.App;
 import com.gigabytedevelopersinc.apps.sonshub.R;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.startapp.sdk.ads.banner.Banner;
 import com.startapp.sdk.ads.banner.BannerListener;
 import com.startapp.sdk.adsbase.StartAppAd;
@@ -40,6 +40,7 @@ import static com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity.isT
 public class AmazonAdWrapper extends FrameLayout {
 
     private Context appContext = App.Companion.getContext();
+    private FirebaseCrashlytics firebaseCrashlytics = FirebaseCrashlytics.getInstance();
 
     // Amazon
     private AdLayout mAdView;
@@ -238,7 +239,7 @@ public class AmazonAdWrapper extends FrameLayout {
                 mAdView.loadAd();
             }
         } catch (Exception e) {
-            Crashlytics.logException(e);
+            firebaseCrashlytics.recordException(e);
         }
     }
 
@@ -276,7 +277,7 @@ public class AmazonAdWrapper extends FrameLayout {
                 startAppBannerAd.loadAd();
             }
         } catch (Exception e) {
-            Crashlytics.logException(e);
+            firebaseCrashlytics.recordException(e);
         }
     }
 

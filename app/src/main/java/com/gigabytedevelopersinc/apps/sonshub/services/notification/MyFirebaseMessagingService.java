@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import com.crashlytics.android.Crashlytics;
+
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.utils.NotificationUtil;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Configs;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -17,9 +19,10 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
-import timber.log.Timber;
 
 import java.io.IOException;
+
+import timber.log.Timber;
 
 import static com.gigabytedevelopersinc.apps.sonshub.utils.misc.Configs.TOPIC_GLOBAL;
 
@@ -27,6 +30,7 @@ import static com.gigabytedevelopersinc.apps.sonshub.utils.misc.Configs.TOPIC_GL
  * @author Created by Emmanuel Nwokoma (Founder and CEO at Gigabyte Developers) on 12/10/2018
  **/
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+    private FirebaseCrashlytics firebaseCrashlytics = FirebaseCrashlytics.getInstance();
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
 
     private NotificationUtil notificationUtils;
@@ -92,7 +96,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 handleDataMessage(json);
             } catch (Exception e) {
                 Timber.tag(TAG).e("Exception: %s", e.getMessage());
-                Crashlytics.log(1, TAG, "NotificationException: " + e.getMessage());
+                firebaseCrashlytics.log("NotificationException: " + e.getMessage());
             }
         }
     }

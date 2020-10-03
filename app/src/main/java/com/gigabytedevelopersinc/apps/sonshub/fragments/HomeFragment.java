@@ -32,7 +32,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.crashlytics.android.Crashlytics;
 import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.MovieAdapter;
@@ -47,6 +46,7 @@ import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
 import com.glide.slider.library.Animations.DescriptionAnimation;
 import com.glide.slider.library.SliderLayout;
 import com.glide.slider.library.SliderTypes.DefaultSliderView;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -198,6 +198,7 @@ public class HomeFragment extends Fragment {
     }
 
     public static void checkVolleyErrors(Context context, VolleyError error) {
+        FirebaseCrashlytics firebaseCrashlytics = FirebaseCrashlytics.getInstance();
         try {
             if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                 if (error.getMessage() == null
@@ -206,7 +207,7 @@ public class HomeFragment extends Fragment {
                         || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
                     Toast.makeText(context, "Sorry, There was a Timeout Error", Toast.LENGTH_LONG).show();
                 } else {
-                    Crashlytics.log(0, "IGNORE: ", error.getMessage());
+                    firebaseCrashlytics.log("IGNORE: " + error.getMessage());
                 }
             } else if (error instanceof AuthFailureError) {
                 if (error.getMessage() == null
@@ -215,7 +216,7 @@ public class HomeFragment extends Fragment {
                         || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
                     Toast.makeText(context, "Ooops... An Authentication Error Occurred", Toast.LENGTH_LONG).show();
                 } else {
-                    Crashlytics.log(0, "IGNORE: ", error.getMessage());
+                    firebaseCrashlytics.log("IGNORE: " + error.getMessage());
                 }
             } else if (error instanceof ServerError || error.getCause() instanceof ServerError) {
                 if (error.getMessage() == null
@@ -224,7 +225,7 @@ public class HomeFragment extends Fragment {
                         || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
                     Toast.makeText(context, "Ooops... A Server Error Occurred", Toast.LENGTH_LONG).show();
                 } else {
-                    Crashlytics.log(0, "IGNORE: ", error.getMessage());
+                    firebaseCrashlytics.log("IGNORE: " + error.getMessage());
                 }
             } else if (error instanceof NetworkError) {
                 if (error.getMessage() == null
@@ -233,7 +234,7 @@ public class HomeFragment extends Fragment {
                         || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
                     Toast.makeText(context, "Error Connecting to Server. Check your Network", Toast.LENGTH_LONG).show();
                 } else {
-                    Crashlytics.log(0, "IGNORE: ", error.getMessage());
+                    firebaseCrashlytics.log("IGNORE: " + error.getMessage());
                 }
             } else if (error instanceof ParseError) {
                 if (error.getMessage() == null
@@ -242,13 +243,13 @@ public class HomeFragment extends Fragment {
                         || Objects.requireNonNull(error.getCause().getMessage()).equals("")) {
                     Toast.makeText(context, "Ooops... an Unknown Error Occurred", Toast.LENGTH_LONG).show();
                 } else {
-                    Crashlytics.log(0, "IGNORE: ", error.getMessage());
+                    firebaseCrashlytics.log("IGNORE: " + error.getMessage());
                     //Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         } catch (Exception e) {
             if (e.getCause() != null && e.getCause() instanceof UnknownHostException) {
-                Crashlytics.log(0, "IGNORE: ", error.getMessage());
+                    firebaseCrashlytics.log("IGNORE: " + error.getMessage());
             }
             e.printStackTrace();
         }

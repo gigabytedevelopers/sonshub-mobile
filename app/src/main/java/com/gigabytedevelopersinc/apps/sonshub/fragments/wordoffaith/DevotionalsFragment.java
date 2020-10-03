@@ -26,7 +26,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.crashlytics.android.Crashlytics;
 import com.gigabytedevelopersinc.apps.sonshub.R;
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.MainListAdapter;
@@ -34,6 +33,7 @@ import com.gigabytedevelopersinc.apps.sonshub.fragments.HomeFragment;
 import com.gigabytedevelopersinc.apps.sonshub.models.MainListModel;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -95,6 +95,7 @@ public class DevotionalsFragment extends Fragment {
 
     //Method to get the first 10 items from the sonshub api
     private void getAfricanList() {
+        FirebaseCrashlytics firebaseCrashlytics = FirebaseCrashlytics.getInstance();
         String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=7&per_page=10&page=1";
         JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, response -> {
             list.clear();
@@ -126,8 +127,8 @@ public class DevotionalsFragment extends Fragment {
                 Snackbar.make(requireActivity().findViewById(android.R.id.content), "error connecting to server",
                         Snackbar.LENGTH_SHORT).show();
                 error.printStackTrace();
-            }catch (NullPointerException npe) {
-                Crashlytics.logException(npe);
+            } catch (NullPointerException npe) {
+                firebaseCrashlytics.recordException(npe);
             }
 
 
