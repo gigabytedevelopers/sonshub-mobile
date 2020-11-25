@@ -53,7 +53,8 @@ class RealAlbumRepository(
     }
 
     override fun getAllAlbums(caller: String?): List<Album> {
-        MediaID.currentCaller = caller
+        if (caller != null)
+            MediaID.currentCaller = caller
         return makeAlbumCursor(null, null)
                 .mapList(true) { Album.fromCursor(this) }
     }
@@ -84,8 +85,16 @@ class RealAlbumRepository(
     }
 
     override fun getAlbumsForArtist(artistId: Long): List<Album> {
-        return makeAlbumForArtistCursor(artistId)
-                .mapList(true) { Album.fromCursor(this, artistId) }
+        // fetching through cursor has some bug where incorrect album ids are returned on android 10
+        // so we use alternate way of fetching all albums and filtering
+        val allAlbums: List<Album> = getAllAlbums(null)
+        val artistAlbums = ArrayList<Album>()
+        for (album in allAlbums) {
+            if (album.artistId == artistId) {
+                artistAlbums.add(album)
+            }
+        }
+        return artistAlbums
     }
 
     private fun getAlbum(cursor: Cursor?): Album {
