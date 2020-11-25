@@ -149,7 +149,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".players.music.ui.activities.ExpandedControlsActivity" />
+        <activity android:name=".players.music.ui.activities.ExpandedControlsActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <activity
             android:name="com.amazon.device.ads.AdActivity"
