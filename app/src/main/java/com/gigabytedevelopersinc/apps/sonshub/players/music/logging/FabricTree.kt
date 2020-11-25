@@ -1,6 +1,6 @@
 package com.gigabytedevelopersinc.apps.sonshub.players.music.logging
 
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import timber.log.Timber
 
 /**
@@ -27,10 +27,11 @@ class FabricTree : Timber.Tree() {
     ) {
         try {
             if (t != null) {
-                Crashlytics.setString("crash_tag", tag)
-                Crashlytics.logException(t)
+                if (tag != null)
+                    FirebaseCrashlytics.getInstance().setCustomKey("crash_tag", tag)
+                FirebaseCrashlytics.getInstance().recordException(t)
             } else {
-                Crashlytics.log(priority, tag, message)
+                FirebaseCrashlytics.getInstance().log(message)
             }
         } catch (e: IllegalStateException) {
             // TODO this is caught so that Robolelectric tests which test classes that make use of Timber don't crash.
