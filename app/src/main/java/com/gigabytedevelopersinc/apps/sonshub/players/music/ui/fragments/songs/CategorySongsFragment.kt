@@ -57,7 +57,7 @@ class CategorySongsFragment : MediaItemFragment() {
         super.onActivityCreated(savedInstanceState)
         binding.categorySongData = categorySongData
 
-        songsAdapter = SongsAdapter().apply {
+        songsAdapter = SongsAdapter(this).apply {
             popupMenuListener = mainViewModel.popupMenuListener
             if (categorySongData.type == TYPE_PLAYLIST) {
                 playlistId = categorySongData.id

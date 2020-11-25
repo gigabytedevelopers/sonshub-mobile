@@ -65,7 +65,7 @@ class SearchFragment : BaseNowPlayingFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        songAdapter = SongsAdapter().apply {
+        songAdapter = SongsAdapter(this).apply {
             popupMenuListener = mainViewModel.popupMenuListener
         }
         rvSongs.apply {

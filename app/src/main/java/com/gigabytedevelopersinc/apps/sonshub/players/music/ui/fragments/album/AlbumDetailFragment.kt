@@ -56,7 +56,7 @@ class AlbumDetailFragment : MediaItemFragment() {
         super.onActivityCreated(savedInstanceState)
         binding.album = album
 
-        songsAdapter = SongsAdapter().apply {
+        songsAdapter = SongsAdapter(this).apply {
             popupMenuListener = mainViewModel.popupMenuListener
         }
         recyclerView.apply {

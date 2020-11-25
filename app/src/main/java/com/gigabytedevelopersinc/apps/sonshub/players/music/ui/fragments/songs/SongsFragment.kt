@@ -57,7 +57,7 @@ class SongsFragment : MediaItemFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        songsAdapter = SongsAdapter().apply {
+        songsAdapter = SongsAdapter(this).apply {
             showHeader = true
             popupMenuListener = mainViewModel.popupMenuListener
             sortMenuListener = sortListener

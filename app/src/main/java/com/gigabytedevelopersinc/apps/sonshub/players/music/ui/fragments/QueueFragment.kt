@@ -56,7 +56,7 @@ class QueueFragment : BaseNowPlayingFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        adapter = SongsAdapter().apply {
+        adapter = SongsAdapter(this).apply {
             isQueue = true
             popupMenuListener = mainViewModel.popupMenuListener
         }

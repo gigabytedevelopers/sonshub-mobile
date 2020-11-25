@@ -1,16 +1,18 @@
 package com.gigabytedevelopersinc.apps.sonshub.players.music.ui.adapters
 
+import android.support.v4.media.session.PlaybackStateCompat
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.gigabytedevelopersinc.apps.sonshub.R
 import com.gigabytedevelopersinc.apps.sonshub.databinding.MusicItemSongsBinding
 import com.gigabytedevelopersinc.apps.sonshub.databinding.MusicItemSongsHeaderBinding
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.inflateWithBinding
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.moveElement
-import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.showOrHide
+import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.*
 import com.gigabytedevelopersinc.apps.sonshub.players.music.models.Song
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.listeners.PopupMenuListener
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.listeners.SortMenuListener
+import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.viewmodels.NowPlayingViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * Project - SonsHub
@@ -29,8 +31,9 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.listeners.SortMen
 private const val PLAYLIST_ID_NOT_IN_PLAYLIST = -1L
 private const val TYPE_SONG_HEADER = 0
 private const val TYPE_SONG_ITEM = 1
+private const val INVALID_POSITION = -1
 
-class SongsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SongsAdapter(val lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var songs: List<Song> = emptyList()
     var showHeader = false
     var isQueue = false
@@ -39,6 +42,31 @@ class SongsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var sortMenuListener: SortMenuListener? = null
 
     var playlistId: Long = PLAYLIST_ID_NOT_IN_PLAYLIST
+
+    private val nowPlayingViewModel by lifecycleOwner.viewModel<NowPlayingViewModel>()
+    private var nowPlayingPosition = INVALID_POSITION
+
+    init {
+        // attach observer for updating now playing indicator on songs
+        nowPlayingViewModel.currentData.observe(lifecycleOwner) {
+            val previousPlayingPosition = nowPlayingPosition
+
+            if (!it.mediaId.isNullOrEmpty()
+                && it.state == PlaybackStateCompat.STATE_PLAYING) {
+                nowPlayingPosition = getPositionForSong(it.mediaId!!.toLong())
+            } else {
+                nowPlayingPosition = INVALID_POSITION
+            }
+
+            // reset playing indicator on previous playing position
+            if (previousPlayingPosition != INVALID_POSITION)
+                notifyItemChanged(previousPlayingPosition)
+
+            // show playing indicator on now playing position
+            if (nowPlayingPosition != INVALID_POSITION)
+                notifyItemChanged(nowPlayingPosition)
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -64,7 +92,7 @@ class SongsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             TYPE_SONG_ITEM -> {
                 val song = songs[position + if (showHeader) -1 else 0]
-                (holder as ViewHolder).bind(song)
+                (holder as ViewHolder).bind(song, nowPlayingPosition)
             }
         }
     }
@@ -101,7 +129,7 @@ class SongsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val isQueue: Boolean = false
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(song: Song) {
+        fun bind(song: Song, nowPlayingPosition: Int) {
             binding.song = song
             binding.albumArt.clipToOutline = true
             binding.executePendingBindings()
@@ -110,6 +138,10 @@ class SongsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 playlistId = this@ViewHolder.playlistId
                 setupMenu(popupMenuListener) { song }
             }
+
+            if (adapterPosition == nowPlayingPosition) {
+                binding.visualizer.show()
+            } else binding.visualizer.hide()
 
             binding.ivReorder.showOrHide(isQueue)
         }
@@ -135,5 +167,12 @@ class SongsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         } else {
             songs[position]
         }
+    }
+
+    private fun getPositionForSong(songId: Long): Int {
+        val songIndex = songs.indexOf(songs.find { it.id == songId })
+        return if (showHeader) {
+            songIndex + 1
+        } else songIndex
     }
 }

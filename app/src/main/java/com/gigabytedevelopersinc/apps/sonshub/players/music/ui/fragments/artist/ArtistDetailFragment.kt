@@ -64,7 +64,7 @@ class ArtistDetailFragment : MediaItemFragment() {
         super.onActivityCreated(savedInstanceState)
         binding.artist = artist
 
-        val adapter = SongsAdapter().apply {
+        val adapter = SongsAdapter(this).apply {
             popupMenuListener = mainViewModel.popupMenuListener
         }
         recyclerView.layoutManager = LinearLayoutManager(safeActivity)
