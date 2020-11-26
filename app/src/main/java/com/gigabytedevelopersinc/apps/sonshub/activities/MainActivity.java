@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // Downloader
     public static Fetch fetch;
-    private static Context appContext = App.Companion.getContext();
+    private static final Context appContext = App.Companion.getContext();
     private static final String FETCH_NAMESPACE = "Downloading";
 
     public MainActivity() {
@@ -344,10 +344,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         player.addListener(new Player.EventListener() {
             @Override
-            public void onTimelineChanged(Timeline timeline, int reason) { }
+            public void onTimelineChanged(@NotNull Timeline timeline, int reason) { }
 
             @Override
-            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) { }
+            public void onTracksChanged(@NotNull TrackGroupArray trackGroups, @NotNull TrackSelectionArray trackSelections) { }
 
             @Override
             public void onLoadingChanged(boolean isLoading) { }
@@ -368,13 +368,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) { }
 
             @Override
-            public void onPlayerError(ExoPlaybackException error) { }
+            public void onPlayerError(@NotNull ExoPlaybackException error) { }
 
             @Override
             public void onPositionDiscontinuity(int reason) { }
 
             @Override
-            public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) { }
+            public void onPlaybackParametersChanged(@NotNull PlaybackParameters playbackParameters) { }
 
             @Override
             public void onSeekProcessed() { }
@@ -945,49 +945,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         LinearLayout optionShare = optionsView.findViewById(R.id.shareSonsHub);
         LinearLayout optionRate = optionsView.findViewById(R.id.rateSonsHub);
         LinearLayout close = optionsView.findViewById(R.id.back);
-        switch (item.getItemId()) {
-            case R.id.nav_search:
-                return true;
 
-            case R.id.nav_download:
-                startActivity(new Intent(MainActivity.this, DownloadActivity.class));
-                showInterstitial();
-                return true;
+        int itemId = item.getItemId();
+        if (itemId == R.id.nav_search) {
+            return true;
+        } else if (itemId == R.id.nav_download) {
+            startActivity(new Intent(MainActivity.this, DownloadActivity.class));
+            showInterstitial();
+            return true;
+        } else if (itemId == R.id.nav_music_play) {
+            player.setPlayWhenReady(false);
+            startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
+            overridePendingTransition(R.anim.push_up_in, R.anim.hold);
+            showInterstitial();
+            return true;
+        } else if (itemId == R.id.nav_sub_menu) {// For Rating SonsHub Mobile
+            Intent rateIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=com.gigabytedevelopersinc.apps.sonshub")
+            );
 
-            case R.id.nav_music_play:
+            // For Sharing SonsHub Mobile
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("text/plain");
+            String shareSub = "Download the SonsHub Mobile app for your latest Gospel Music, Sermons, Articles and all round Christian Entertainment.\n\n";
+            shareSub = shareSub + "https://bit.ly/DownloadSonsHubMobile \n\n";
+            share.putExtra(Intent.EXTRA_SUBJECT, "Check out SonsHub Mobile");
+            share.putExtra(Intent.EXTRA_TEXT, shareSub);
+            optionMusicPlayer.setOnClickListener(v -> {
                 player.setPlayWhenReady(false);
                 startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
                 overridePendingTransition(R.anim.push_up_in, R.anim.hold);
-                showInterstitial();
-                return true;
-
-            case R.id.nav_sub_menu:
-                // For Rating SonsHub Mobile
-                Intent rateIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("market://details?id=com.gigabytedevelopersinc.apps.sonshub")
-                );
-
-                // For Sharing SonsHub Mobile
-                Intent share = new Intent(Intent.ACTION_SEND);
-                share.setType("text/plain");
-                String shareSub = "Download the SonsHub Mobile app for your latest Gospel Music, Sermons, Articles and all round Christian Entertainment.\n\n";
-                shareSub = shareSub + "https://bit.ly/DownloadSonsHubMobile \n\n";
-                share.putExtra(Intent.EXTRA_SUBJECT, "Check out SonsHub Mobile");
-                share.putExtra(Intent.EXTRA_TEXT, shareSub);
-                optionMusicPlayer.setOnClickListener(v -> {
-                    player.setPlayWhenReady(false);
-                    startActivity(new Intent(MainActivity.this, MusicMainActivity.class));
-                    overridePendingTransition(R.anim.push_up_in, R.anim.hold);
-                    bottomSheetDialog.dismiss();
-                });
-                optionShare.setOnClickListener(v -> startActivity(Intent.createChooser(share,
-                        "Share SonsHub Mobile using")));
-                optionRate.setOnClickListener(v -> startActivity(rateIntent));
-                close.setOnClickListener(v -> bottomSheetDialog.dismiss());
-                bottomSheetDialog.setCancelable(false);
-                bottomSheetDialog.setContentView(optionsView);
-                bottomSheetDialog.show();
-                return true;
+                bottomSheetDialog.dismiss();
+            });
+            optionShare.setOnClickListener(v -> startActivity(Intent.createChooser(share,
+                    "Share SonsHub Mobile using")));
+            optionRate.setOnClickListener(v -> startActivity(rateIntent));
+            close.setOnClickListener(v -> bottomSheetDialog.dismiss());
+            bottomSheetDialog.setCancelable(false);
+            bottomSheetDialog.setContentView(optionsView);
+            bottomSheetDialog.show();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
