@@ -11,6 +11,7 @@ import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.database.FetchDa
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.database.FetchDatabaseManagerImpl;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.database.DownloadDatabase;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.database.DownloadInfo;
+import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.database.FetchDatabaseManagerWrapper;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.database.migration.Migration;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.downloader.DownloadManager;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.downloader.DownloadManagerImpl;
@@ -291,6 +292,19 @@ public class FetchHandlerInstrumentedTest {
         assertNotNull(downloads1);
         for (DownloadInfo downloadInfo : downloads1) {
             assertNull(downloadInfo);
+        }
+    }
+
+    @Test
+    public void insertBatch() throws Exception {
+        fetchHandler.deleteAll();
+        final int size = 1000;
+        List<Request> requestList = getTestRequestList(size);
+        List<Pair<DownloadInfo, Boolean>> pairs = fetchHandler.enqueueBatch(requestList);
+        assertEquals(1000, pairs.size());
+        for (Pair<DownloadInfo, Boolean> downloadInfoPair : pairs) {
+            assertNotNull(downloadInfoPair);
+            assertTrue(downloadInfoPair.component2());
         }
     }
 

@@ -1,6 +1,7 @@
 package com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.fetch
 
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.*
+import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.database.DownloadInfo
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2core.*
 import java.io.Closeable
 
@@ -12,6 +13,7 @@ interface FetchHandler : Closeable {
     fun init()
     fun enqueue(request: Request): Pair<Download, Error>
     fun enqueue(requests: List<Request>): List<Pair<Download, Error>>
+    fun enqueueBatch(requests: List<Request>): List<Pair<DownloadInfo, Boolean>>
     fun enqueueCompletedDownload(completedDownload: CompletedDownload): Download
     fun enqueueCompletedDownloads(completedDownloads: List<CompletedDownload>): List<Download>
     fun pause(ids: List<Int>): List<Download>
