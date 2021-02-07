@@ -1,6 +1,7 @@
 package com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2
 
 import android.annotation.SuppressLint
+import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.database.DownloadInfo
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.exception.FetchException
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.fetch.FetchImpl
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.fetch.FetchModulesBuilder
@@ -74,6 +75,23 @@ interface Fetch {
      * @return Instance
      * */
     fun enqueue(requests: List<Request>, func: Func<List<Pair<Request, Error>>>? = null): Fetch
+
+    /**
+     * Queues a list of requests for downloading. If Fetch fails to enqueue a
+     * download request because an error occurred, all other request in the list will
+     * fail. Func2 will be called with the error message.
+     * Errors that may cause Fetch to fail the enqueue are :
+     * 1. No storage space on the device.
+     * 2. Fetch is already managing the same request. This means that a request with the same url
+     * and file name is already managed.
+     * 3. Fetch is already managing a request that is downloading to the request file.
+     * @param requests Request List
+     * @param func Callback that the enqueued or failed requests will be returned on.
+     *             This callback returns a list with a pair<DpwnloadInfo,Boolean> for each enqueued request.
+     *
+     * @throws FetchException if this instance of Fetch has been closed.
+     * */
+    fun enqueueBatch(requests: List<Request>, func: Func<List<Pair<DownloadInfo, Boolean>>>?)
 
     /** Pause a queued or downloading download.
      * @param ids ids of downloads to be paused.
