@@ -114,7 +114,7 @@ class FetchDatabaseManagerImpl constructor(context: Context,
         database.execSQL("UPDATE ${DownloadDatabase.TABLE_NAME} SET "
                 + "${DownloadDatabase.COLUMN_EXTRAS} = '?' "
                 + "WHERE ${DownloadDatabase.COLUMN_ID} = ?",
-            arrayOf(extras.toJSONString(),id)
+            arrayOf(extras.toJSONString(), id)
         )
         database.setTransactionSuccessful()
         database.endTransaction()
@@ -331,7 +331,16 @@ class FetchDatabaseManagerImpl constructor(context: Context,
             return
         }
         closed = true
-        requestDatabase.close()
+        try {
+            database.close()
+        } catch (e: Exception) {
+
+        }
+        try {
+            requestDatabase.close()
+        } catch (e: Exception) {
+
+        }
         logger.d("Database closed")
     }
 
