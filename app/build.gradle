@@ -30,6 +30,7 @@ android {
         multiDexEnabled true
         setProperty("archivesBaseName",
                 "SonsHub Mobile" + "-v" + versionName + " " + "(" + versionCode + ")")
+        ndkVersion "22.0.7026061"
     }
 
     signingConfigs {
