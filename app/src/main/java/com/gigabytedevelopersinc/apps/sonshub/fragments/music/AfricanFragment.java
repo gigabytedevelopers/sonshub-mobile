@@ -32,6 +32,8 @@ import com.gigabytedevelopersinc.apps.sonshub.fragments.HomeFragment;
 import com.gigabytedevelopersinc.apps.sonshub.models.MainListModel;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
 import com.google.gson.Gson;
+import com.startapp.sdk.ads.nativead.NativeAdPreferences;
+import com.startapp.sdk.ads.nativead.StartAppNativeAd;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -76,6 +78,8 @@ public class AfricanFragment extends Fragment {
         recyclerView = view.findViewById(R.id.african_list);
         list = new ArrayList<>();
 
+        StartAppNativeAd startAppNativeAd = new StartAppNativeAd(requireActivity());
+
         setHasOptionsMenu(false);
         manager = new LinearLayoutManager(getActivity());
         progressBar = view.findViewById(R.id.progressBar);
@@ -92,6 +96,7 @@ public class AfricanFragment extends Fragment {
         pageNum = 2;
         HomeFragment.hideStreamLayout(recyclerView);
         getAfricanList();
+        startAppNativeAd.loadAd(new NativeAdPreferences());
     }
 
     //Method to get the first 10 items from the sonshub api
