@@ -97,7 +97,7 @@ public class SplashActivity extends AppCompatActivity {
                 // Check for both permissions
                 for (int i = 0; i < listPermissionsNeeded.size(); i++) {
                     if (perms.get(listPermissionsNeeded.get(i)) == PackageManager.PERMISSION_GRANTED) {
-                        Timber.tag(TAG).d("sms & location services permission granted");
+                        Timber.tag(TAG).d("storage permission granted");
                         // process the normal flow
                         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                         startActivity(intent);
