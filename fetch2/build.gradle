@@ -7,7 +7,7 @@ buildscript {
     apply from: '../versions.gradle'
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$gradle_tools_version"
