@@ -1,8 +1,11 @@
 package com.gigabytedevelopersinc.apps.sonshub.utils.misc;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import androidx.annotation.NonNull;
+
+import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Priority;
 import com.gigabytedevelopersinc.apps.sonshub.downloader.fetch2.Request;
 import timber.log.Timber;
@@ -86,7 +89,14 @@ public final class Data {
 
     @NonNull
     private static String getSaveDir() {
-        return Environment.getExternalStorageDirectory() + "/SonsHub";
+        return MainActivity.commonDocumentDirPath("SonsHub").toString();
+
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)+ "/SonsHub";
+        } else {
+            return Environment.getExternalStorageDirectory() + "/SonsHub";
+        }*/
+        // return Environment.getExternalStorageDirectory() + "/SonsHub";
     }
 
     private void moveFiles(String inputPath, String inputFile, String outputPath) {

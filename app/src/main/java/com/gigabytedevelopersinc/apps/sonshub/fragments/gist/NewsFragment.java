@@ -92,7 +92,7 @@ public class NewsFragment extends Fragment {
 
     //Method to get the first 10 items from the sonshub api
     private void getAfricanList() {
-        String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=5&per_page=10&page=1";
+        String AFRICAN_URL = "https://sonshub.co/wp-json/wp/v2/posts?categories=5&per_page=10&page=1";
         JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, response -> {
             list.clear();
             mWaveSwipeRefreshLayout.setRefreshing(false);
@@ -208,7 +208,7 @@ public class NewsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         adapter.setOnBottomReachedListener(position -> {
-            String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=5&per_page=10&page=" + pageNum;
+            String AFRICAN_URL = "https://sonshub.co/wp-json/wp/v2/posts?categories=5&per_page=10&page=" + pageNum;
             pageNum = pageNum + 1;
             progressBar.setVisibility(View.VISIBLE);
             new Handler().postDelayed(() -> loadMoreAfricanList(AFRICAN_URL), 5000);

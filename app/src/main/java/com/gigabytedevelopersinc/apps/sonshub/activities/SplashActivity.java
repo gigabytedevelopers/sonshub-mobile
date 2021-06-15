@@ -84,6 +84,7 @@ public class SplashActivity extends AppCompatActivity {
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NotNull String @NotNull [] permissions, @NotNull int @NotNull [] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         String TAG = "tag";
         Timber.tag(TAG).d("Permission callback called-------");
         if (requestCode == REQUEST_ID_MULTIPLE_PERMISSIONS) {

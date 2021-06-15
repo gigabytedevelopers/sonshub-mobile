@@ -51,7 +51,7 @@ public class SearchFrag extends Fragment {
     public MainListAdapter searchAdapter;
     public ProgressBar searchProgress, bufferingProgress;
     public RecyclerView searchRecyclerView;
-    public String SEARCH_URL = "https://sonshub.com/wp-json/wp/v2/posts?search=";
+    public String SEARCH_URL = "https://sonshub.co/wp-json/wp/v2/posts?search=";
     public Context context;
     public int pageNum;
     public TinyDb tinyDb;
@@ -155,7 +155,7 @@ public class SearchFrag extends Fragment {
         });
 
         searchAdapter.setOnBottomReachedListener(position -> {
-            String SEARCH_URL = "https://sonshub.com/wp-json/wp/v2/posts?search="+ searchQuery.trim()+"&per_page=10&page=" + pageNum;
+            String SEARCH_URL = "https://sonshub.co/wp-json/wp/v2/posts?search="+ searchQuery.trim()+"&per_page=10&page=" + pageNum;
             pageNum = pageNum + 1;
             bufferingProgress.setVisibility(View.VISIBLE);
             new Handler().postDelayed(() -> loadMoreSearchList(SEARCH_URL), 5000);

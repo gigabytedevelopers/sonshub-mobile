@@ -89,7 +89,7 @@ public class HipHopFragment extends Fragment {
 
     //Method to get the first 10 items from the sonshub api
     private void getHipHopList() {
-        String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=2208&per_page=10&page=1";
+        String AFRICAN_URL = "https://sonshub.co/wp-json/wp/v2/posts?categories=2208&per_page=10&page=1";
         JsonArrayRequest africanRequest = new JsonArrayRequest(AFRICAN_URL, response -> {
             mWaveSwipeRefreshLayout.setRefreshing(false);
             System.out.println("Album response: "+response);
@@ -204,7 +204,7 @@ public class HipHopFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         adapter.setOnBottomReachedListener(position -> {
-            String AFRICAN_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=2208&per_page=10&page=" + pageNum;
+            String AFRICAN_URL = "https://sonshub.co/wp-json/wp/v2/posts?categories=2208&per_page=10&page=" + pageNum;
             pageNum = pageNum + 1;
             progressBar.setVisibility(View.VISIBLE);
             new Handler().postDelayed(() -> loadMoreHipHopList(AFRICAN_URL), 5000);

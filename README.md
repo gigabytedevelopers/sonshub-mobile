@@ -2,7 +2,7 @@
 Android app for SonsHub
 
 
-## Top Praise and Worship Songs from SonsHub ([sonshub.com](sonshub.com))
+## Top Praise and Worship Songs from SonsHub ([sonshub.co](sonshub.co))
 
 #### ➤ The best platform for your latest gospel music, videos, christian movies and news from around the world. 
 #### ➤ Get all the best Gospel Praise and Worship Songs for your daily spiritual uplifting. 

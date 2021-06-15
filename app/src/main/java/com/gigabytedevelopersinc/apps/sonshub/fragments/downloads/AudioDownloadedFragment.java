@@ -81,9 +81,9 @@ public class AudioDownloadedFragment extends Fragment {
     }
     private void setAudioListAdapter(List<DownloadedModel> data) {
         DownloadedAdapter adapter = new DownloadedAdapter(getActivity(), data, (view, position, title) -> {
-            File fileFolder = Environment.getExternalStorageDirectory();
+            File fileFolder = MainActivity.commonDocumentDirPath("SonsHub" + "/Music");
             File audioUrl = new File(
-                    fileFolder.getPath() + "/SonsHub/Music/" + title
+                    fileFolder.getPath() + "/" + title
             );
             Uri uri1 = Uri.fromFile(audioUrl);
             try {
@@ -137,9 +137,7 @@ public class AudioDownloadedFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
     private ArrayList<File> getAudioListFiles() {
-        File filePath = new File(
-                Environment.getExternalStorageDirectory() + "/SonsHub/Music"
-        );
+        File filePath = MainActivity.commonDocumentDirPath("SonsHub" + "/Music");
 
         ArrayList<File> fileArrayList = new ArrayList<>();
         File[] listOfFiles = filePath.listFiles();

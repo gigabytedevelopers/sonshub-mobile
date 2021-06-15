@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -744,6 +745,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    public static File commonDocumentDirPath(String FolderName){
+        File dir = null ;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            dir = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)+ "/"+FolderName );
+        } else {
+            dir = new File(Environment.getExternalStorageDirectory() + "/"+FolderName);
+        }
+
+        return  dir ;
+    }
+
+
     @SuppressLint("InflateParams")
     public static void downloadFile(Matcher matcher,Context context) {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
@@ -761,8 +775,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             DownloadingFragment.enqueueDownload();
         } else {
             continueButton.setOnClickListener(v -> {
-                File basePathMp3 = new File(Environment.getExternalStorageDirectory() + "/SonsHub" + "/Music");
-                File basePathVideo = new File(Environment.getExternalStorageDirectory() + "/SonsHub" + "/Videos");
+                File basePathMp3 = commonDocumentDirPath("SonsHub" + "/Music");
+                File basePathVideo = commonDocumentDirPath("SonsHub" + "/Videos");
 
                 File fullPathMp3 = new File(basePathMp3, fileName);
                 File fullPathVideo = new File(basePathVideo, fileName);
@@ -785,8 +799,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public static boolean need2Download(String fileName) {
-        File basePathMp3 = new File(Environment.getExternalStorageDirectory() + "/SonsHub" + "/Music");
-        File basePathVideo = new File(Environment.getExternalStorageDirectory() + "/SonsHub" + "/Videos");
+        File basePathMp3 = commonDocumentDirPath("SonsHub" + "/Music");
+        File basePathVideo = commonDocumentDirPath("SonsHub" + "/Videos");
+        /*File basePathMp3 = new File(Environment.getExternalStorageDirectory() + "/SonsHub" + "/Music");
+        File basePathVideo = new File(Environment.getExternalStorageDirectory() + "/SonsHub" + "/Videos");*/
 
         File fullPathMp3 = new File(basePathMp3, fileName);
         File fullPathVideo = new File(basePathVideo, fileName);

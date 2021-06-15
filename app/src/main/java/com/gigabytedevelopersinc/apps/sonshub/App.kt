@@ -30,7 +30,6 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.notifications.notifi
 import com.gigabytedevelopersinc.apps.sonshub.players.music.playback.mediaModule
 import com.gigabytedevelopersinc.apps.sonshub.players.music.prefsModule
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.viewmodels.viewModelsModule
-import com.gigabytedevelopersinc.apps.sonshub.services.notification.MyFirebaseMessagingService
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.AnalyticsManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.startapp.sdk.adsbase.StartAppAd
@@ -144,15 +143,6 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
 
     override fun onActivityDestroyed(activity: Activity) {
-        val restartService =
-            Intent(context, MyFirebaseMessagingService::class.java)
-        val pendingIntent = PendingIntent.getService(
-            context, 1,
-            restartService, PendingIntent.FLAG_ONE_SHOT
-        )
-        val alarmManager =
-            (getSystemService(Context.ALARM_SERVICE) as AlarmManager)
-        alarmManager[AlarmManager.ELAPSED_REALTIME, 5000] = pendingIntent
     }
 
     companion object {

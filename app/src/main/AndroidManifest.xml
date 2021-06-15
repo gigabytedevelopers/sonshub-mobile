@@ -7,8 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -179,20 +177,6 @@
             android:value="@string/startApp_AppID" />
 
         <!-- Firebase Notifications -->
-        <service
-            android:name=".services.notification.RegistrationService"
-            android:exported="false" />
-        <service android:name=".services.notification.MyFirebaseMessagingService"
-            android:permission="com.google.android.c2dm.permission.SEND"
-            android:enabled="true"
-            android:stopWithTask="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            </intent-filter>
-        </service>
-        <service android:name=".utils.Utils"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
         <!-- End of Firebase Notifications -->
 
         <provider
@@ -205,6 +189,5 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".receivers.BootReceiver" />
     </application>
 </manifest>

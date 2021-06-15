@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.gigabytedevelopersinc.apps.sonshub.R;
+import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.adapters.DownloadedAdapter;
 import com.gigabytedevelopersinc.apps.sonshub.models.DownloadedModel;
 import com.gigabytedevelopersinc.apps.sonshub.utils.RecyclerViewEmptyObserver;
@@ -77,10 +78,14 @@ public class VideoDownloadedFragment extends Fragment {
     private void setVideoListAdapter(List<DownloadedModel> data) {
         DownloadedAdapter adapter = new DownloadedAdapter(getActivity(), data, (view, position, title) -> {
             try {
-                File fileFolder = Environment.getExternalStorageDirectory();
+                File fileFolder = MainActivity.commonDocumentDirPath("SonsHub" + "/Videos");
+                File videoUrl = new File(
+                        fileFolder.getPath() + "/" + title
+                );
+                /*File fileFolder = Environment.getExternalStorageDirectory();
                 File videoUrl = new File(
                         fileFolder.getPath() + "/SonsHub/Videos/" + title
-                );
+                );*/
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(videoUrl), "video/mp4");
                 startActivity(Intent.createChooser(intent, "Play this Video with"));
@@ -99,9 +104,7 @@ public class VideoDownloadedFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
     private ArrayList<File> getVideoListFiles() {
-        File filePath = new File(
-                Environment.getExternalStorageDirectory() + "/SonsHub/Videos"
-        );
+        File filePath = MainActivity.commonDocumentDirPath("SonsHub" + "/Videos");
 
         ArrayList<File> fileArrayList = new ArrayList<>();
         File[] listOfFiles = filePath.listFiles();

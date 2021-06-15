@@ -72,10 +72,10 @@ public class HomeFragment extends Fragment {
     private NewsAdapter newsAdapter;
     private MovieAdapter adapter;
     private MusicAdapter musicAdapter;
-    private String MOVIE_HOME_URL="https://sonshub.com/wp-json/wp/v2/posts?categories=586&per_page=10";
-    private String MUSIC_HOME_URL ="https://sonshub.com/wp-json/wp/v2/posts?categories=2&per_page=10";
-    private String ARTICLE_HOME_URL ="https://sonshub.com/wp-json/wp/v2/posts?per_page=10";
-    private String FEATURED_AREA_URL = "https://sonshub.com/wp-json/wp/v2/posts?categories=19824&per_page=10";
+    private String MOVIE_HOME_URL="https://sonshub.co/wp-json/wp/v2/posts?categories=586&per_page=10";
+    private String MUSIC_HOME_URL ="https://sonshub.co/wp-json/wp/v2/posts?categories=2&per_page=10";
+    private String ARTICLE_HOME_URL ="https://sonshub.co/wp-json/wp/v2/posts?per_page=10";
+    private String FEATURED_AREA_URL = "https://sonshub.co/wp-json/wp/v2/posts?categories=19824&per_page=10";
     private SliderLayout mDemoSlider;
     private ProgressBar moviesProgress, musicProgress, gistProgress;
     private TinyDb tinyDb;

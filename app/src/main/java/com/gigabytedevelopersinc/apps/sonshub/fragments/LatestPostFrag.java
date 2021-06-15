@@ -106,7 +106,7 @@ public class LatestPostFrag extends Fragment {
 
     //Method to get the first 10 items from the sonshub api
     private void getLatestPostList() {
-        String LATEST_POST_URL = "https://sonshub.com/wp-json/wp/v2/posts?per_page=10&page=1";
+        String LATEST_POST_URL = "https://sonshub.co/wp-json/wp/v2/posts?per_page=10&page=1";
         JsonArrayRequest africanRequest = new JsonArrayRequest(LATEST_POST_URL, response -> {
             list.clear();
             System.out.println("African response: "+response);
@@ -225,7 +225,7 @@ public class LatestPostFrag extends Fragment {
         gridView.setAdapter(adapter);
 
         adapter.setOnBottomReachedListener(position -> {
-            String LATEST_URL = "https://sonshub.com/wp-json/wp/v2/posts?per_page=10&page=" + pageNum;
+            String LATEST_URL = "https://sonshub.co/wp-json/wp/v2/posts?per_page=10&page=" + pageNum;
             pageNum = pageNum + 1;
             progressBar.setVisibility(View.VISIBLE);
             new Handler().postDelayed(() -> loadMoreLatestList(LATEST_URL), 5000);
