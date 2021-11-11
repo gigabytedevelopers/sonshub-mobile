@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
@@ -78,11 +77,16 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+
+        // Sets Java compatibility to Java 11
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = '11'
     }
 }
 
@@ -105,7 +109,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.ogaclejapan.smarttablayout:library:2.0.0@aar'
     implementation 'com.ogaclejapan.smarttablayout:utils-v4:2.0.0@aar'
-    implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'
+    implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.5'
     implementation 'com.squareup.okhttp3:okhttp:4.6.0'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.14.1'
     implementation 'com.google.android.exoplayer:exoplayer-dash:2.14.1'
@@ -180,6 +184,7 @@ dependencies {
     // Testing/Debug
     implementation 'com.jakewharton.timber:timber:4.7.1'
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.3'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 }
 
 configurations {
