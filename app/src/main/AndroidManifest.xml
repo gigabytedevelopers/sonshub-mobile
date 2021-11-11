@@ -41,7 +41,8 @@
 
         <activity android:name=".activities.FirstSplashScreen"
             android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,7 +56,8 @@
 
         <activity android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation|screenSize">
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true">
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -94,7 +96,8 @@
         <activity
             android:name=".players.music.ui.activities.MusicMainActivity"
             android:theme="@style/AppTheme.Light"
-            android:label="SonsHub Music Player">
+            android:label="SonsHub Music Player"
+            android:exported="false">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity" />
@@ -154,14 +157,14 @@
         <service
             android:name=".players.music.playback.TimberMusicService"
             android:enabled="true"
-            android:exported="true"
-            tools:ignore="ExportedService">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
 
-        <receiver android:name="androidx.media.session.MediaButtonReceiver">
+        <receiver android:name="androidx.media.session.MediaButtonReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
@@ -182,12 +185,19 @@
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            android:exported="false">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <receiver android:name="com.startapp.sdk.adsbase.remoteconfig.BootCompleteListener"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 </manifest>
