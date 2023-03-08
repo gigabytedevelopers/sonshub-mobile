@@ -43,9 +43,9 @@ import com.gigabytedevelopersinc.apps.sonshub.models.MovieModel;
 import com.gigabytedevelopersinc.apps.sonshub.models.MusicModel;
 import com.gigabytedevelopersinc.apps.sonshub.models.NewsModel;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
-import com.glide.slider.library.Animations.DescriptionAnimation;
+import com.glide.slider.library.animations.DescriptionAnimation;
 import com.glide.slider.library.SliderLayout;
-import com.glide.slider.library.SliderTypes.DefaultSliderView;
+import com.glide.slider.library.slidertypes.DefaultSliderView;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 
