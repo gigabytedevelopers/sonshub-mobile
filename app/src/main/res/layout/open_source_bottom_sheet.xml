@@ -311,41 +311,7 @@
                     android:text="@string/license_8_owner"
                     android:layout_marginTop="@dimen/margin_small"/>
             </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1.0dp"
-                android:background="@color/grey"/>
-            <LinearLayout
-                android:id="@+id/license_9"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_small"
-                android:layout_marginTop="@dimen/margin_small">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/license_9_name"
-                    android:textColor="@color/colorPrimary"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                    android:textColor="@color/grey_500"
-                    android:text="@string/license_9_type"
-                    android:layout_marginTop="@dimen/margin_small"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                    android:textColor="@color/grey_500"
-                    android:text="@string/license_9_owner"
-                    android:layout_marginTop="@dimen/margin_small"/>
-            </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1.0dp"

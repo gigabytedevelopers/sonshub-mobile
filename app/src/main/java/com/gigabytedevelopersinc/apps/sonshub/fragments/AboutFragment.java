@@ -103,7 +103,6 @@ public class AboutFragment extends Fragment {
             openSourceView.findViewById(R.id.license_6).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.license_6_url)))));
             openSourceView.findViewById(R.id.license_7).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.license_7_url)))));
             openSourceView.findViewById(R.id.license_8).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.license_8_url)))));
-            openSourceView.findViewById(R.id.license_9).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.license_9_url)))));
 
             (openSourceView.findViewById(R.id.continue_btn)).setOnClickListener(v -> bottomSheetDialog.dismiss());
             bottomSheetDialog.setCancelable(false);
