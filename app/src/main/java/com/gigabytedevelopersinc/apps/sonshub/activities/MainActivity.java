@@ -70,10 +70,6 @@ import com.gigabytedevelopersinc.apps.sonshub.utils.NotificationUtil;
 import com.gigabytedevelopersinc.apps.sonshub.utils.TinyDb;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Configs;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.Data;
-import com.github.javiersantos.appupdater.AppUpdaterUtils;
-import com.github.javiersantos.appupdater.enums.AppUpdaterError;
-import com.github.javiersantos.appupdater.enums.UpdateFrom;
-import com.github.javiersantos.appupdater.objects.Update;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -192,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         );
         
         sonshubAppInstance = this;
-        checkForUpdate();
         initializeInterstitialAd();
         initStartAppInterstitialAd();
 
@@ -817,54 +812,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static MediaSource buildMediaSource(Uri uri) {
         return new ProgressiveMediaSource.Factory(
                 new DefaultHttpDataSourceFactory("exoplayer-codelab")).createMediaSource(uri);
-    }
-
-    @SuppressLint("InflateParams")
-    public void checkForUpdate() {
-        AppUpdaterUtils appUpdaterUtils = new AppUpdaterUtils(this)
-                .setUpdateFrom(UpdateFrom.JSON)
-                .setUpdateJSON("https://www.gigabytedevelopersinc.com/apps/sonshub/updater/update.json")
-                .withListener(new AppUpdaterUtils.UpdateListener() {
-                    @Override
-                    public void onSuccess(Update update, Boolean isUpdateAvailable) {
-                        Timber.tag("Latest Version").d(update.getLatestVersion());
-                        Timber.tag("Latest Version Code").d(String.valueOf(update.getLatestVersionCode()));
-                        Timber.tag("Release notes").d(update.getReleaseNotes());
-                        Timber.tag("URL").d(String.valueOf(update.getUrlToDownload()));
-                        Timber.tag("Is update available?").d(Boolean.toString(isUpdateAvailable));
-                        tinyDb.putString("updateDownloadURL", String.valueOf(update.getUrlToDownload()));
-
-                        if (isUpdateAvailable) {
-                            Toast.makeText(appContext, getString(R.string.toast_success_new_version), Toast.LENGTH_LONG).show();
-                            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MainActivity.this);
-                            final View updateNoticeView = LayoutInflater.from(MainActivity.this).inflate(R.layout.updater_notice, null);
-
-                            TextView updateNoticeText = updateNoticeView.findViewById(R.id.updateNoticeText);
-                            Button continueButton = updateNoticeView.findViewById(R.id.update_continue);
-                            LinearLayout closeButton = updateNoticeView.findViewById(R.id.close);
-                            updateNoticeText.setText(update.getReleaseNotes());
-                            continueButton.setOnClickListener(v -> {
-                                Intent playStore = new Intent(Intent.ACTION_VIEW,
-                                        Uri.parse("market://details?id=com.gigabytedevelopersinc.apps.sonshub")
-                                );
-                                startActivity(playStore);
-                                bottomSheetDialog.dismiss();
-                            });
-                            closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
-                            bottomSheetDialog.setCancelable(false);
-                            bottomSheetDialog.setContentView(updateNoticeView);
-                            if (!MainActivity.this.isFinishing()) {
-                                bottomSheetDialog.show();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailed(AppUpdaterError appUpdaterError) {
-                        Timber.tag("AppUpdater Error").d("Something went wrong");
-                    }
-                });
-        appUpdaterUtils.start();
     }
 
     public static void miniPlayerExpand() {

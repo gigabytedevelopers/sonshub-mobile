@@ -135,9 +135,6 @@ dependencies {
     // StartApp
     implementation 'com.startapp:inapp-sdk:4.8.2'
 
-    // App Update
-    implementation 'com.github.javiersantos:AppUpdater:2.7'
-
     // Downloader Fetcher
     implementation project(':fetch2')
     implementation project(':fetch2okhttp')

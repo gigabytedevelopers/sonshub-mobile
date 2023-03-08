@@ -11,10 +11,6 @@ import androidx.browser.customtabs.CustomTabsIntent;
 
 import com.gigabytedevelopersinc.apps.sonshub.activities.MainActivity;
 import com.gigabytedevelopersinc.apps.sonshub.utils.misc.AnalyticsManager;
-import com.github.javiersantos.appupdater.AppUpdaterUtils;
-import com.github.javiersantos.appupdater.enums.AppUpdaterError;
-import com.github.javiersantos.appupdater.enums.UpdateFrom;
-import com.github.javiersantos.appupdater.objects.Update;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import androidx.core.widget.NestedScrollView;
@@ -41,11 +37,6 @@ import java.util.Calendar;
  * A simple {@link Fragment} subclass.
  */
 public class AboutFragment extends Fragment {
-
-    // Updater
-    private ImageView updateImg;
-    private TextView updateTitle, updateText;
-    private Button continueButton, cancelButton;
 
     public AboutFragment() {
         // Required empty public constructor
@@ -163,41 +154,6 @@ public class AboutFragment extends Fragment {
         String text = String.format(getString(R.string.copyright_desc), currentYear);
         copyright.setText(text);
 
-        LinearLayout about = view.findViewById(R.id.aboutSonsHub);
-        about.setOnLongClickListener(v -> {
-            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
-            View appUpdateView = getLayoutInflater().inflate(R.layout.general_notice,null);
-
-            updateImg = appUpdateView.findViewById(R.id.warningImg);
-            updateTitle = appUpdateView.findViewById(R.id.warning);
-            updateText = appUpdateView.findViewById(R.id.generalNoticeText);
-            continueButton = appUpdateView.findViewById(R.id.continueButton);
-            cancelButton = appUpdateView.findViewById(R.id.cancelButton);
-
-            updateImg.setImageResource(R.drawable.ic_system_update_white_24dp);
-            updateImg.setColorFilter(ContextCompat.getColor(requireContext(), R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
-            updateTitle.setText(getString(R.string.update_check_title));
-            updateText.setText("If for some reason you have not automatically been asked to update your version of SonsHub Mobile to the latest, then it most likely means that you are already running the latest version of SonsHub Mobile.\n\nDo you still want to check for new SonsHub Mobile app update?");
-            continueButton.setText(getString(R.string.update_check_proceed));
-            cancelButton.setText(getString(R.string.update_check_cancel));
-
-            continueButton.setOnClickListener(view1 -> {
-                bottomSheetDialog.dismiss();
-                checkForUpdate();
-            });
-            cancelButton.setOnClickListener(view1 -> {
-                bottomSheetDialog.dismiss();
-                Snackbar.make(requireActivity()
-                                .findViewById(android.R.id.content),
-                        getString(R.string.snackBar_update_check_cancel),
-                        Snackbar.LENGTH_LONG).show();
-            });
-            bottomSheetDialog.setCancelable(false);
-            bottomSheetDialog.setContentView(appUpdateView);
-            bottomSheetDialog.show();
-            return false;
-        });
-
         LinearLayout rate = view.findViewById(R.id.rate);
         rate.setOnClickListener(v -> {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
@@ -268,72 +224,6 @@ public class AboutFragment extends Fragment {
             }
         });
         return view;
-    }
-
-    @SuppressLint("InflateParams")
-    private void checkForUpdate() {
-        Snackbar updateCheck = Snackbar.make(requireActivity()
-                        .findViewById(android.R.id.content),
-                "Hang on, Checking for new version update! \n- This takes less than a minute.",
-                Snackbar.LENGTH_LONG);
-        updateCheck.show();
-        AppUpdaterUtils appUpdaterUtils = new AppUpdaterUtils(getContext())
-                .setUpdateFrom(UpdateFrom.JSON)
-                .setUpdateJSON("https://www.gigabytedevelopersinc.com/apps/sonshub/updater/update.json")
-                .withListener(new AppUpdaterUtils.UpdateListener() {
-                    @Override
-                    public void onSuccess(Update update, Boolean isUpdateAvailable) {
-                        Timber.tag("Latest Version:").d(update.getLatestVersion());
-                        Timber.tag("Latest Version Code:").d(String.valueOf(update.getLatestVersionCode()));
-                        Timber.tag("Release Notes:").d(update.getReleaseNotes());
-                        Timber.tag("URL:").d(String.valueOf(update.getUrlToDownload()));
-                        Timber.tag("Is update available?").d(Boolean.toString(isUpdateAvailable));
-
-                        if ((update.getLatestVersionCode() > BuildConfig.VERSION_CODE)) {
-                            Handler handler = new Handler();
-                            Runnable r = () -> {
-                                updateCheck.dismiss();
-                                Toast.makeText(requireContext(), getString(R.string.toast_success_new_version), Toast.LENGTH_LONG).show();
-                                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
-                                final View updateNoticeView = LayoutInflater.from(requireContext()).inflate(R.layout.updater_notice, null);
-
-                                TextView updateNoticeText = updateNoticeView.findViewById(R.id.updateNoticeText);
-                                Button continueButton = updateNoticeView.findViewById(R.id.update_continue);
-                                LinearLayout closeButton = updateNoticeView.findViewById(R.id.close);
-                                updateNoticeText.setText(update.getReleaseNotes());
-                                continueButton.setOnClickListener(v -> {
-                                    Intent playStore = new Intent(Intent.ACTION_VIEW,
-                                            Uri.parse("market://details?id=com.gigabytedevelopersinc.apps.sonshub")
-                                    );
-                                    startActivity(playStore);
-                                    bottomSheetDialog.dismiss();
-                                });
-                                closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
-                                bottomSheetDialog.setCancelable(false);
-                                bottomSheetDialog.setContentView(updateNoticeView);
-                                bottomSheetDialog.show();
-                            };
-                            handler.postDelayed(r, 5000);
-                        } else {
-                            // No Update
-                            Handler handler = new Handler();
-                            Runnable r = () -> {
-                                updateCheck.dismiss();
-                                Snackbar.make(requireActivity()
-                                                .findViewById(android.R.id.content),
-                                        "You have the latest version of SonsHub Mobile!",
-                                        Snackbar.LENGTH_LONG).show();
-                            };
-                            handler.postDelayed(r, 5000);
-                        }
-                    }
-
-                    @Override
-                    public void onFailed(AppUpdaterError appUpdaterError) {
-                        Timber.tag("AppUpdater Error").d("Something went wrong");
-                    }
-                });
-        appUpdaterUtils.start();
     }
 
     @Override
