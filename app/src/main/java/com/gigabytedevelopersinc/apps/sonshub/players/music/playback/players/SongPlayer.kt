@@ -2,6 +2,8 @@ package com.gigabytedevelopersinc.apps.sonshub.players.music.playback.players
 
 import android.app.Application
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.*
@@ -128,7 +130,15 @@ class RealSongPlayer(
         setPlaybackState(stateBuilder.build())
 
         val sessionIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-        val sessionActivityPendingIntent = PendingIntent.getActivity(context, 0, sessionIntent, 0)
+        val sessionActivityPendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            sessionIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                FLAG_IMMUTABLE or 0
+            } else {
+                0
+            })
         setSessionActivity(sessionActivityPendingIntent)
         isActive = true
     }

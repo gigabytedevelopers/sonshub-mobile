@@ -1,5 +1,6 @@
 package com.gigabytedevelopersinc.apps.sonshub.players.music.notifications
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.app.Notification
 import android.app.NotificationChannel
@@ -9,6 +10,7 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_ALBUM
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_ALBUM_ART
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_ARTIST
@@ -28,6 +30,7 @@ import com.gigabytedevelopersinc.apps.sonshub.players.music.constants.Constants.
 import com.gigabytedevelopersinc.apps.sonshub.players.music.extensions.isPlaying
 import com.gigabytedevelopersinc.apps.sonshub.players.music.ui.activities.MusicMainActivity
 import com.gigabytedevelopersinc.apps.sonshub.players.music.util.Utils.isOreo
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.lang.System.currentTimeMillis
@@ -63,6 +66,7 @@ class RealNotifications(
 ) : Notifications {
     private var postTime: Long = -1
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun updateNotification(mediaSession: MediaSessionCompat) {
         // TODO should this be scoped so that it can be cancelled?
         GlobalScope.launch {
@@ -70,6 +74,7 @@ class RealNotifications(
         }
     }
 
+    @SuppressLint("ResourceType")
     override fun buildNotification(mediaSession: MediaSessionCompat): Notification {
         if (mediaSession.controller.metadata == null || mediaSession.controller.playbackState == null) {
             return getEmptyNotification()
@@ -88,7 +93,15 @@ class RealNotifications(
         }
 
         val nowPlayingIntent = Intent(context, MusicMainActivity::class.java)
-        val clickIntent = PendingIntent.getActivity(context, 0, nowPlayingIntent, FLAG_UPDATE_CURRENT)
+        val clickIntent = PendingIntent.getActivity(
+            context,
+            0,
+            nowPlayingIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT
+            } else {
+                FLAG_UPDATE_CURRENT
+            })
 
         if (postTime == -1L) {
             postTime = currentTimeMillis()
@@ -136,7 +149,15 @@ class RealNotifications(
         val actionIntent = Intent(context, TimberMusicService::class.java).apply {
             action = ACTION_PREVIOUS
         }
-        val pendingIntent = PendingIntent.getService(context, 0, actionIntent, 0)
+        val pendingIntent = PendingIntent.getService(
+            context,
+            0,
+            actionIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE or 0
+            } else {
+                0
+            })
         return NotificationCompat.Action(R.drawable.music_ic_previous, "", pendingIntent)
     }
 
@@ -144,7 +165,15 @@ class RealNotifications(
         val actionIntent = Intent(context, TimberMusicService::class.java).apply {
             action = ACTION_PLAY_PAUSE
         }
-        val pendingIntent = PendingIntent.getService(context, 0, actionIntent, 0)
+        val pendingIntent = PendingIntent.getService(
+            context,
+            0,
+            actionIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE or 0
+            } else {
+                0
+            })
         return NotificationCompat.Action(playButtonResId, "", pendingIntent)
     }
 
@@ -152,7 +181,15 @@ class RealNotifications(
         val actionIntent = Intent(context, TimberMusicService::class.java).apply {
             action = ACTION_NEXT
         }
-        val pendingIntent = PendingIntent.getService(context, 0, actionIntent, 0)
+        val pendingIntent = PendingIntent.getService(
+            context,
+            0,
+            actionIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE or 0
+            } else {
+                0
+            })
         return NotificationCompat.Action(R.drawable.music_ic_next, "", pendingIntent)
     }
 
