@@ -11,7 +11,7 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     applicationVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "SonsHub Mobile-${variant.name}-${variant.versionName}.apk"
@@ -21,7 +21,7 @@ android {
     defaultConfig {
         applicationId "com.gigabytedevelopersinc.apps.sonshub"
         minSdkVersion 19
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 23
         versionName "1.4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
